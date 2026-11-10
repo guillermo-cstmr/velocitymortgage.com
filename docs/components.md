@@ -26,7 +26,9 @@ Every section is a Kadence Row Layout with full-width alignment, the content max
 | `vm-program` | Row Layout with two columns | A program: text beside an image. Give the columns `vm-program-text` and `vm-program-image` |
 | `vm-program vm-program--featured` | Row Layout with two columns | The same, inside a white bordered card |
 | `vm-step` | Section (Kadence column) | One numbered step |
-| `vm-deals` | Query Loop | Shows posts as deal cards in three columns. Wrap each post's blocks in a Group with `vm-deal-card` |
+| `vm-deals` | Query Loop | Shows posts as deal cards in three columns. Wrap each post's blocks in a Group with `vm-deal-card`. The whole card is clickable through the Post Title block, which needs the class `vm-deal-location` and "Make title a link" turned on |
+
+Cards lift slightly on hover. That comes with the class, there is nothing to set.
 
 ## Text
 
@@ -64,7 +66,7 @@ Use the Kadence Advanced Button block. It already follows the style guide: pill 
 
 | Class | Put it on | What it does |
 |---|---|---|
-| `vm-faq` | Details block | A frequently asked question. Tick "Open by default" on the first one |
+| `vm-faq` | Details block | A frequently asked question. Tick "Open by default" on the first one. Questions placed one after another act as a group: opening one closes the others, and one always stays open |
 | `vm-menu-featured` | Navigation link inside a dropdown | Sets the item apart with a rule, bold text and an arrow |
 | `vm-placeholder` | Paragraph | Marks where something not built yet will go. Delete the block when the real thing exists |
 

@@ -107,20 +107,6 @@ Text Domain:  velocity-kadence
 	line-height: 1.1;
 }
 
-/* Outline button: 1px Action Orange, fills with Deep Rust on hover. */
-.kb-button.kb-btn-global-outline {
-	border: 1px solid var(--global-palette1);
-	color: var(--global-palette1);
-	padding: 15px 23px;
-}
-
-.kb-button.kb-btn-global-outline:hover,
-.kb-button.kb-btn-global-outline:focus {
-	border-color: var(--global-palette2);
-	background: var(--global-palette2);
-	color: var(--global-palette9);
-}
-
 /*
  * Header.
  * Layout, colors and the menu come from the Global Header blocks.
@@ -439,19 +425,6 @@ p.vm-step-number {
 	margin: 0;
 }
 
-/* An outline button on a dark background: white instead of orange. */
-.kb-button.kb-btn-global-outline.vm-btn-on-dark {
-	border-color: var(--global-palette9);
-	color: var(--global-palette9);
-}
-
-.kb-button.kb-btn-global-outline.vm-btn-on-dark:hover,
-.kb-button.kb-btn-global-outline.vm-btn-on-dark:focus {
-	border-color: var(--global-palette9);
-	background: var(--global-palette9);
-	color: var(--global-palette3);
-}
-
 /* Closed deals: a query loop of properties shown as cards. */
 .vm-deals .wp-block-post-template {
 	display: grid;
@@ -655,4 +628,122 @@ p.vm-cta-note {
 	.vm-subtitle {
 		line-height: 1.31;
 	}
+}
+
+/*
+ * Outline button, final word.
+ * The theme and Kadence Blocks both style this button and both change its
+ * border on hover, which made it grow by a pixel on each side and left the
+ * text white on a transparent background. These rules carry enough weight
+ * to settle it: a 1px border in every state, and padding one pixel smaller
+ * than the primary button so both end up the same height.
+ */
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline,
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:hover,
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:focus,
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:active {
+	padding: 15px 23px;
+	border-width: 1px;
+	border-style: solid;
+	box-shadow: none;
+}
+
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline {
+	border-color: var(--global-palette1);
+	background: transparent;
+	color: var(--global-palette1);
+}
+
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:hover,
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:focus,
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:active {
+	border-color: var(--global-palette2);
+	background: var(--global-palette2);
+	color: var(--global-palette9);
+}
+
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline.vm-btn-on-dark {
+	border-color: var(--global-palette9);
+	color: var(--global-palette9);
+}
+
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline.vm-btn-on-dark:hover,
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline.vm-btn-on-dark:focus,
+.kb-buttons-wrap .kb-button.button.kb-btn-global-outline.vm-btn-on-dark:active {
+	border-color: var(--global-palette9);
+	background: var(--global-palette9);
+	color: var(--global-palette3);
+}
+
+/*
+ * Hover states for cards.
+ * A card lifts slightly and its shadow deepens.
+ */
+.vm-card > .kt-inside-inner-col,
+.vm-deals .vm-deal-card {
+	transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.vm-card:hover > .kt-inside-inner-col,
+.vm-deals .vm-deal-card:hover,
+.vm-deals .vm-deal-card:focus-within {
+	transform: translateY(-4px);
+	box-shadow: 0 8px 12px -4px rgba(0, 0, 0, 0.06), 0 24px 32px -8px rgba(1, 7, 57, 0.16);
+}
+
+.vm-card:not(.vm-card--left):hover > .kt-inside-inner-col,
+.vm-deals .vm-deal-card:hover,
+.vm-deals .vm-deal-card:focus-within {
+	border-color: rgba(43, 53, 120, 0.24);
+}
+
+/*
+ * A deal card is clickable as a whole. The link on the location is stretched
+ * over the card, so there is one link for keyboards and screen readers.
+ */
+.vm-deals .vm-deal-card {
+	position: relative;
+}
+
+.vm-deals .vm-deal-location a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	border-radius: 12px;
+}
+
+.vm-deals .vm-deal-location a:focus-visible {
+	outline: none;
+}
+
+.vm-deals .vm-deal-location a:focus-visible::after {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+.vm-deals .vm-deal-card:hover .vm-deal-location a {
+	color: var(--global-palette2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.vm-card > .kt-inside-inner-col,
+	.vm-deals .vm-deal-card {
+		transition: none;
+	}
+
+	.vm-card:hover > .kt-inside-inner-col,
+	.vm-deals .vm-deal-card:hover,
+	.vm-deals .vm-deal-card:focus-within {
+		transform: none;
+	}
+}
+
+/* A card keeps its own background on any section color. */
+.wp-block-kadence-column.vm-card > .kt-inside-inner-col {
+	background: var(--global-palette9);
+}
+
+.wp-block-kadence-column.vm-card.vm-card--left > .kt-inside-inner-col {
+	background: var(--global-palette8);
 }

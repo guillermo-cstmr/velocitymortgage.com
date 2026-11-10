@@ -40,6 +40,25 @@ function vm_enqueue_styles() {
 add_action( 'wp_enqueue_scripts', 'vm_enqueue_styles', 20 );
 
 /**
+ * Load the small script behind the frequently asked questions.
+ */
+function vm_enqueue_scripts() {
+	$file = VELOCITY_KADENCE_DIR . '/assets/js/faq.js';
+
+	wp_enqueue_script(
+		'velocity-kadence-faq',
+		VELOCITY_KADENCE_URI . '/assets/js/faq.js',
+		array(),
+		file_exists( $file ) ? (string) filemtime( $file ) : null,
+		array(
+			'strategy'  => 'defer',
+			'in_footer' => true,
+		)
+	);
+}
+add_action( 'wp_enqueue_scripts', 'vm_enqueue_scripts', 20 );
+
+/**
  * Load the same stylesheet inside the block editor, so buttons, the header
  * and the footer look in the editor the way they do on the site.
  */
