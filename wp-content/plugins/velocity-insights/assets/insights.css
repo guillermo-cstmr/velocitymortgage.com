@@ -1,0 +1,39 @@
+/* Velocity Insights — minimal styles; the theme's typography and colors still apply. */
+
+.vmi { max-width: 1140px; margin: 0 auto; padding: 32px 16px 64px; }
+.vmi-meta { font-size: .9em; opacity: .75; margin: .25em 0 .75em; }
+
+/* Topic filter */
+.vmi-topics { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 24px; }
+.vmi-topics a { padding: 6px 14px; border: 1px solid currentColor; border-radius: 999px; text-decoration: none; font-size: .9em; }
+.vmi-topics a[aria-current="page"] { font-weight: 700; border-width: 2px; }
+
+/* Index grid */
+.vmi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 32px; }
+.vmi-card { display: flex; flex-direction: column; border: 1px solid rgba(0,0,0,.1); border-radius: 8px; overflow: hidden; background: #fff; }
+.vmi-card__image { display: block; aspect-ratio: 16 / 9; background: #eef1f4; }
+.vmi-card__image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vmi-card__body { padding: 20px; }
+.vmi-card__title { font-size: 1.25rem; line-height: 1.3; margin: 0 0 .25em; }
+.vmi-card__title a { text-decoration: none; }
+.vmi-card__excerpt p { margin: 0; }
+.vmi-index .pagination, .vmi-index .navigation { margin-top: 40px; text-align: center; }
+.vmi-index .nav-links .page-numbers { display: inline-block; padding: 6px 12px; }
+
+/* Article */
+.vmi-single { max-width: 780px; }
+.vmi-single__header h1 { margin: .25em 0; }
+.vmi-back a { text-decoration: none; font-size: .9em; }
+.vmi-single__image { margin: 0 0 32px; }
+.vmi-single__image img { width: 100%; height: auto; border-radius: 8px; }
+
+/* CTA (also used on theme templates) */
+.vmi-cta { margin: 48px 0 0; padding: 32px; border-radius: 8px; background: #f3f6f9; text-align: center; }
+.vmi-cta h2 { margin-top: 0; }
+.vmi-cta__button { display: inline-block; padding: 12px 28px; border-radius: 4px; background: #0b3d6e; color: #fff !important; text-decoration: none; font-weight: 600; }
+
+@media (max-width: 600px) {
+	.vmi { padding: 24px 16px 48px; }
+	.vmi-grid { gap: 20px; }
+	.vmi-cta { padding: 24px 16px; }
+}

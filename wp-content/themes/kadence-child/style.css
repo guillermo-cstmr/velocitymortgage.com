@@ -1,0 +1,352 @@
+/*
+Theme Name:     Kadence Custom Child Theme
+Theme URI:      https://pixeljar.com
+Template:       kadence
+Author:         Pixel Jar
+Author URI:     https://pixeljar.com
+Description:    Custom child theme for Kadence parent theme
+Version:        1.0
+License:        GNU General Public License v3.0 (or later)
+License URI:    https://www.gnu.org/licenses/gpl-3.0.html
+*/
+
+/* Home Page Style Customizations */
+.overview-add-play-button {
+	position: relative;
+	display: inline-block;
+}
+.overview-add-play-button::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 50px;
+	height: 50px;
+	background-image: url('/wp-content/uploads/2025/10/play-button.svg');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+	pointer-events: none;
+	z-index: 10;
+}
+
+/* Home page: Featured Funding Cards */
+.ff-programs a {
+	font-family: 'Poppins', sans-serif;
+	font-size: 18px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ff-refinance a {
+	color: #84888C;
+	font-size: 16px;
+	font-weight: 400;
+	text-decoration: none;
+}
+
+/* Remove right border on 4th card (desktop) */
+.ff-cards ul li:nth-child(4) .kt-inside-inner-col {
+	border-right: none !important;
+}
+
+/* Remove right border on all cards (mobile) */
+@media (max-width: 767px) {
+	.ff-cards ul li .kt-inside-inner-col {
+		border-right: none !important;
+	}
+}
+
+
+/* Adjust icon-outline.png positioning to match target */
+.kb-row-layout-id10_bd0432-78 {
+    background-position: 55% 45% !important;
+    background-size: 120% auto !important;
+}
+
+/* Responsive adjustments */
+@media all and (max-width: 1024px) {
+    .kb-row-layout-id10_bd0432-78 {
+        background-position: 80% 25% !important;
+        background-size: 110% auto !important;
+    }
+}
+
+@media all and (max-width: 767px) {
+    .kb-row-layout-id10_bd0432-78 {
+        background-position: center !important;
+        background-size: cover !important;
+    }
+}
+
+/* Featured Fundings */
+.featured-no-links {
+    pointer-events: none;
+}
+
+.account-exec a {
+  text-decoration: none !important;
+}
+
+.post-type-archive-velocity-property #primary.content-area {
+  margin-top: 0 !important;
+}
+
+/* Featured Fundings Filter Row Styles */
+.filter-row select {
+  max-width: 170px;
+}
+
+.filter-row .date-funded {
+  width: 300px;
+}
+
+.filter-row .date-funded input[type="text"] {
+  max-width: 120px;
+  height: 40px;
+  float: left;
+}
+
+.filter-row .facetwp-reset{
+  background-color: #ffffff;
+  border: 1px solid #d4773c;
+  border-radius: 25px;
+  color: #d4773c;
+  padding: 4px 20px;
+}
+
+.filter-row .facetwp-reset:hover {
+  background-color: #d4773c;
+  border-radius: 25px;
+  color: #ffffff;
+}
+
+.filter-row .facetwp-facet {
+  margin-bottom: 20px;
+}
+
+
+
+/* Featured Fundings Pagination Styles */
+.post-type-archive-velocity-property .navigation.pagination .nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.post-type-archive-velocity-property .navigation.pagination {
+  border-top: solid 1px #e2e8f0;
+  padding-top: 40px;
+}
+
+.post-type-archive-velocity-property .navigation.pagination .page-numbers {
+    min-width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #ADB0B3;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.post-type-archive-velocity-property .navigation.pagination a.page-numbers {
+    color: #d4773c !important;
+}
+
+.post-type-archive-velocity-property .navigation.pagination a.page-numbers:hover {
+    color: #d4773c !important;
+}
+
+.post-type-archive-velocity-property .navigation.pagination .page-numbers.current {
+    color: #ADB0B3;
+    background: transparent;
+    font-weight: 400;
+    border: none;
+}
+
+.post-type-archive-velocity-property .navigation.pagination .page-numbers.dots {
+    border: none;
+    background: transparent;
+    pointer-events: none;
+}
+
+.post-type-archive-velocity-property .navigation.pagination .prev.page-numbers,
+.post-type-archive-velocity-property .navigation.pagination .next.page-numbers {
+    padding: 10px 20px;
+    border: 1px solid #d4773c;
+    border-radius: 25px;
+    background: transparent;
+    color: #d4773c;
+    font-weight: 400;
+    min-width: auto;
+}
+
+.post-type-archive-velocity-property .navigation.pagination .prev.page-numbers:hover,
+.post-type-archive-velocity-property .navigation.pagination .next.page-numbers:hover {
+    border-color: #d4773c;
+    color: #d4773c;
+}
+
+.post-type-archive-velocity-property .navigation.pagination .screen-reader-text {
+    position: absolute;
+    left: -9999px;
+}
+
+.post-type-archive-velocity-property .navigation.pagination .kadence-svg-iconset {
+    display: inline-flex;
+    align-items: center;
+}
+
+.post-type-archive-velocity-property .navigation.pagination .next.page-numbers::before {
+  content: " Next";
+}
+
+.post-type-archive-velocity-property .navigation.pagination .prev.page-numbers::after {
+  content: " Previous";
+  padding-left: 5px;
+}
+
+@media (max-width: 767px) {
+  .post-type-archive-velocity-property .ff-programs {
+    text-align: center !important;
+    align-items: center !important;
+  }
+
+  .careers-hero-blurb {
+    max-height: 400px;
+    overflow: none;
+  }
+
+}
+
+/* Careers Single */
+.single-velocity-career .gfield_label {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.single-velocity-career .gform_button {
+  float: right;
+  background-color: #d4773c !important;
+  border-radius: 25px !important;
+  padding: 10px 20px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border: none !important;
+}
+
+/* Blog Archive Navigation */
+.blog-loop .navigation.pagination {
+  border-top: 1px solid #E7E8E8;
+  padding-top: 40px !important;
+}
+
+.blog-loop .navigation.pagination .page-numbers.current {
+    min-width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #ADB0B3;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.blog-loop .navigation.pagination .page-numbers {
+    min-width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #d4773c;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.blog-loop .navigation.pagination .next,
+.blog-loop .navigation.pagination .prev {
+  border: solid 1px #d4773c !important;
+  border-radius: 25px !important;
+  padding: 10px 20px !important;
+  color: #d4773c !important;
+}
+
+.blog-loop .navigation.pagination a.prev.page-numbers::before {
+  content: '< ';
+  padding-right: 10px;
+}
+.blog-loop .navigation.pagination a.next.page-numbers::after {
+  content: " >";
+  padding-left: 10px;
+}
+
+/* Single Blog Post Previous/next links */
+.prev-next-single {
+   border: solid 1px #d4773c !important;
+  border-radius: 25px !important;
+  padding: 10px 20px !important;
+  color: #d4773c !important;
+}
+
+@media (max-width: 767px) {
+  .prev-next-single a {
+    font-size: 16px !important;
+  }
+}
+
+.kt_facebook_share,
+.kt_twitter_share,
+.kt_linkedin_share,
+.kt_email_share {
+    background-color: #d4773c !important;
+    border: none !important;
+    margin-right: 10px !important;
+}
+
+/* Blog Single breadcrumbs fade */
+.breadcrumb-fade .kt-inside-inner-col {
+    flex-wrap: nowrap !important;
+}
+
+.breadcrumb-fade .kt-inside-inner-col p:last-child {
+  white-space: nowrap;
+}
+
+.breadcrumb-fade .wp-block-kadence-column::after {
+    width: 36px; /*adjust as necessary */
+    height: 100%;
+    background: linear-gradient(to right, 
+      rgba(15, 23, 42, 0) 0%,
+      rgba(15, 23, 42, 0.8) 50%,
+      rgba(15, 23, 42, 1) 100%
+    );
+    top: 0;
+    right: 0;
+    content: '';
+    position: absolute;
+}
+
+.staff-mobile-card h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: #3C3D3F;
+}
