@@ -203,3 +203,81 @@ Text Domain:  velocity-kadence
 		justify-content: flex-end;
 	}
 }
+
+/*
+ * Components.
+ * A block gets one of these classes in Advanced, Additional CSS class.
+ * They keep repeated pieces identical everywhere they are used.
+ */
+
+/* The semibold half of a two-weight headline: wrap it in bold in the editor. */
+h1 strong,
+h2 strong {
+	font-weight: 600;
+}
+
+/* Hero: more air under the headline and the intro. */
+.vm-hero h1.wp-block-heading {
+	margin-bottom: 24px;
+}
+
+.vm-hero p.vm-subtitle {
+	margin-bottom: 40px;
+}
+
+/* Card: a Kadence column with the class vm-card. */
+.vm-card > .kt-inside-inner-col {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	min-height: 220px;
+	padding: 32px;
+	border: 1px solid var(--vm-border);
+	border-radius: var(--vm-radius-card);
+	background: var(--global-palette9);
+	box-shadow: var(--vm-shadow-medium);
+}
+
+.vm-card > .kt-inside-inner-col > * {
+	margin: 0;
+}
+
+/* A number with its label, as in the trust strip. */
+p.vm-stat-number {
+	margin: 0 0 4px;
+	font-family: var(--global-heading-font-family);
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+p.vm-stat-label {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.1;
+}
+
+/* The line that closes a section, in Deep Rust. */
+:is(h2, h3, h4, p).vm-closing-line {
+	margin: 40px 0 0;
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 1.1;
+	letter-spacing: 0;
+	color: var(--global-palette2);
+}
+
+@media (max-width: 767px) {
+	:is(h2, h3, h4, p).vm-closing-line {
+		font-size: 22px;
+	}
+}
+
+/* The icon at the top of a card: no stray space under the image. */
+.vm-card > .kt-inside-inner-col > .wp-block-image {
+	margin: 0;
+	line-height: 0;
+}
