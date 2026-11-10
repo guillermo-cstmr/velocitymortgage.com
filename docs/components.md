@@ -38,7 +38,11 @@ In a block's color control, pick from the **Style Library** tab, not from Custom
 | Medium | Indigo |
 | Subtle | Gray |
 
-The light blue, off white and white are in the same list, under the background names. Supporting Orange, used by the trust strip and the step numbers, has no entry there: type `#f18521` in the Custom tab.
+The list has a second group for backgrounds, where the light blue, the off white and the white are. The names repeat between groups, so check the swatch before picking.
+
+Three entries in the list do not belong to this site's palette and still hold Kadence's own defaults: Main 3, Button and Button Hover. Do not use them.
+
+Supporting Orange, used by the trust strip and the step numbers, has no entry: type `#f18521` in the Custom tab.
 
 Kadence Blocks stores these as design tokens, written like `{primitive.color.brand.secondary}`. Older content uses `palette2` instead. That older format still shows the right color on the site, but the color control displays it as empty, which looks like the block has no color set. If you see an empty color control on a block that is clearly colored, pick the color again from the Style Library.
 
