@@ -255,7 +255,7 @@ function vm_option_defaults( $defaults ) {
 			'family'   => 'Poppins',
 			'google'   => true,
 			'fallback' => 'sans-serif',
-			'variant'  => array( 'regular', '500', '600', '700' ),
+			'variant'  => array( '300', 'regular', '500', '600', '700' ),
 		),
 
 		/*
