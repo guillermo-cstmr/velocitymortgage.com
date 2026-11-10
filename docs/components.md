@@ -14,6 +14,19 @@ There are three layers. Each thing lives in exactly one of them.
 
 **If the sidebar can do it, do it in the sidebar.** A style set there is visible to whoever opens the block, and the editor shows exactly what the site shows. Reach for a CSS class only when a block has no setting for what you need.
 
+## An empty field means "inherit"
+
+Select a section title in the editor and its Color, Font Size and Line Height are all empty. That is correct. The title is navy and 56px because every H2 on the site is, by token. Nothing is set on the block, so nothing shows in the block.
+
+| You see in the sidebar | It means |
+|---|---|
+| An empty field | The block follows the global style. Change it globally in `inc/tokens.php` |
+| A value | This block overrides the global style, on purpose |
+
+To see the global values, open Appearance, Customize, Colors & Fonts. They are listed there, read-only in practice: change them in `inc/tokens.php`, not in the Customizer.
+
+On the home page, these inherit and show empty fields: every H1, H2 and H3 at its normal size, body text, and the primary and outline buttons. These carry their own values: intro texts, card titles, the closing line, numbers and labels, cards, panels and the buttons on dark backgrounds.
+
 ## The blocks to use
 
 | For | Use |
@@ -116,6 +129,7 @@ Advanced Button. It follows the style guide on its own: pill shape, 20px semibol
 | Primary, orange fill | The default |
 | Outline, orange | Set the button style to Outline |
 | Arrow | Add the "arrow right" icon on the right side |
+| Outline on a dark background | Outline, then in the button's Style tab: text color white, border white 1px. Under Hover: text Brand Navy, background white, border white 1px |
 
 ### Images
 
@@ -130,7 +144,6 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | Class | Put it on | Why it is a class |
 |---|---|---|
 | `vm-eyebrow` | Text (Adv) | Adds the orange dot before a small label. Text has no setting for that |
-| `vm-btn-on-dark` | A single button set to Outline | White outline for dark backgrounds. The theme and Kadence both restyle the outline button on hover, so per-button colors do not hold |
 | `vm-stats` | Row Layout | On tablet and mobile the items wrap centered, so an odd one out sits in the middle. A row's grid leaves it on the left |
 | `vm-deals` | Query Loop over the properties | Shows them as deal cards in three columns. Query Loop is made of core blocks, which have no card settings in this theme |
 | `vm-deal-card` | The Group around each post in that Query Loop | The card itself. Inside it go a Featured Image block and a Shortcode block with `[vm_deal_info]` |

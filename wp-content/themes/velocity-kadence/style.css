@@ -77,48 +77,36 @@ h2 strong {
 
 /*
  * Outline button.
- * The theme and Kadence Blocks both style this button and both change its
- * border on hover, which made it grow by a pixel on each side and left the
- * text white on a transparent background. These rules carry enough weight
- * to settle it: a 1px border in every state, and padding one pixel smaller
- * than the primary button so both end up the same height.
+ * The theme and Kadence Blocks both style this button and they disagree on
+ * hover: the border grew from 1px to 2px, which made the button jump, and the
+ * text turned white over a transparent background. These rules settle the
+ * default look: a 1px border in every state, a Deep Rust fill on hover, and
+ * padding one pixel smaller than the primary button so both are equally tall.
+ *
+ * They are written to lose against a button's own settings. Kadence prints
+ * each block's styles after this file with the same weight, so colors and
+ * borders set on a button in the editor always win.
  */
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline,
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:hover,
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:focus,
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:active {
+.kb-button.kb-btn-global-outline.wp-block-kadence-singlebtn {
+	--kb-btn-padding: 15px 23px;
+}
+
+.kb-button.button.kb-btn-global-outline,
+.kb-button.button.kb-btn-global-outline:hover,
+.kb-button.button.kb-btn-global-outline:focus,
+.kb-button.button.kb-btn-global-outline:active {
 	padding: 15px 23px;
 	border-width: 1px;
 	border-style: solid;
 	box-shadow: none;
 }
 
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline {
-	border-color: var(--global-palette1);
-	background: transparent;
-	color: var(--global-palette1);
-}
-
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:hover,
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:focus,
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline:active {
+.kb-button.button.kb-btn-global-outline:hover,
+.kb-button.button.kb-btn-global-outline:focus,
+.kb-button.button.kb-btn-global-outline:active {
 	border-color: var(--global-palette2);
 	background: var(--global-palette2);
 	color: var(--global-palette9);
-}
-
-/* vm-btn-on-dark: an outline button on a dark background, white instead of orange. */
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline.vm-btn-on-dark {
-	border-color: var(--global-palette9);
-	color: var(--global-palette9);
-}
-
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline.vm-btn-on-dark:hover,
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline.vm-btn-on-dark:focus,
-.kb-buttons-wrap .kb-button.button.kb-btn-global-outline.vm-btn-on-dark:active {
-	border-color: var(--global-palette9);
-	background: var(--global-palette9);
-	color: var(--global-palette3);
 }
 
 /*
@@ -514,4 +502,25 @@ h2 strong {
  */
 .vm-deal-info .vm-deal-tag.vm-deal-tag--empty {
 	visibility: hidden;
+}
+
+/*
+ * Buttons inside the block editor.
+ * While editing, Kadence draws a button with different markup than on the
+ * site, and that markup ignores the radius and size tokens set above. This
+ * makes a button look in the editor the way it does on the site. On the site
+ * the selector matches nothing, so it has no effect there. The class is
+ * doubled to outrank a Kadence Blocks Pro stylesheet that loads in the editor
+ * and resets the radius to 3px.
+ */
+.wp-block-kadence-singlebtn .kt-button.kt-button {
+	border-radius: var(--kb-btn-radius, 9999px);
+	font-size: var(--kb-token--semantic--font-size--control, 20px);
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+.wp-block-kadence-singlebtn .kt-button.kt-button.kb-btn-global-outline {
+	padding: 15px 23px;
+	border-width: 1px;
 }

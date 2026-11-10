@@ -324,11 +324,29 @@ class Velocity_Home {
 	}
 
 	/**
+	 * Settings of an outline button on a dark background: white instead of
+	 * orange, turning solid white with navy text on hover.
+	 *
+	 * @return array
+	 */
+	private static function on_dark() {
+		$white = Velocity_Seed::color( 'palette9' );
+
+		return array(
+			'color'            => $white,
+			'colorHover'       => Velocity_Seed::color( 'palette3' ),
+			'backgroundHover'  => $white,
+			'borderStyle'      => self::border( $white ),
+			'borderHoverStyle' => self::border( $white ),
+		);
+	}
+
+	/**
 	 * A group of Kadence buttons, each with an arrow.
 	 *
 	 * @param int     $post_id Page ID.
 	 * @param string  $key     Key for the unique IDs.
-	 * @param array[] $buttons Each: label, URL, style (fill or outline), extra class.
+	 * @param array[] $buttons Each: label, URL, style (fill or outline), extra settings.
 	 * @param string  $align   left or center.
 	 * @return string
 	 */
@@ -349,8 +367,9 @@ class Velocity_Home {
 				$attrs['inheritStyles'] = $button[2];
 			}
 
+			// Extra settings for this one button, such as its own colors.
 			if ( ! empty( $button[3] ) ) {
-				$attrs['className'] = $button[3];
+				$attrs = array_merge( $attrs, $button[3] );
 			}
 
 			$inner[] = Velocity_Seed::block( 'kadence/singlebtn', $attrs );
@@ -913,7 +932,7 @@ class Velocity_Home {
 					'metadata'     => array( 'name' => 'Steps' ),
 				)
 			) . "\n\n" .
-			self::buttons( $post_id, 'steps', array( array( 'See It Step-by-Step', '#', 'outline', 'vm-btn-on-dark' ) ) );
+			self::buttons( $post_id, 'steps', array( array( 'See It Step-by-Step', '#', 'outline', self::on_dark() ) ) );
 
 		return self::panel(
 			$post_id,
@@ -1122,7 +1141,7 @@ class Velocity_Home {
 						'cta',
 						array(
 							array( 'Become a Partner', home_url( '/become-a-partner/' ) ),
-							array( 'Start a Conversation', home_url( '/contact-us/' ), 'outline', 'vm-btn-on-dark' ),
+							array( 'Start a Conversation', home_url( '/contact-us/' ), 'outline', self::on_dark() ),
 						)
 					) . "\n\n" .
 					self::t(
