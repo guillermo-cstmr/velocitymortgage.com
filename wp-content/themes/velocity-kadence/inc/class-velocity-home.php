@@ -5,10 +5,15 @@
  * Like the header and footer, this only produces the first version of the
  * page. After `wp velocity seed-home` the page is edited in the block editor.
  *
- * Each section is a Kadence row. Text uses core heading and paragraph blocks.
- * Visual components that repeat across the site (cards, tags, panels) get a
- * CSS class and are styled in style.css, so they stay consistent wherever
- * they are used. The classes are listed in docs/components.md.
+ * The rule followed here, and the one to follow when building other pages:
+ * whatever the block settings can express is set ON THE BLOCK, so it shows up
+ * in the editor sidebar and anyone can change it. Borders, radius, shadows,
+ * padding, backgrounds, alignment and text sizes are all block settings.
+ * CSS classes are kept for the few things the sidebar cannot do. They are
+ * listed in docs/components.md.
+ *
+ * Blocks used: Kadence Row Layout and Section for structure, Kadence Text
+ * (Adv) for text, Kadence Image, Kadence Advanced Button.
  *
  * Figma: page "Homepage", frame "velocity-homepage-design".
  *
@@ -25,89 +30,301 @@ defined( 'ABSPATH' ) || exit;
 class Velocity_Home {
 
 	/**
-	 * A core heading block.
+	 * Card shadow at rest. Figma effect "medium".
 	 *
-	 * @param string $text  Heading text. May contain inline HTML.
-	 * @param int    $level Heading level.
-	 * @param string $align Text alignment, or empty.
-	 * @param string $class Extra CSS class, or empty.
-	 * @return string
+	 * @return array
 	 */
-	private static function heading( $text, $level, $align = '', $class = '' ) {
-		$attrs   = array();
-		$classes = array( 'wp-block-heading' );
-
-		if ( $align ) {
-			$attrs['textAlign'] = $align;
-			$classes[]          = 'has-text-align-' . $align;
-		}
-
-		if ( 2 !== $level ) {
-			$attrs['level'] = $level;
-		}
-
-		if ( $class ) {
-			$attrs['className'] = $class;
-			$classes[]          = $class;
-		}
-
-		return Velocity_Seed::block(
-			'heading',
-			$attrs,
-			sprintf( '<h%1$d class="%2$s">%3$s</h%1$d>', $level, esc_attr( implode( ' ', $classes ) ), $text )
-		);
-	}
-
-	/**
-	 * A core paragraph block with an optional class.
-	 *
-	 * @param string $text  Text. May contain inline HTML.
-	 * @param string $align Text alignment, or empty.
-	 * @param string $class Extra CSS class, or empty.
-	 * @return string
-	 */
-	private static function text( $text, $align = '', $class = '' ) {
-		$attrs   = array();
-		$classes = array();
-
-		if ( $align ) {
-			$attrs['align'] = $align;
-			$classes[]      = 'has-text-align-' . $align;
-		}
-
-		if ( $class ) {
-			$attrs['className'] = $class;
-			$classes[]          = $class;
-		}
-
-		return Velocity_Seed::block(
-			'paragraph',
-			$attrs,
-			sprintf( '<p%1$s>%2$s</p>', $classes ? ' class="' . esc_attr( implode( ' ', $classes ) ) . '"' : '', $text )
-		);
-	}
-
-	/**
-	 * An image shipped with the theme, as a core image block.
-	 *
-	 * @param string $file  File name in assets/images/home.
-	 * @param int    $width Width in px.
-	 * @param string $alt   Alternative text. Empty for decorative images.
-	 * @return string
-	 */
-	private static function image( $file, $width, $alt = '' ) {
-		return Velocity_Seed::block(
-			'image',
+	private static function shadow() {
+		return array(
 			array(
-				'width'           => $width . 'px',
-				'sizeSlug'        => 'full',
+				'color'   => '#000000',
+				'opacity' => 0.08,
+				'spread'  => -4,
+				'blur'    => 16,
+				'hOffset' => 0,
+				'vOffset' => 12,
+				'inset'   => false,
+			),
+		);
+	}
+
+	/**
+	 * Card shadow on hover: deeper, with a navy tint.
+	 *
+	 * @return array
+	 */
+	private static function shadow_hover() {
+		return array(
+			array(
+				'color'   => '#010739',
+				'opacity' => 0.18,
+				'spread'  => -8,
+				'blur'    => 32,
+				'hOffset' => 0,
+				'vOffset' => 24,
+				'inset'   => false,
+			),
+		);
+	}
+
+	/**
+	 * A one pixel border on all sides, in Kadence's format.
+	 *
+	 * @param string $color Border color.
+	 * @return array
+	 */
+	private static function border( $color ) {
+		$side = array( $color, '', 1 );
+
+		return array(
+			array(
+				'top'    => $side,
+				'right'  => $side,
+				'bottom' => $side,
+				'left'   => $side,
+				'unit'   => 'px',
+			),
+		);
+	}
+
+	/**
+	 * Settings of a card: a Kadence Section with border, radius and shadow.
+	 *
+	 * @param array $overrides Settings that differ from the default card.
+	 * @return array
+	 */
+	private static function card( $overrides = array() ) {
+		return array_merge(
+			array(
+				'background'         => 'palette9',
+				'borderStyle'        => self::border( '#e5e5e5' ),
+				'borderHoverStyle'   => self::border( 'rgba(43,53,120,0.24)' ),
+				'borderRadius'       => array( 8, 8, 8, 8 ),
+				'padding'            => array( '32', '32', '32', '32' ),
+				'displayShadow'      => true,
+				'shadow'             => self::shadow(),
+				'displayHoverShadow' => true,
+				'shadowHover'        => self::shadow_hover(),
+				// A custom gap between the blocks stacked inside the card.
+				'rowGapVariable'     => array( 'custom', '', '' ),
+				'rowGap'             => array( 16, '', '' ),
+			),
+			$overrides
+		);
+	}
+
+	/**
+	 * A Kadence Text (Adv) block.
+	 *
+	 * Options: tag (h1 to h6, or p), align, size [desktop, tablet, mobile],
+	 * weight, lh (unitless line height), color and background (palette slug or
+	 * any CSS color), margin and padding [top, right, bottom, left], transform,
+	 * family ("heading" for the heading font), width (max width in px), class.
+	 *
+	 * @param int    $post_id Page ID.
+	 * @param string $key     Key for the unique ID.
+	 * @param string $text    Text. May contain inline HTML.
+	 * @param array  $o       Options.
+	 * @return string
+	 */
+	private static function t( $post_id, $key, $text, $o = array() ) {
+		$uid     = Velocity_Seed::uid( $post_id, 't-' . $key );
+		$tag     = isset( $o['tag'] ) ? $o['tag'] : 'p';
+		$attrs   = array( 'uniqueID' => $uid );
+		$classes = array( 'kt-adv-heading' . $uid );
+
+		if ( 'h' === $tag[0] ) {
+			if ( 'h2' !== $tag ) {
+				$attrs['level'] = (int) $tag[1];
+			}
+		} else {
+			$attrs['htmlTag'] = $tag;
+		}
+
+		if ( ! empty( $o['class'] ) ) {
+			$attrs['className'] = $o['class'];
+			$classes[]          = $o['class'];
+		}
+
+		$classes[] = 'wp-block-kadence-advancedheading';
+
+		if ( ! empty( $o['align'] ) ) {
+			$attrs['align'] = $o['align'];
+		}
+
+		if ( ! empty( $o['color'] ) ) {
+			$attrs['color'] = $o['color'];
+
+			if ( 0 === strpos( $o['color'], 'palette' ) ) {
+				$attrs['colorClass'] = 'theme-' . $o['color'];
+				$classes[]           = 'has-theme-palette-' . substr( $o['color'], 7 ) . '-color';
+				$classes[]           = 'has-text-color';
+			}
+		}
+
+		if ( ! empty( $o['size'] ) ) {
+			$attrs['fontSize'] = $o['size'];
+		}
+
+		if ( ! empty( $o['lh'] ) ) {
+			$attrs['fontHeight']     = array( $o['lh'], '', '' );
+			$attrs['fontHeightType'] = '-';
+		}
+
+		if ( ! empty( $o['weight'] ) ) {
+			$attrs['fontWeight'] = (string) $o['weight'];
+		}
+
+		if ( ! empty( $o['family'] ) && 'heading' === $o['family'] ) {
+			$attrs['typography'] = 'var( --global-heading-font-family, inherit )';
+		}
+
+		if ( ! empty( $o['transform'] ) ) {
+			$attrs['textTransform'] = $o['transform'];
+		}
+
+		if ( isset( $o['margin'] ) ) {
+			$attrs['margin'] = $o['margin'];
+		}
+
+		if ( isset( $o['width'] ) ) {
+			$attrs['maxWidth'] = array( $o['width'], '', '' );
+		}
+
+		// A highlighted word drawn as a pill, using Kadence's text highlight.
+		if ( ! empty( $o['pill'] ) ) {
+			$attrs['markColor']        = 'palette5';
+			$attrs['markBG']           = 'palette7';
+			$attrs['markPadding']      = array( 4, 8, 4, 8 );
+			$attrs['markBorderRadius'] = array( 5, 5, 5, 5 );
+			$attrs['markFontWeight']   = '600';
+			$text                      = '<mark class="kt-highlight">' . $text . '</mark>';
+		}
+
+		return Velocity_Seed::block(
+			'kadence/advancedheading',
+			$attrs,
+			sprintf(
+				'<%1$s class="%2$s" data-kb-block="kb-adv-heading%3$s">%4$s</%1$s>',
+				$tag,
+				esc_attr( implode( ' ', $classes ) ),
+				$uid,
+				$text
+			)
+		);
+	}
+
+	/**
+	 * A section title: H2, centered.
+	 *
+	 * @param int    $post_id Page ID.
+	 * @param string $key     Key for the unique ID.
+	 * @param string $text    Title. May contain inline HTML.
+	 * @return string
+	 */
+	private static function title( $post_id, $key, $text ) {
+		return self::t(
+			$post_id,
+			$key . '-title',
+			$text,
+			array(
+				'tag'    => 'h2',
+				'align'  => 'center',
+				'margin' => array( '0', '', '16', '' ),
+			)
+		);
+	}
+
+	/**
+	 * Intro text under a title. Figma style "Subtitle".
+	 *
+	 * @param int    $post_id Page ID.
+	 * @param string $key     Key for the unique ID.
+	 * @param string $text    Text.
+	 * @param array  $o       Extra options for t().
+	 * @return string
+	 */
+	private static function subtitle( $post_id, $key, $text, $o = array() ) {
+		return self::t(
+			$post_id,
+			$key . '-subtitle',
+			$text,
+			array_merge(
+				array(
+					'size'   => array( 20, '', 18 ),
+					'lh'     => 1.31,
+					'margin' => array( '0', '', '0', '' ),
+				),
+				$o
+			)
+		);
+	}
+
+	/**
+	 * Body text with no margin, for use inside cards.
+	 *
+	 * @param int    $post_id Page ID.
+	 * @param string $key     Key for the unique ID.
+	 * @param string $text    Text.
+	 * @return string
+	 */
+	private static function body( $post_id, $key, $text ) {
+		return self::t( $post_id, $key . '-body', $text, array( 'margin' => array( '0', '', '0', '' ) ) );
+	}
+
+	/**
+	 * A card or step title: H3 at 22px bold. Figma style "H3 Small".
+	 *
+	 * @param int    $post_id Page ID.
+	 * @param string $key     Key for the unique ID.
+	 * @param string $text    Title.
+	 * @param array  $o       Extra options for t().
+	 * @return string
+	 */
+	private static function card_title( $post_id, $key, $text, $o = array() ) {
+		return self::t(
+			$post_id,
+			$key . '-title',
+			$text,
+			array_merge(
+				array(
+					'tag'    => 'h3',
+					'size'   => array( 22, '', '' ),
+					'weight' => '700',
+					'margin' => array( '0', '', '0', '' ),
+				),
+				$o
+			)
+		);
+	}
+
+	/**
+	 * A Kadence Image block showing a file shipped with the theme.
+	 *
+	 * @param int    $post_id Page ID.
+	 * @param string $key     Key for the unique ID.
+	 * @param string $file    File name in assets/images/home.
+	 * @param int    $width   Max width in px.
+	 * @param string $alt     Alternative text. Empty for decorative images.
+	 * @return string
+	 */
+	private static function image( $post_id, $key, $file, $width, $alt = '' ) {
+		$uid = Velocity_Seed::uid( $post_id, 'img-' . $key );
+
+		return Velocity_Seed::block(
+			'kadence/image',
+			array(
+				'imgMaxWidth'     => $width,
 				'linkDestination' => 'none',
+				'uniqueID'        => $uid,
+				'marginDesktop'   => array( '0', '', '0', '' ),
 			),
 			sprintf(
-				'<figure class="wp-block-image size-full is-resized"><img src="%1$s" alt="%2$s" style="width:%3$dpx"/></figure>',
+				'<figure class="wp-block-kadence-image kb-image%1$s%2$s"><img src="%3$s" alt="%4$s" class="kb-img"/></figure>',
+				$uid,
+				'.svg' === substr( $file, -4 ) ? ' image-is-svg' : '',
 				esc_url( get_stylesheet_directory_uri() . '/assets/images/home/' . $file ),
-				esc_attr( $alt ),
-				$width
+				esc_attr( $alt )
 			)
 		);
 	}
@@ -146,11 +363,13 @@ class Velocity_Home {
 		}
 
 		$attrs = array( 'uniqueID' => $wrap );
+
 		if ( 'center' !== $align ) {
-			$attrs = array(
-				'hAlign'   => $align,
-				'uniqueID' => $wrap,
-			);
+			$attrs['hAlign'] = $align;
+		}
+
+		if ( count( $buttons ) > 1 ) {
+			$attrs['gap'] = array( 'md', '', 'sm' );
 		}
 
 		return Velocity_Seed::block(
@@ -171,10 +390,10 @@ class Velocity_Home {
 	 * @return string
 	 */
 	private static function section_header( $post_id, $key, $title, $intro = '', $width = 846 ) {
-		$inner = self::heading( $title, 2, 'center' );
+		$inner = self::title( $post_id, $key, $title );
 
 		if ( $intro ) {
-			$inner .= "\n\n" . self::text( $intro, 'center', 'vm-subtitle' );
+			$inner .= "\n\n" . self::subtitle( $post_id, $key, $intro, array( 'align' => 'center' ) );
 		}
 
 		return Velocity_Seed::row(
@@ -183,20 +402,20 @@ class Velocity_Home {
 			array( Velocity_Seed::column( $post_id, $key . '-header-col', $inner ) ),
 			array(
 				'maxWidth' => $width,
-				'padding'  => array( '0', '', '48', '' ),
+				'padding'  => array( '0', '', '56', '' ),
 				'metadata' => array( 'name' => 'Section header' ),
 			)
 		);
 	}
 
 	/**
-	 * A full-width section wrapper.
+	 * A full-width section, with its content held to the site's content width.
 	 *
 	 * @param int    $post_id Page ID.
 	 * @param string $key     Key for the unique IDs.
 	 * @param string $inner   Section content.
 	 * @param string $name    Name shown in the editor's list view.
-	 * @param array  $attrs   Extra row attributes.
+	 * @param array  $attrs   Extra row settings.
 	 * @return string
 	 */
 	private static function section( $post_id, $key, $inner, $name, $attrs = array() ) {
@@ -210,9 +429,54 @@ class Velocity_Home {
 					'bgColor'         => 'palette9',
 					'inheritMaxWidth' => true,
 					'padding'         => array( '96', '', '96', '' ),
+					'mobilePadding'   => array( '64', '', '64', '' ),
 					'metadata'        => array( 'name' => $name ),
 				),
 				$attrs
+			)
+		);
+	}
+
+	/**
+	 * A panel: a rounded, colored area inset from the page edges.
+	 *
+	 * The outer row only provides the side gutters. The Section inside it
+	 * carries the background, the radius and the padding. On mobile the
+	 * gutters and the radius drop to zero, so the panel runs edge to edge.
+	 *
+	 * @param int    $post_id Page ID.
+	 * @param string $key     Key for the unique IDs.
+	 * @param string $inner   Panel content.
+	 * @param string $name    Name shown in the editor's list view.
+	 * @param array  $surface Background settings for the inner Section.
+	 * @return string
+	 */
+	private static function panel( $post_id, $key, $inner, $name, $surface ) {
+		return Velocity_Seed::row(
+			$post_id,
+			$key,
+			array(
+				Velocity_Seed::column(
+					$post_id,
+					$key . '-col',
+					$inner,
+					array_merge(
+						array(
+							'borderRadius'       => array( 30, 30, 30, 30 ),
+							'mobileBorderRadius' => array( 0, 0, 0, 0 ),
+							'padding'            => array( '112', '64', '112', '64' ),
+							'tabletPadding'      => array( '80', '32', '80', '32' ),
+							'mobilePadding'      => array( '64', '20', '64', '20' ),
+						),
+						$surface
+					)
+				),
+			),
+			array(
+				'align'         => 'full',
+				'padding'       => array( '0', '32', '0', '32' ),
+				'mobilePadding' => array( '0', '0', '0', '0' ),
+				'metadata'      => array( 'name' => $name ),
 			)
 		);
 	}
@@ -225,8 +489,25 @@ class Velocity_Home {
 	 */
 	public static function hero( $post_id ) {
 		$inner =
-			self::heading( 'More Ways to <br><strong>Get to “Yes”</strong>', 1, 'center' ) . "\n\n" .
-			self::text( 'Velocity Mortgage Capital is a direct portfolio lender for investment properties with over 20 years of experience. When deals get complicated, we help you find a way forward.', 'center', 'vm-subtitle' ) . "\n\n" .
+			self::t(
+				$post_id,
+				'hero-title',
+				'More Ways to <br><strong>Get to “Yes”</strong>',
+				array(
+					'tag'    => 'h1',
+					'align'  => 'center',
+					'margin' => array( '0', '', '24', '' ),
+				)
+			) . "\n\n" .
+			self::subtitle(
+				$post_id,
+				'hero',
+				'Velocity Mortgage Capital is a direct portfolio lender for investment properties with over 20 years of experience. When deals get complicated, we help you find a way forward.',
+				array(
+					'align'  => 'center',
+					'margin' => array( '0', '', '40', '' ),
+				)
+			) . "\n\n" .
 			self::buttons( $post_id, 'hero', array( array( 'Become a Partner', home_url( '/become-a-partner/' ) ) ) );
 
 		return Velocity_Seed::row(
@@ -246,7 +527,6 @@ class Velocity_Home {
 				'maxWidth'          => 978,
 				'textColor'         => 'palette9',
 				'padding'           => array( '80', '', '80', '' ),
-				'className'         => 'vm-hero',
 				'metadata'          => array( 'name' => 'Hero' ),
 			)
 		);
@@ -277,11 +557,33 @@ class Velocity_Home {
 			$columns[] = Velocity_Seed::column(
 				$post_id,
 				'stat-' . $index,
-				self::text( $stat[0], '', 'vm-stat-number' ) . "\n\n" . self::text( $stat[1], '', 'vm-stat-label' ),
+				self::t(
+					$post_id,
+					'stat-number-' . $index,
+					$stat[0],
+					array(
+						'family' => 'heading',
+						'size'   => array( 24, '', '' ),
+						'weight' => '700',
+						'lh'     => 1.1,
+						'margin' => array( '0', '', '4', '' ),
+					)
+				) . "\n\n" .
+				self::t(
+					$post_id,
+					'stat-label-' . $index,
+					$stat[1],
+					array(
+						'size'   => array( 14, '', '' ),
+						'lh'     => 1.1,
+						'margin' => array( '0', '', '0', '' ),
+					)
+				),
 				$attrs
 			);
 		}
 
+		// vm-stats: on tablet and mobile the items wrap centered. See components.md.
 		return Velocity_Seed::row(
 			$post_id,
 			'stats',
@@ -320,9 +622,13 @@ class Velocity_Home {
 		foreach ( array_chunk( $cards, 3 ) as $row_index => $row_cards ) {
 			$columns = array();
 			foreach ( $row_cards as $index => $card ) {
-				$attrs = array(
-					'textAlign' => array( 'center', '', '' ),
-					'className' => 'vm-card',
+				$key   = 'why-card-' . $row_index . '-' . $index;
+				$attrs = self::card(
+					array(
+						'textAlign'         => array( 'center', '', '' ),
+						'justifyContent'    => array( 'center', '', '' ),
+						'verticalAlignment' => 'middle',
+					)
 				);
 				if ( $index ) {
 					$attrs['id'] = $index + 1;
@@ -330,10 +636,10 @@ class Velocity_Home {
 
 				$columns[] = Velocity_Seed::column(
 					$post_id,
-					'why-card-' . $row_index . '-' . $index,
-					self::image( $card[0], 35 ) . "\n\n" .
-					self::heading( $card[1], 3, '', 'vm-h3-small' ) . "\n\n" .
-					self::text( $card[2] ),
+					$key,
+					self::image( $post_id, $key, $card[0], 35 ) . "\n\n" .
+					self::card_title( $post_id, $key, $card[1] ) . "\n\n" .
+					self::body( $post_id, $key, $card[2] ),
 					$attrs
 				);
 			}
@@ -343,15 +649,30 @@ class Velocity_Home {
 				'why-grid-' . $row_index,
 				$columns,
 				array(
-					'columnGutter' => 'custom',
-					'customGutter' => array( 24, '', '' ),
-					'tabletLayout' => 'row',
-					'mobileLayout' => 'row',
-					'padding'      => array( '0', '', '24', '' ),
-					'metadata'     => array( 'name' => 'Cards row ' . ( $row_index + 1 ) ),
+					'columnGutter'       => 'custom',
+					'customGutter'       => array( 24, '', '' ),
+					'columnsInnerHeight' => true,
+					'tabletLayout'       => 'row',
+					'mobileLayout'       => 'row',
+					'padding'            => array( '0', '', '24', '' ),
+					'metadata'           => array( 'name' => 'Cards row ' . ( $row_index + 1 ) ),
 				)
 			);
 		}
+
+		$closing = self::t(
+			$post_id,
+			'why-closing',
+			'We help brokers move forward when others hit limits.',
+			array(
+				'tag'    => 'h3',
+				'align'  => 'center',
+				'color'  => 'palette2',
+				'size'   => array( 30, '', 22 ),
+				'weight' => '600',
+				'margin' => array( '40', '', '0', '' ),
+			)
+		);
 
 		return self::section(
 			$post_id,
@@ -361,8 +682,7 @@ class Velocity_Home {
 				'why',
 				'How We Help Brokers Win',
 				'Where banks get stuck, Velocity keeps moving. By lending and holding our own money, we offer the flexibility you need alongside the stability you expect.'
-			) . "\n\n" . implode( "\n\n", $grids ) . "\n\n" .
-			self::heading( 'We help brokers move forward when others hit limits.', 3, 'center', 'vm-closing-line' ),
+			) . "\n\n" . implode( "\n\n", $grids ) . "\n\n" . $closing,
 			'How We Help Brokers Win'
 		);
 	}
@@ -383,48 +703,89 @@ class Velocity_Home {
 
 		$rows = array();
 		foreach ( $programs as $index => $program ) {
-			// The first program is the featured one: image left, inside a white card.
+			$key         = 'program-' . $index;
+			$featured    = 0 === $index;
 			$image_first = 0 === $index || 2 === $index;
 
 			$text = Velocity_Seed::column(
 				$post_id,
-				'program-text-' . $index,
-				self::text( $program[0], '', 'vm-eyebrow' ) . "\n\n" .
-				self::heading( $program[1], 3 ) . "\n\n" .
-				self::text( $program[2], '', 'vm-subtitle' ) . "\n\n" .
-				self::buttons( $post_id, 'program-' . $index, array( array( $program[3], '#', 'outline' ) ), 'left' ),
+				$key . '-text',
+				// vm-eyebrow adds the orange dot. Everything else is block settings.
+				self::t(
+					$post_id,
+					$key . '-eyebrow',
+					$program[0],
+					array(
+						'size'      => array( 14, '', '' ),
+						'lh'        => 1.1,
+						'transform' => 'uppercase',
+						'margin'    => array( '0', '', '24', '' ),
+						'class'     => 'vm-eyebrow',
+					)
+				) . "\n\n" .
+				self::t(
+					$post_id,
+					$key . '-title',
+					$program[1],
+					array(
+						'tag'    => 'h3',
+						'margin' => array( '0', '', '24', '' ),
+					)
+				) . "\n\n" .
+				self::subtitle( $post_id, $key, $program[2], array( 'margin' => array( '0', '', '40', '' ) ) ) . "\n\n" .
+				self::buttons( $post_id, $key, array( array( $program[3], '#', 'outline' ) ), 'left' ),
 				array(
 					'id'                => $image_first ? 2 : 1,
 					'verticalAlignment' => 'middle',
-					'className'         => 'vm-program-text',
+					'padding'           => $featured ? array( '32', '24', '32', '0' ) : array( '', '', '', '' ),
+					'tabletPadding'     => $featured ? array( '0', '24', '32', '24' ) : array( '', '', '', '' ),
 				)
 			);
 
 			$image = Velocity_Seed::column(
 				$post_id,
-				'program-image-' . $index,
-				self::image( $program[4], $program[5], $program[6] ),
+				$key . '-image',
+				self::image( $post_id, $key, $program[4], $program[5], $program[6] ),
 				array(
 					'id'                => $image_first ? 1 : 2,
 					'verticalAlignment' => 'middle',
-					'className'         => 'vm-program-image',
 				)
 			);
 
-			$rows[] = Velocity_Seed::row(
+			$row = Velocity_Seed::row(
 				$post_id,
-				'program-' . $index,
+				$key,
 				$image_first ? array( $image, $text ) : array( $text, $image ),
 				array(
-					'maxWidth'          => 1060,
 					'verticalAlignment' => 'middle',
 					'columnGutter'      => 'custom',
 					'customGutter'      => array( 64, 32, '' ),
 					'tabletLayout'      => 'row',
 					'mobileLayout'      => 'row',
-					'padding'           => array( '0', '', '80', '' ),
-					'className'         => 0 === $index ? 'vm-program vm-program--featured' : 'vm-program',
-					'metadata'          => array( 'name' => 'Program: ' . $program[1] ),
+					// On tablet and mobile the image always comes first.
+					'collapseOrder'     => $image_first ? 'left-to-right' : 'right-to-left',
+					'padding'           => array( '0', '', '0', '' ),
+					'metadata'          => array( 'name' => 'Image and text' ),
+				)
+			);
+
+			// The first program sits inside a white card.
+			$wrapper = $featured
+				? array(
+					'background'   => 'palette9',
+					'borderStyle'  => self::border( 'rgba(43,53,120,0.24)' ),
+					'borderRadius' => array( 16, 16, 16, 16 ),
+				)
+				: array();
+
+			$rows[] = Velocity_Seed::row(
+				$post_id,
+				$key . '-wrap',
+				array( Velocity_Seed::column( $post_id, $key . '-wrap-col', $row, $wrapper ) ),
+				array(
+					'maxWidth' => 1060,
+					'padding'  => array( '0', '', '80', '' ),
+					'metadata' => array( 'name' => 'Program: ' . $program[1] ),
 				)
 			);
 		}
@@ -437,19 +798,18 @@ class Velocity_Home {
 				'Long-term financing meets the flexibility of private lending, available on anything from single rentals to commercial buildings nationwide.'
 			) . "\n\n" . implode( "\n\n", $rows ) . "\n\n" .
 			self::buttons( $post_id, 'programs-all', array( array( 'See Programs Side by Side', home_url( '/mortgage-programs/' ) ) ) ) . "\n\n" .
-			self::text( 'Foreign borrowers are eligible for every program, but borrowing limits may vary. See program pages for details.', 'center', 'vm-note' );
+			self::subtitle(
+				$post_id,
+				'programs-note',
+				'Foreign borrowers are eligible for every program, but borrowing limits may vary. See program pages for details.',
+				array(
+					'align'  => 'center',
+					'color'  => '#494949',
+					'margin' => array( '20', '', '0', '' ),
+				)
+			);
 
-		return self::section(
-			$post_id,
-			'programs',
-			$inner,
-			'Programs',
-			array(
-				'bgColor'   => '#f2f4fc',
-				'padding'   => array( '112', '', '112', '' ),
-				'className' => 'vm-panel',
-			)
-		);
+		return self::panel( $post_id, 'programs', $inner, 'Programs', array( 'background' => '#f2f4fc' ) );
 	}
 
 	/**
@@ -468,8 +828,26 @@ class Velocity_Home {
 				'Grow Your Book With <br><strong>the Right Program</strong>',
 				'Our loan scenario calculator shows which program works best for you. Enter your deal’s numbers—we’ll do the rest.'
 			) . "\n\n" .
-			self::text( 'Loan scenario calculator: to be built. This block marks where it goes.', 'center', 'vm-placeholder' ) . "\n\n" .
-			self::text( 'Got your answer? An account executive is ready to work the deal with you.', 'center', 'vm-note vm-note--rust' ) . "\n\n" .
+			// vm-placeholder draws the dashed box. Delete this block when the calculator exists.
+			self::t(
+				$post_id,
+				'calculator-placeholder',
+				'Loan scenario calculator: to be built. This block marks where it goes.',
+				array(
+					'align' => 'center',
+					'class' => 'vm-placeholder',
+				)
+			) . "\n\n" .
+			self::subtitle(
+				$post_id,
+				'calculator-note',
+				'Got your answer? An account executive is ready to work the deal with you.',
+				array(
+					'align'  => 'center',
+					'color'  => '#8a4b2e',
+					'margin' => array( '0', '', '32', '' ),
+				)
+			) . "\n\n" .
 			self::buttons( $post_id, 'calculator', array( array( 'Bring Us Your Deal', home_url( '/contact-us/' ) ) ) );
 
 		return self::section( $post_id, 'calculator', $inner, 'Calculator' );
@@ -492,20 +870,30 @@ class Velocity_Home {
 
 		$columns = array();
 		foreach ( $steps as $index => $step ) {
-			$attrs = array(
-				'textAlign' => array( 'center', '', '' ),
-				'className' => 'vm-step',
-			);
+			$key   = 'step-' . $index;
+			$attrs = array( 'textAlign' => array( 'center', '', '' ) );
 			if ( $index ) {
 				$attrs['id'] = $index + 1;
 			}
 
 			$columns[] = Velocity_Seed::column(
 				$post_id,
-				'step-' . $index,
-				self::text( (string) ( $index + 1 ), '', 'vm-step-number' ) . "\n\n" .
-				self::heading( $step[0], 3, '', 'vm-h3-small' ) . "\n\n" .
-				self::text( $step[1] ),
+				$key,
+				self::t(
+					$post_id,
+					$key . '-number',
+					(string) ( $index + 1 ),
+					array(
+						'family' => 'heading',
+						'color'  => 'palette10',
+						'size'   => array( 50, '', 40 ),
+						'weight' => '300',
+						'lh'     => 1.1,
+						'margin' => array( '0', '', '24', '' ),
+					)
+				) . "\n\n" .
+				self::card_title( $post_id, $key, $step[0], array( 'margin' => array( '0', '', '12', '' ) ) ) . "\n\n" .
+				self::body( $post_id, $key, $step[1] ),
 				$attrs
 			);
 		}
@@ -533,22 +921,24 @@ class Velocity_Home {
 			) . "\n\n" .
 			self::buttons( $post_id, 'steps', array( array( 'See It Step-by-Step', '#', 'outline', 'vm-btn-on-dark' ) ) );
 
-		return self::section(
+		return self::panel(
 			$post_id,
 			'steps',
 			$inner,
 			'How Brokers Grow With Velocity',
 			array(
-				'bgColor'   => 'palette3',
-				'textColor' => 'palette9',
-				'padding'   => array( '112', '', '112', '' ),
-				'className' => 'vm-panel vm-panel--gradient',
+				'backgroundType' => 'gradient',
+				'gradient'       => 'linear-gradient(341deg,var(--global-palette5) 24%,var(--global-palette3) 69%)',
+				'textColor'      => 'palette9',
 			)
 		);
 	}
 
 	/**
 	 * Deals: the three latest funded properties, read from the properties.
+	 *
+	 * A Query Loop of core blocks. The card look comes from the classes
+	 * vm-deals and vm-deal-card, see components.md.
 	 *
 	 * @param int $post_id Page ID.
 	 * @return string
@@ -569,7 +959,7 @@ class Velocity_Home {
 				'post-terms',
 				array(
 					'term'      => 'velocity-property-type',
-					'className' => 'vm-h3-small',
+					'className' => 'vm-deal-type',
 				)
 			) . "\n\n" .
 			Velocity_Seed::block(
@@ -579,7 +969,14 @@ class Velocity_Home {
 					'className' => 'vm-deal-program',
 				)
 			) . "\n\n" .
-			Velocity_Seed::block( 'post-title', array( 'level' => 3, 'isLink' => true, 'className' => 'vm-deal-location' ) ) .
+			Velocity_Seed::block(
+				'post-title',
+				array(
+					'level'     => 3,
+					'isLink'    => true,
+					'className' => 'vm-deal-location',
+				)
+			) .
 			'</div>'
 		);
 
@@ -624,7 +1021,16 @@ class Velocity_Home {
 			) . "\n\n" . $query . "\n\n" .
 			self::buttons( $post_id, 'deals', array( array( 'Explore More Closed Deals', home_url( '/featured-investment-property-loans/' ) ) ) );
 
-		return self::section( $post_id, 'deals', $inner, 'Closed deals', array( 'padding' => array( '96', '', '48', '' ) ) );
+		return self::section(
+			$post_id,
+			'deals',
+			$inner,
+			'Closed deals',
+			array(
+				'padding'       => array( '96', '', '48', '' ),
+				'mobilePadding' => array( '64', '', '32', '' ),
+			)
+		);
 	}
 
 	/**
@@ -642,18 +1048,37 @@ class Velocity_Home {
 
 		$columns = array();
 		foreach ( $cards as $index => $card ) {
-			$attrs = array( 'className' => 'vm-card vm-card--left' );
+			$key   = 'resource-' . $index;
+			$attrs = self::card(
+				array(
+					'background'        => 'palette8',
+					'borderStyle'       => self::border( '#ffffff' ),
+					'padding'           => array( '36', '24', '36', '24' ),
+					'rowGap'            => array( 24, '', '' ),
+					'verticalAlignment' => 'bottom',
+				)
+			);
 			if ( $index ) {
 				$attrs['id'] = $index + 1;
 			}
 
 			$columns[] = Velocity_Seed::column(
 				$post_id,
-				'resource-' . $index,
-				self::text( $card[0], '', 'vm-tag' ) . "\n\n" .
-				self::heading( $card[1], 3, '', 'vm-h6' ) . "\n\n" .
-				self::text( $card[2] ) . "\n\n" .
-				self::buttons( $post_id, 'resource-' . $index, array( array( 'Learn More', $card[3] ) ), 'left' ),
+				$key,
+				self::t(
+					$post_id,
+					$key . '-tag',
+					$card[0],
+					array(
+						'size'   => array( 14, '', '' ),
+						'lh'     => 1.5,
+						'margin' => array( '0', '', '0', '' ),
+						'pill'   => true,
+					)
+				) . "\n\n" .
+				self::card_title( $post_id, $key, $card[1], array( 'size' => array( 24, '', '' ) ) ) . "\n\n" .
+				self::body( $post_id, $key, $card[2] ) . "\n\n" .
+				self::buttons( $post_id, $key, array( array( 'Learn More', $card[3] ) ), 'left' ),
 				$attrs
 			);
 		}
@@ -670,16 +1095,26 @@ class Velocity_Home {
 				'resources-grid',
 				$columns,
 				array(
-					'columnGutter' => 'custom',
-					'customGutter' => array( 24, '', '' ),
-					'tabletLayout' => 'row',
-					'mobileLayout' => 'row',
-					'padding'      => array( '0', '', '0', '' ),
-					'metadata'     => array( 'name' => 'Resource cards' ),
+					'columnGutter'       => 'custom',
+					'customGutter'       => array( 24, '', '' ),
+					'columnsInnerHeight' => true,
+					'tabletLayout'       => 'row',
+					'mobileLayout'       => 'row',
+					'padding'            => array( '0', '', '0', '' ),
+					'metadata'           => array( 'name' => 'Resource cards' ),
 				)
 			);
 
-		return self::section( $post_id, 'resources', $inner, 'Resources', array( 'padding' => array( '48', '', '72', '' ) ) );
+		return self::section(
+			$post_id,
+			'resources',
+			$inner,
+			'Resources',
+			array(
+				'padding'       => array( '48', '', '72', '' ),
+				'mobilePadding' => array( '32', '', '48', '' ),
+			)
+		);
 	}
 
 	/**
@@ -696,8 +1131,17 @@ class Velocity_Home {
 				Velocity_Seed::column(
 					$post_id,
 					'cta-band-col',
-					self::heading( 'Ready to Close More Deals?', 2, 'center' ) . "\n\n" .
-					self::text( 'Register today and hear back within 48 hours. One signed package approves you for a year. Start closing the deals banks turn down.', 'center', 'vm-subtitle' ) . "\n\n" .
+					self::title( $post_id, 'cta', 'Ready to Close More Deals?' ) . "\n\n" .
+					self::subtitle(
+						$post_id,
+						'cta',
+						'Register today and hear back within 48 hours. One signed package approves you for a year. Start closing the deals banks turn down.',
+						array(
+							'align'  => 'center',
+							'width'  => 800,
+							'margin' => array( '0', 'auto', '32', 'auto' ),
+						)
+					) . "\n\n" .
 					self::buttons(
 						$post_id,
 						'cta',
@@ -706,7 +1150,18 @@ class Velocity_Home {
 							array( 'Start a Conversation', home_url( '/contact-us/' ), 'outline', 'vm-btn-on-dark' ),
 						)
 					) . "\n\n" .
-					self::text( 'Join 3,000+ approved broker partners already placing deals with Velocity.', 'center', 'vm-cta-note' )
+					self::t(
+						$post_id,
+						'cta-note',
+						'Join 3,000+ approved broker partners already placing deals with Velocity.',
+						array(
+							'align'  => 'center',
+							'size'   => array( 18, '', '' ),
+							'weight' => '600',
+							'lh'     => 1.31,
+							'margin' => array( '48', '', '0', '' ),
+						)
+					)
 				),
 			),
 			array(
@@ -714,10 +1169,11 @@ class Velocity_Home {
 				'bgImg'         => get_stylesheet_directory_uri() . '/assets/images/home/cta-background.jpg',
 				'bgImgSize'     => 'cover',
 				'bgImgPosition' => 'center center',
+				'borderRadius'  => array( 26, 26, 26, 26 ),
 				'maxWidth'      => 1040,
 				'textColor'     => 'palette9',
 				'padding'       => array( '112', '', '112', '' ),
-				'className'     => 'vm-cta',
+				'mobilePadding' => array( '64', '', '64', '' ),
 				'metadata'      => array( 'name' => 'Call to action band' ),
 			)
 		);
@@ -726,9 +1182,10 @@ class Velocity_Home {
 	}
 
 	/**
-	 * Frequently asked questions, as native details blocks.
+	 * Frequently asked questions, as native Details blocks.
 	 *
-	 * Only the first answer is in the design. The rest are placeholders.
+	 * The class vm-faq styles them and groups them: opening one closes the
+	 * others. Only the first answer is in the design, the rest are placeholders.
 	 *
 	 * @param int $post_id Page ID.
 	 * @return string
@@ -754,7 +1211,7 @@ class Velocity_Home {
 		foreach ( $faqs as $index => $faq ) {
 			$answers = array();
 			foreach ( $faq[1] as $paragraph ) {
-				$answers[] = self::text( $paragraph );
+				$answers[] = Velocity_Seed::block( 'paragraph', array(), '<p>' . $paragraph . '</p>' );
 			}
 
 			$attrs = array( 'className' => 'vm-faq' );
@@ -777,7 +1234,10 @@ class Velocity_Home {
 			'faq',
 			self::section_header( $post_id, 'faq', 'Frequently Asked Questions' ) . "\n\n" . implode( "\n\n", $items ),
 			'Frequently asked questions',
-			array( 'padding' => array( '48', '', '96', '' ) )
+			array(
+				'padding'       => array( '48', '', '96', '' ),
+				'mobilePadding' => array( '32', '', '64', '' ),
+			)
 		);
 	}
 
