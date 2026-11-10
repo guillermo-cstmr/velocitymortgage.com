@@ -112,14 +112,27 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-eyebrow` | Text (Adv) | Adds the orange dot before a small label. Text has no setting for that |
 | `vm-btn-on-dark` | A single button set to Outline | White outline for dark backgrounds. The theme and Kadence both restyle the outline button on hover, so per-button colors do not hold |
 | `vm-stats` | Row Layout | On tablet and mobile the items wrap centered, so an odd one out sits in the middle. A row's grid leaves it on the left |
-| `vm-deals` | Query Loop | Shows posts as cards in three columns. Query Loop is made of core blocks, which have no card settings in this theme |
-| `vm-deal-card` | The Group around each post in that Query Loop | The card itself |
-| `vm-deal-type`, `vm-deal-program` | Post Terms inside the card | The property type as a title, the program in rust |
-| `vm-deal-location` | Post Title inside the card, with "Make title a link" on | Makes the whole card clickable through that one link |
+| `vm-deals` | Query Loop over the properties | Shows them as deal cards in three columns. Query Loop is made of core blocks, which have no card settings in this theme |
+| `vm-deal-card` | The Group around each post in that Query Loop | The card itself. Inside it go a Featured Image block and a Shortcode block with `[vm_deal_info]` |
 | `vm-faq` | Details | Styles a frequently asked question. Details has no styling settings. Questions placed one after another act as a group: opening one closes the others, and one always stays open. Tick "Open by default" on the first |
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule, bold text and an arrow. Navigation has no per-item styling |
 | `vm-placeholder` | Text (Adv) | Marks where something not built yet will go. Delete the block when the real thing exists |
 | `vm-footer-main`, `vm-footer-legal` | The two rows of the footer | Line heights, the rule above the legal text, and the underline on legal links |
+
+## The deal card
+
+The text of a deal card comes from the shortcode `[vm_deal_info]`, defined in `inc/shortcodes.php`. It prints, for the property being shown:
+
+| Line | Where it comes from |
+|---|---|
+| Closing time tag, with the bolt | The property field "Processed Details Text" |
+| Title | Property type and purpose. Falls back to the property name when both are empty |
+| Program | Loan program |
+| Name | Account executive |
+
+A line is left out when the property has no value for it, so an incomplete card means incomplete data on that property. The title links to the property, and that link covers the whole card.
+
+It is a shortcode because core blocks cannot print a custom field, or a taxonomy term without turning it into a link. In the editor the block shows the shortcode text, not the result.
 
 ## The style guide page
 

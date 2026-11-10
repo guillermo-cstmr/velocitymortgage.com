@@ -311,9 +311,10 @@ h2 strong {
 }
 
 /*
- * vm-deals: a Query Loop of posts shown as cards.
+ * vm-deals: a Query Loop of properties shown as deal cards.
  * The Query Loop is made of core blocks, which have no card settings in this
  * theme, and the whole card has to be clickable, which no block offers.
+ * Measures are from Figma, component "deal-card".
  */
 .wp-block-query.vm-deals {
 	margin-bottom: 56px;
@@ -328,11 +329,12 @@ h2 strong {
 	list-style: none;
 }
 
+.vm-deals .wp-block-post-template > li {
+	margin: 0;
+}
+
 .vm-deals .vm-deal-card {
 	position: relative;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
 	height: 100%;
 	padding: 32px;
 	border: 1px solid var(--vm-border);
@@ -348,47 +350,86 @@ h2 strong {
 	box-shadow: 0 24px 32px -8px rgba(1, 7, 57, 0.18);
 }
 
-.vm-deals .vm-deal-card > * {
+/*
+ * On a classic theme WordPress wraps a Group's content in an inner
+ * container. That wrapper is the one that stacks the photo and the text.
+ */
+.vm-deals .vm-deal-card > .wp-block-group__inner-container {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.vm-deals .vm-deal-card .wp-block-post-featured-image {
+	margin: 0;
+	line-height: 0;
+}
+
+.vm-deals .vm-deal-card .wp-block-post-featured-image img {
+	width: 100%;
+	height: 160px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+/* The text, printed by the [vm_deal_info] shortcode. */
+.vm-deal-info {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-start;
+}
+
+/* Two classes, to outrank the theme paragraph margins. */
+.vm-deal-card .vm-deal-info > * {
 	margin: 0;
 }
 
-.vm-deals .wp-block-post-featured-image {
-	margin-bottom: 12px;
+.vm-deal-info .vm-deal-tag {
+	display: inline-flex;
+	gap: 8px;
+	align-items: center;
+	padding: 4px 8px;
+	border-radius: 5px;
+	background: #ffcea1;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+	color: var(--global-palette2);
 }
 
-.vm-deals .wp-block-post-featured-image img {
-	border-radius: 8px;
+.vm-deal-info .vm-deal-tag img {
+	flex: none;
+	width: 16px;
+	height: 16px;
 }
 
-.vm-deals .vm-deal-card a {
-	color: inherit;
-	text-decoration: none;
-}
-
-.vm-deals .vm-deal-type {
-	margin-top: 8px;
-	font-family: var(--global-heading-font-family);
+.vm-deal-info :is(h2, h3).vm-deal-title {
+	margin: 0;
 	font-size: 22px;
 	font-weight: 700;
 	line-height: 1.1;
+	letter-spacing: 0;
 }
 
-.vm-deals .vm-deal-program {
+.vm-deal-info .vm-deal-title a {
+	color: var(--global-palette3);
+	text-decoration: none;
+}
+
+.vm-deal-info .vm-deal-program {
 	font-size: 14px;
 	line-height: 1.1;
 	color: var(--global-palette2);
 }
 
-.vm-deals :is(h2, h3).vm-deal-location {
-	font-family: var(--global-body-font-family);
+.vm-deal-info .vm-deal-ae {
 	font-size: 16px;
-	font-weight: 400;
 	line-height: 1.47;
-	letter-spacing: 0;
 }
 
-/* The link on the location is stretched over the card: one link, whole card. */
-.vm-deals .vm-deal-location a::after {
+/* The title link is stretched over the card: one link, whole card. */
+.vm-deals .vm-deal-title a::after {
 	content: "";
 	position: absolute;
 	inset: 0;
@@ -396,16 +437,16 @@ h2 strong {
 	border-radius: 12px;
 }
 
-.vm-deals .vm-deal-location a:focus-visible {
+.vm-deals .vm-deal-title a:focus-visible {
 	outline: none;
 }
 
-.vm-deals .vm-deal-location a:focus-visible::after {
+.vm-deals .vm-deal-title a:focus-visible::after {
 	outline: 2px solid var(--global-palette5);
 	outline-offset: 2px;
 }
 
-.vm-deals .vm-deal-card:hover .vm-deal-location a {
+.vm-deals .vm-deal-card:hover .vm-deal-title a {
 	color: var(--global-palette2);
 }
 
