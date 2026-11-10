@@ -221,6 +221,36 @@ class Velocity_Seed {
 	}
 
 	/**
+	 * The value Kadence Blocks stores for a palette color.
+	 *
+	 * Kadence Blocks keeps colors as design tokens, written like
+	 * "{primitive.color.brand.primary}". The tokens are synced from the theme
+	 * palette, so they follow inc/tokens.php. The older "palette1" format still
+	 * renders on the site, but the color control in the editor shows it as
+	 * empty, so it must not be used.
+	 *
+	 * @param string $slot Palette slot, "palette1" to "palette10".
+	 * @return string
+	 */
+	public static function color( $slot ) {
+		$tokens = array(
+			'palette1' => '{primitive.color.brand.primary}',   // Action Orange.
+			'palette2' => '{primitive.color.brand.secondary}', // Deep Rust.
+			'palette3' => '{primitive.color.neutral.900}',     // Brand Navy.
+			'palette4' => '{primitive.color.neutral.900}',     // Brand Navy.
+			'palette5' => '{primitive.color.neutral.600}',     // Indigo.
+			'palette6' => '{primitive.color.neutral.500}',     // Gray.
+			'palette7' => '{primitive.color.neutral.100}',     // Light Blue.
+			'palette8' => '{primitive.color.neutral.50}',      // Off White.
+			'palette9' => '{primitive.color.neutral.0}',       // White.
+			// Supporting Orange has no token of its own, so it is a plain value.
+			'palette10' => '#f18521',
+		);
+
+		return isset( $tokens[ $slot ] ) ? $tokens[ $slot ] : $slot;
+	}
+
+	/**
 	 * A stable Kadence unique ID for a block, prefixed with its post ID.
 	 *
 	 * @param int    $post_id Post the block lives in.
@@ -361,9 +391,9 @@ class Velocity_Seed {
 				'link'            => 'https://www.generatevelocity.com/#/SignIn',
 				'icon'            => 'fe_user',
 				'iconSide'        => 'left',
-				'color'           => 'palette1',
+				'color'           => self::color( 'palette1' ),
 				'background'      => 'rgba(0,0,0,0)',
-				'colorHover'      => 'palette10',
+				'colorHover'      => self::color( 'palette10' ),
 				'backgroundHover' => 'rgba(0,0,0,0)',
 				'typography'      => self::typography( 16, '600' ),
 				'className'       => 'vm-login-link',
@@ -534,12 +564,12 @@ class Velocity_Seed {
 			array(
 				'uniqueID'             => self::uid( $post_id, 'trigger' ),
 				'iconSize'             => 28,
-				'iconColor'            => 'palette9',
-				'iconColorTablet'      => 'palette9',
-				'iconColorMobile'      => 'palette9',
-				'iconColorHover'       => 'palette10',
-				'iconColorHoverTablet' => 'palette10',
-				'iconColorHoverMobile' => 'palette10',
+				'iconColor'            => self::color( 'palette9' ),
+				'iconColorTablet'      => self::color( 'palette9' ),
+				'iconColorMobile'      => self::color( 'palette9' ),
+				'iconColorHover'       => self::color( 'palette10' ),
+				'iconColorHoverTablet' => self::color( 'palette10' ),
+				'iconColorHoverMobile' => self::color( 'palette10' ),
 			)
 		);
 
@@ -565,8 +595,8 @@ class Velocity_Seed {
 			array(
 				'uniqueID'        => self::uid( $post_id, 'offcanvas' ),
 				'slideFrom'       => 'right',
-				'backgroundColor' => 'palette3',
-				'closeIconColor'  => 'palette9',
+				'backgroundColor' => self::color( 'palette3' ),
+				'closeIconColor'  => self::color( 'palette9' ),
 			),
 			self::block(
 				'kadence/navigation',
@@ -756,10 +786,10 @@ class Velocity_Seed {
 				'thirdColumnWidth'  => 24,
 				'tabletLayout'      => 'row',
 				'mobileLayout'      => 'row',
-				'bgColor'           => 'palette3',
-				'textColor'         => 'palette9',
-				'linkColor'         => 'palette9',
-				'linkHoverColor'    => 'palette10',
+				'bgColor'           => self::color( 'palette3' ),
+				'textColor'         => self::color( 'palette9' ),
+				'linkColor'         => self::color( 'palette9' ),
+				'linkHoverColor'    => self::color( 'palette10' ),
 				'inheritMaxWidth'   => true,
 				'padding'           => array( '80', '', '36', '' ),
 				'className'         => 'vm-footer-main',
@@ -781,10 +811,10 @@ class Velocity_Seed {
 				'colLayout'       => 'left-golden',
 				'tabletLayout'    => 'row',
 				'mobileLayout'    => 'row',
-				'bgColor'         => 'palette3',
-				'textColor'       => 'palette9',
-				'linkColor'       => 'palette9',
-				'linkHoverColor'  => 'palette10',
+				'bgColor'         => self::color( 'palette3' ),
+				'textColor'       => self::color( 'palette9' ),
+				'linkColor'       => self::color( 'palette9' ),
+				'linkHoverColor'  => self::color( 'palette10' ),
 				'inheritMaxWidth' => true,
 				'padding'         => array( '32', '', '80', '' ),
 				'className'       => 'vm-footer-legal',

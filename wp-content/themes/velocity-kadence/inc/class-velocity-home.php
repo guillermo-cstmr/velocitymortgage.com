@@ -96,7 +96,7 @@ class Velocity_Home {
 	private static function card( $overrides = array() ) {
 		return array_merge(
 			array(
-				'background'         => 'palette9',
+				'background'         => Velocity_Seed::color( 'palette9' ),
 				'borderStyle'        => self::border( '#e5e5e5' ),
 				'borderHoverStyle'   => self::border( 'rgba(43,53,120,0.24)' ),
 				'borderRadius'       => array( 8, 8, 8, 8 ),
@@ -154,12 +154,6 @@ class Velocity_Home {
 
 		if ( ! empty( $o['color'] ) ) {
 			$attrs['color'] = $o['color'];
-
-			if ( 0 === strpos( $o['color'], 'palette' ) ) {
-				$attrs['colorClass'] = 'theme-' . $o['color'];
-				$classes[]           = 'has-theme-palette-' . substr( $o['color'], 7 ) . '-color';
-				$classes[]           = 'has-text-color';
-			}
 		}
 
 		if ( ! empty( $o['size'] ) ) {
@@ -193,8 +187,8 @@ class Velocity_Home {
 
 		// A highlighted word drawn as a pill, using Kadence's text highlight.
 		if ( ! empty( $o['pill'] ) ) {
-			$attrs['markColor']        = 'palette5';
-			$attrs['markBG']           = 'palette7';
+			$attrs['markColor']        = Velocity_Seed::color( 'palette5' );
+			$attrs['markBG']           = Velocity_Seed::color( 'palette7' );
 			$attrs['markPadding']      = array( 4, 8, 4, 8 );
 			$attrs['markBorderRadius'] = array( 5, 5, 5, 5 );
 			$attrs['markFontWeight']   = '600';
@@ -426,7 +420,7 @@ class Velocity_Home {
 			array_merge(
 				array(
 					'align'           => 'full',
-					'bgColor'         => 'palette9',
+					'bgColor'         => Velocity_Seed::color( 'palette9' ),
 					'inheritMaxWidth' => true,
 					'padding'         => array( '96', '', '96', '' ),
 					'mobilePadding'   => array( '64', '', '64', '' ),
@@ -516,16 +510,16 @@ class Velocity_Home {
 			array( Velocity_Seed::column( $post_id, 'hero-col', $inner ) ),
 			array(
 				'align'             => 'full',
-				'bgColor'           => 'palette3',
+				'bgColor'           => Velocity_Seed::color( 'palette3' ),
 				'bgImg'             => get_stylesheet_directory_uri() . '/assets/images/home/hero-background.jpg',
 				'bgImgSize'         => 'cover',
 				'bgImgPosition'     => 'center center',
-				'overlay'           => 'palette3',
+				'overlay'           => Velocity_Seed::color( 'palette3' ),
 				'overlayOpacity'    => 35,
 				'minHeight'         => 593,
 				'verticalAlignment' => 'middle',
 				'maxWidth'          => 978,
-				'textColor'         => 'palette9',
+				'textColor'         => Velocity_Seed::color( 'palette9' ),
 				'padding'           => array( '80', '', '80', '' ),
 				'metadata'          => array( 'name' => 'Hero' ),
 			)
@@ -590,8 +584,8 @@ class Velocity_Home {
 			$columns,
 			array(
 				'align'        => 'full',
-				'bgColor'      => 'palette10',
-				'textColor'    => 'palette3',
+				'bgColor'      => Velocity_Seed::color( 'palette10' ),
+				'textColor'    => Velocity_Seed::color( 'palette3' ),
 				'maxWidth'     => 1022,
 				'tabletLayout' => 'three-grid',
 				'mobileLayout' => 'two-grid',
@@ -667,7 +661,7 @@ class Velocity_Home {
 			array(
 				'tag'    => 'h3',
 				'align'  => 'center',
-				'color'  => 'palette2',
+				'color'  => Velocity_Seed::color( 'palette2' ),
 				'size'   => array( 30, '', 22 ),
 				'weight' => '600',
 				'margin' => array( '40', '', '0', '' ),
@@ -772,7 +766,7 @@ class Velocity_Home {
 			// The first program sits inside a white card.
 			$wrapper = $featured
 				? array(
-					'background'   => 'palette9',
+					'background'   => Velocity_Seed::color( 'palette9' ),
 					'borderStyle'  => self::border( 'rgba(43,53,120,0.24)' ),
 					'borderRadius' => array( 16, 16, 16, 16 ),
 				)
@@ -885,7 +879,7 @@ class Velocity_Home {
 					(string) ( $index + 1 ),
 					array(
 						'family' => 'heading',
-						'color'  => 'palette10',
+						'color'  => Velocity_Seed::color( 'palette10' ),
 						'size'   => array( 50, '', 40 ),
 						'weight' => '300',
 						'lh'     => 1.1,
@@ -929,7 +923,7 @@ class Velocity_Home {
 			array(
 				'backgroundType' => 'gradient',
 				'gradient'       => 'linear-gradient(341deg,var(--global-palette5) 24%,var(--global-palette3) 69%)',
-				'textColor'      => 'palette9',
+				'textColor'      => Velocity_Seed::color( 'palette9' ),
 			)
 		);
 	}
@@ -1032,7 +1026,7 @@ class Velocity_Home {
 			$key   = 'resource-' . $index;
 			$attrs = self::card(
 				array(
-					'background'        => 'palette8',
+					'background'        => Velocity_Seed::color( 'palette8' ),
 					'borderStyle'       => self::border( '#ffffff' ),
 					'padding'           => array( '36', '24', '36', '24' ),
 					'rowGap'            => array( 24, '', '' ),
@@ -1146,13 +1140,13 @@ class Velocity_Home {
 				),
 			),
 			array(
-				'bgColor'       => 'palette3',
+				'bgColor'       => Velocity_Seed::color( 'palette3' ),
 				'bgImg'         => get_stylesheet_directory_uri() . '/assets/images/home/cta-background.jpg',
 				'bgImgSize'     => 'cover',
 				'bgImgPosition' => 'center center',
 				'borderRadius'  => array( 26, 26, 26, 26 ),
 				'maxWidth'      => 1040,
-				'textColor'     => 'palette9',
+				'textColor'     => Velocity_Seed::color( 'palette9' ),
 				'padding'       => array( '112', '', '112', '' ),
 				'mobilePadding' => array( '64', '', '64', '' ),
 				'metadata'      => array( 'name' => 'Call to action band' ),

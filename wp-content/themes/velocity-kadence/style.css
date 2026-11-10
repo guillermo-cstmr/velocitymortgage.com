@@ -22,41 +22,9 @@ Text Domain:  velocity-kadence
  */
 
 :root {
-	/* Named aliases for the Kadence palette. Use these or the palette variables, never hex. */
-	--vm-action-orange: var(--global-palette1);
-	--vm-deep-rust: var(--global-palette2);
-	--vm-navy: var(--global-palette3);
-	--vm-indigo: var(--global-palette5);
-	--vm-light-blue: var(--global-palette7);
-	--vm-off-white: var(--global-palette8);
-	--vm-white: var(--global-palette9);
-	--vm-supporting-orange: var(--global-palette10);
-
-	/* Not part of the palette. */
+	/* Two values the deal cards share with the style guide page. In CSS, colors come from the palette variables, --global-palette1 to 10. */
 	--vm-border: #e5e5e5;
-
-	/* Used by the deal cards and the style guide page. */
-	--vm-radius-card: 8px;
 	--vm-shadow-medium: 0 4px 6px -2px rgba(0, 0, 0, 0.03), 0 12px 16px -4px rgba(0, 0, 0, 0.08);
-}
-
-/* Text styles used by the style guide page. */
-.vm-subtitle {
-	font-size: 20px;
-	line-height: 1.31;
-}
-
-.vm-body-small {
-	font-size: 14px;
-	line-height: 1.1;
-}
-
-.vm-h3-small {
-	font-family: var(--global-heading-font-family);
-	font-size: 22px;
-	font-weight: 700;
-	line-height: 1.1;
-	letter-spacing: 0;
 }
 
 /*
@@ -76,10 +44,6 @@ Text Domain:  velocity-kadence
 	h4,
 	h5 {
 		font-weight: 700;
-	}
-
-	.vm-subtitle {
-		font-size: 18px;
 	}
 }
 

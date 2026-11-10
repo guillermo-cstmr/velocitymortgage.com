@@ -26,6 +26,22 @@ There are three layers. Each thing lives in exactly one of them.
 
 Text (Adv) is used for all text instead of the core Heading and Paragraph blocks, because it has size, weight, line height, color and margin in the sidebar.
 
+## Colors
+
+In a block's color control, pick from the **Style Library** tab, not from Custom. Those are the site's colors, and a block that uses one follows the palette if it ever changes.
+
+| Style Library name | Color |
+|---|---|
+| Main 1 | Action Orange |
+| Main 2 | Deep Rust |
+| Strongest, Strong | Brand Navy |
+| Medium | Indigo |
+| Subtle | Gray |
+
+The light blue, off white and white are in the same list, under the background names. Supporting Orange, used by the trust strip and the step numbers, has no entry there: type `#f18521` in the Custom tab.
+
+Kadence Blocks stores these as design tokens, written like `{primitive.color.brand.secondary}`. Older content uses `palette2` instead. That older format still shows the right color on the site, but the color control displays it as empty, which looks like the block has no color set. If you see an empty color control on a block that is clearly colored, pick the color again from the Style Library.
+
 ## Recipes
 
 These are the settings behind each piece of the home page. Open the home page in the editor and select the block to see them live.
