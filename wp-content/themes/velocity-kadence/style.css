@@ -1,0 +1,86 @@
+/*
+Theme Name:   Velocity Kadence
+Theme URI:    https://www.velocitymortgage.com
+Template:     kadence
+Author:       CSTMR
+Author URI:   https://cstmr.com
+Description:  Kadence child theme for the Velocity Mortgage Capital rebuild. Design tokens come from the Figma style guide and are defined in inc/tokens.php.
+Version:      0.1.0
+Requires PHP: 7.4
+Text Domain:  velocity-kadence
+*/
+
+/*
+ * Colors, fonts, heading sizes and button styles are NOT set here.
+ * They are Kadence option defaults, defined in inc/tokens.php.
+ * This file only holds what Kadence options cannot express.
+ */
+
+:root {
+	/* Named aliases for the Kadence palette. Use these or the palette variables, never hex. */
+	--vm-action-orange: var(--global-palette1);
+	--vm-deep-rust: var(--global-palette2);
+	--vm-navy: var(--global-palette3);
+	--vm-indigo: var(--global-palette5);
+	--vm-light-blue: var(--global-palette7);
+	--vm-off-white: var(--global-palette8);
+	--vm-white: var(--global-palette9);
+	--vm-supporting-orange: var(--global-palette10);
+
+	/* Not part of the palette. */
+	--vm-border: #e5e5e5;
+
+	/* Spacing, from the Figma variables. */
+	--vm-section-padding-large: 112px;
+	--vm-section-padding-medium: 80px;
+	--vm-page-padding: 64px;
+
+	/* Cards. */
+	--vm-radius-card: 8px;
+	--vm-shadow-medium: 0 4px 6px -2px rgba(0, 0, 0, 0.03), 0 12px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* Text styles from the style guide that are not headings. */
+.vm-subtitle {
+	font-size: 20px;
+	line-height: 1.31;
+}
+
+.vm-body-small {
+	font-size: 14px;
+	line-height: 1.1;
+}
+
+/* "H3 Small" in Figma: card titles. */
+.vm-h3-small {
+	font-family: var(--global-heading-font-family);
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: 0;
+}
+
+/*
+ * Mobile headings use different weights and letter spacing than desktop.
+ * Kadence options only take one weight per heading, so mobile is set here.
+ */
+@media (max-width: 767px) {
+	h2 {
+		font-weight: 500;
+		letter-spacing: 0;
+	}
+
+	h3 {
+		font-weight: 600;
+	}
+
+	h4,
+	h5 {
+		font-weight: 700;
+	}
+
+	.vm-subtitle {
+		font-size: 18px;
+		line-height: 1.1;
+	}
+}
