@@ -293,9 +293,9 @@ p.vm-stat-label {
 
 @media (max-width: 767px) {
 	.vm-panel {
-		margin-right: 12px;
-		margin-left: 12px;
-		border-radius: 20px;
+		margin-right: 0;
+		margin-left: 0;
+		border-radius: 0;
 	}
 }
 
@@ -570,22 +570,38 @@ p.vm-cta-note {
  * Overrides that need to outrank the theme and Kadence Blocks defaults.
  */
 
-/* The theme stretches full-width blocks to the viewport. A panel stays inset. */
-.entry-content .kb-row-layout-wrap.vm-panel.alignfull {
-	width: calc(var(--global-vw, 100vw) - 64px);
-	max-width: calc(var(--global-vw, 100vw) - 64px);
-	margin-right: calc(50% - var(--global-vw, 100vw) / 2 + 32px);
-	margin-left: calc(50% - var(--global-vw, 100vw) / 2 + 32px);
+/*
+ * Full-width sections.
+ * The theme stretches a full-width block with a viewport width it measures
+ * once in JavaScript. That value goes stale when the window is resized and
+ * leaves thin white gaps at the sides. Pages here use the full-width, unboxed
+ * layout, where the content area already spans the viewport, so a top-level
+ * full-width block can simply fill its parent.
+ */
+.content-width-fullwidth.content-style-unboxed .entry-content > .alignfull {
+	width: auto;
+	max-width: none;
+	margin-right: 0;
+	margin-left: 0;
+}
+
+/* A panel stays inset from the page edges on desktop and tablet. */
+.content-width-fullwidth.content-style-unboxed .entry-content > .vm-panel.alignfull {
+	margin-right: 32px;
+	margin-left: 32px;
 	border-radius: 30px;
 }
 
+/*
+ * Rule for mobile: any section wider than the content column goes edge to
+ * edge, with no side margin and no rounded corners. It gives the content
+ * more room on a narrow screen.
+ */
 @media (max-width: 767px) {
-	.entry-content .kb-row-layout-wrap.vm-panel.alignfull {
-		width: calc(var(--global-vw, 100vw) - 24px);
-		max-width: calc(var(--global-vw, 100vw) - 24px);
-		margin-right: calc(50% - var(--global-vw, 100vw) / 2 + 12px);
-		margin-left: calc(50% - var(--global-vw, 100vw) / 2 + 12px);
-		border-radius: 20px;
+	.content-width-fullwidth.content-style-unboxed .entry-content > .vm-panel.alignfull {
+		margin-right: 0;
+		margin-left: 0;
+		border-radius: 0;
 	}
 }
 
@@ -746,4 +762,28 @@ p.vm-cta-note {
 
 .wp-block-kadence-column.vm-card.vm-card--left > .kt-inside-inner-col {
 	background: var(--global-palette8);
+}
+
+/*
+ * Trust strip on tablet and mobile: the items wrap and stay centered, so an
+ * odd one left on the last line sits in the middle instead of on the left.
+ */
+@media (max-width: 1024px) {
+	.kb-row-layout-wrap.vm-stats > .kt-row-column-wrap {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 24px 16px;
+	}
+
+	.kb-row-layout-wrap.vm-stats > .kt-row-column-wrap > .wp-block-kadence-column {
+		flex: 0 0 calc(33.333% - 11px);
+		min-width: 0;
+	}
+}
+
+@media (max-width: 767px) {
+	.kb-row-layout-wrap.vm-stats > .kt-row-column-wrap > .wp-block-kadence-column {
+		flex-basis: calc(50% - 8px);
+	}
 }

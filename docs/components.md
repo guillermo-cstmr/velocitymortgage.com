@@ -12,7 +12,7 @@ Every section is a Kadence Row Layout with full-width alignment, the content max
 
 | Class | Put it on | What it does |
 |---|---|---|
-| `vm-panel` | Row Layout, full width | A rounded section inset from the page edges, as in Programs |
+| `vm-panel` | Row Layout, full width | A rounded section inset from the page edges, as in Programs. On mobile it goes edge to edge with square corners |
 | `vm-panel vm-panel--gradient` | Row Layout, full width | The same panel with the navy to indigo gradient. Set the row's text color to white |
 | `vm-cta` | Row Layout with a background image | The rounded call-to-action band |
 | `vm-hero` | Row Layout | Spacing under the hero headline and intro |
