@@ -122,7 +122,7 @@ class Velocity_Seed {
 					'linkColorActive'             => 'palette10',
 					'spacing'                     => array( '', '22', '', '22' ),
 					'spacingUnit'                 => 'px',
-					'typography'                  => self::typography( 16 ),
+					'typography'                  => self::typography( 16, '', '', 18 ),
 					'backgroundDropdown'          => 'palette7',
 					'linkColorDropdown'           => 'palette3',
 					'linkColorDropdownHover'      => 'palette2',
@@ -134,19 +134,26 @@ class Velocity_Seed {
 					'dropdownVerticalSpacingUnit' => 'px',
 					'dropdownBorderRadius'        => array( 16, 16, 16, 16 ),
 					'paddingDropdown'             => array( '24', '20', '24', '20' ),
-				),
-			),
-			'nav-mobile'          => array(
-				'title' => 'Mobile Menu',
-				'items' => $menu,
-				'meta'  => array(
-					'orientation'            => 'vertical',
-					'linkColor'              => 'palette9',
-					'linkColorHover'         => 'palette10',
-					'linkColorActive'        => 'palette10',
-					'linkColorDropdown'      => 'palette9',
-					'linkColorDropdownHover' => 'palette10',
-					'typography'             => self::typography( 18 ),
+
+					/*
+					 * The same menu is used in the mobile drawer, so links are
+					 * maintained in one place. On tablet and mobile it turns
+					 * vertical and its dropdowns lose the light blue panel.
+					 */
+					'orientationTablet'              => 'vertical',
+					'orientationMobile'              => 'vertical',
+					'backgroundDropdownTablet'       => 'rgba(0,0,0,0)',
+					'backgroundDropdownMobile'       => 'rgba(0,0,0,0)',
+					'linkColorDropdownTablet'        => 'palette9',
+					'linkColorDropdownMobile'        => 'palette9',
+					'linkColorDropdownHoverTablet'   => 'palette10',
+					'linkColorDropdownHoverMobile'   => 'palette10',
+					'linkColorDropdownActiveTablet'  => 'palette10',
+					'linkColorDropdownActiveMobile'  => 'palette10',
+					'dropdownBorderRadiusTablet'     => array( 0, 0, 0, 0 ),
+					'dropdownBorderRadiusMobile'     => array( 0, 0, 0, 0 ),
+					'tabletPaddingDropdown'          => array( '0', '0', '8', '16' ),
+					'mobilePaddingDropdown'          => array( '0', '0', '8', '16' ),
 				),
 			),
 			'nav-footer-programs' => array(
@@ -189,12 +196,13 @@ class Velocity_Seed {
 	 * @param int          $size        Desktop size in px.
 	 * @param string       $weight      Font weight, or empty to inherit.
 	 * @param float|string $line_height Unitless line height, or empty to inherit.
+	 * @param int|string   $tablet_size Tablet and mobile size in px, or empty to inherit.
 	 * @return array
 	 */
-	public static function typography( $size, $weight = '', $line_height = '' ) {
+	public static function typography( $size, $weight = '', $line_height = '', $tablet_size = '' ) {
 		return array(
 			array(
-				'size'          => array( $size, '', '' ),
+				'size'          => array( $size, $tablet_size, '' ),
 				'sizeType'      => 'px',
 				'lineHeight'    => array( $line_height, '', '' ),
 				'lineType'      => '',
@@ -490,12 +498,11 @@ class Velocity_Seed {
 	/**
 	 * Content of the header post.
 	 *
-	 * @param int $post_id   Header post ID.
-	 * @param int $nav_id    Desktop navigation post ID.
-	 * @param int $mobile_id Mobile navigation post ID.
+	 * @param int $post_id Header post ID.
+	 * @param int $nav_id  Navigation post ID, used on desktop and in the mobile drawer.
 	 * @return string
 	 */
-	public static function header_content( $post_id, $nav_id, $mobile_id ) {
+	public static function header_content( $post_id, $nav_id ) {
 		$nav = self::block(
 			'kadence/navigation',
 			array(
@@ -565,7 +572,7 @@ class Velocity_Seed {
 				'kadence/navigation',
 				array(
 					'uniqueID' => self::uid( $post_id, 'nav-mobile' ),
-					'id'       => (int) $mobile_id,
+					'id'       => (int) $nav_id,
 				)
 			) . "\n\n" . self::header_buttons( $post_id, 'm' )
 		);

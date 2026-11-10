@@ -69,14 +69,14 @@ They are block content, edited in the block editor like any page.
 | What | Where to edit it |
 |---|---|
 | Header | Kadence, Header, "Global Header" |
-| Menus | Kadence, Navigation. One for the header, one for mobile, one per footer column, one for the legal links |
+| Menus | Kadence, Navigation. One for the header and the mobile drawer, one per footer column, one for the legal links |
 | Footer | Kadence, Elements, "Global Footer" |
 
 The logos and icons are files in the theme, under `assets/images`, not media library items. That keeps them identical on every environment.
 
 A few details cannot be expressed in block settings and live in the theme's `style.css`: the pill shape and size of every Kadence button, the rule above the footer disclosure, and the featured menu item. To feature an item in a dropdown, give its navigation link the CSS class `vm-menu-featured`.
 
-The header menu and the mobile menu are two separate posts. A link added to one has to be added to the other.
+The header and the mobile drawer share one menu, "Header". It turns vertical on tablet and mobile through its own responsive settings, so a link is added once. The footer columns are separate menus, one per column.
 
 ### Creating them on a new environment
 
