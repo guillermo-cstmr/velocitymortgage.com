@@ -238,7 +238,7 @@ class Velocity_CLI {
 			'kadence_header',
 			'Global Header',
 			static function ( $post_id ) use ( $ids ) {
-				return Velocity_Seed::header_content( $post_id, $ids['nav-header'], $ids['nav-mobile'] );
+				return Velocity_Seed::header_content( $post_id, $ids['nav-header'] );
 			},
 			array(
 				'_kad_header_background' => array(
