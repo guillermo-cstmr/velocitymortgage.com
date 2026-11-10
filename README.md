@@ -67,3 +67,4 @@ Open a pull request into `main`. To put the change on staging, merge `main` into
 - [CONTRIBUTING.md](CONTRIBUTING.md): branches, commit messages, coding standards, where each kind of code belongs.
 - [docs/deployment.md](docs/deployment.md): how the deploy works, how to verify it, how to roll back.
 - [docs/database-and-content.md](docs/database-and-content.md): how the database moves, how to move content between environments, how Kadence stores its settings.
+- [docs/components.md](docs/components.md): the CSS classes for cards, panels, tags and the other repeated pieces of the design.

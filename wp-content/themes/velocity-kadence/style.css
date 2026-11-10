@@ -281,3 +281,378 @@ p.vm-stat-label {
 	margin: 0;
 	line-height: 0;
 }
+
+/* Card, left-aligned variant: add vm-card--left next to vm-card. */
+.vm-card.vm-card--left > .kt-inside-inner-col {
+	gap: 24px;
+	align-items: flex-start;
+	justify-content: flex-end;
+	padding: 36px 24px;
+	border-color: var(--global-palette9);
+	background: var(--global-palette8);
+	text-align: left;
+}
+
+/* A rounded section that sits inset from the page edges. */
+.vm-panel {
+	margin-right: 32px;
+	margin-left: 32px;
+	border-radius: 30px;
+	overflow: hidden;
+}
+
+.vm-panel.vm-panel--gradient {
+	background-image: linear-gradient(-18.6deg, var(--global-palette5) 24%, var(--global-palette3) 69%);
+}
+
+@media (max-width: 767px) {
+	.vm-panel {
+		margin-right: 12px;
+		margin-left: 12px;
+		border-radius: 20px;
+	}
+}
+
+/* Small uppercase label with an orange dot, above a title. */
+p.vm-eyebrow {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	margin: 0 0 24px;
+	font-size: 14px;
+	line-height: 1.1;
+	text-transform: uppercase;
+}
+
+p.vm-eyebrow::before {
+	content: "";
+	flex: none;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--global-palette1);
+}
+
+/* Pill label, as on the resource cards. */
+p.vm-tag {
+	display: inline-block;
+	margin: 0;
+	padding: 4px 8px;
+	border-radius: 5px;
+	background: var(--global-palette7);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+	color: var(--global-palette5);
+}
+
+/* A heading that looks like H6 whatever its level. */
+:is(h2, h3, h4, h5).vm-h6 {
+	margin: 0;
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: 0;
+}
+
+/* Supporting line under a block of content. */
+p.vm-note {
+	margin: 20px 0 0;
+	font-size: 20px;
+	line-height: 1.31;
+	color: #494949;
+}
+
+p.vm-note.vm-note--rust {
+	margin: 0 0 32px;
+	color: #8a4b2e;
+}
+
+/* Marks where something not built yet will go. Remove it with the block. */
+p.vm-placeholder {
+	max-width: 908px;
+	margin: 0 auto 48px;
+	padding: 120px 24px;
+	border: 2px dashed var(--global-palette5);
+	border-radius: 16px;
+	background: var(--global-palette8);
+	color: var(--global-palette5);
+}
+
+/* Programs: text beside an image, alternating sides. */
+.vm-program .vm-program-text :is(h3) {
+	margin: 0 0 24px;
+}
+
+.vm-program .vm-program-text p.vm-subtitle {
+	margin: 0 0 40px;
+}
+
+.vm-program .vm-program-image .wp-block-image {
+	margin: 0;
+	line-height: 0;
+}
+
+.vm-program .vm-program-image img {
+	max-width: 100%;
+	height: auto;
+}
+
+/* The featured program sits in a white card. */
+.vm-program.vm-program--featured > .kt-row-column-wrap {
+	padding: 0 24px 0 0;
+	border: 1px solid rgba(43, 53, 120, 0.24);
+	border-radius: 16px;
+	background: var(--global-palette9);
+	overflow: hidden;
+}
+
+.vm-program.vm-program--featured {
+	margin-bottom: 80px;
+}
+
+@media (max-width: 1024px) {
+	.vm-program.vm-program--featured > .kt-row-column-wrap {
+		padding: 0 0 32px;
+	}
+
+	.vm-program.vm-program--featured .vm-program-text > .kt-inside-inner-col {
+		padding: 0 24px;
+	}
+}
+
+/* Numbered steps. */
+p.vm-step-number {
+	margin: 0 0 24px;
+	font-family: var(--global-heading-font-family);
+	font-size: 50px;
+	font-weight: 300;
+	line-height: 1.1;
+	color: var(--global-palette10);
+}
+
+.vm-step :is(h3).vm-h3-small {
+	margin: 0 0 12px;
+}
+
+.vm-step p:last-child {
+	margin: 0;
+}
+
+/* An outline button on a dark background: white instead of orange. */
+.kb-button.kb-btn-global-outline.vm-btn-on-dark {
+	border-color: var(--global-palette9);
+	color: var(--global-palette9);
+}
+
+.kb-button.kb-btn-global-outline.vm-btn-on-dark:hover,
+.kb-button.kb-btn-global-outline.vm-btn-on-dark:focus {
+	border-color: var(--global-palette9);
+	background: var(--global-palette9);
+	color: var(--global-palette3);
+}
+
+/* Closed deals: a query loop of properties shown as cards. */
+.vm-deals .wp-block-post-template {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 20px;
+	margin: 0 0 56px;
+	padding: 0;
+	list-style: none;
+}
+
+.vm-deals .vm-deal-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	height: 100%;
+	padding: 32px;
+	border: 1px solid var(--vm-border);
+	border-radius: 12px;
+	background: var(--global-palette8);
+	box-shadow: var(--vm-shadow-medium);
+}
+
+.vm-deals .vm-deal-card > * {
+	margin: 0;
+}
+
+.vm-deals .wp-block-post-featured-image {
+	margin-bottom: 12px;
+}
+
+.vm-deals .wp-block-post-featured-image img {
+	border-radius: 8px;
+}
+
+.vm-deals .vm-deal-card a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.vm-deals .vm-deal-program {
+	font-size: 14px;
+	line-height: 1.1;
+	color: var(--global-palette2);
+}
+
+.vm-deals :is(h2, h3).vm-deal-location {
+	font-family: var(--global-body-font-family);
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.47;
+	letter-spacing: 0;
+}
+
+@media (max-width: 1024px) {
+	.vm-deals .wp-block-post-template {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Call to action band. */
+.vm-cta {
+	border-radius: 26px;
+	overflow: hidden;
+}
+
+.vm-cta p.vm-subtitle {
+	margin-bottom: 32px;
+}
+
+p.vm-cta-note {
+	margin: 48px 0 0;
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1.31;
+}
+
+.vm-cta .kb-buttons-wrap {
+	gap: 32px;
+}
+
+/* Frequently asked question: a Details block with the class vm-faq. */
+.wp-block-details.vm-faq {
+	margin: 0 0 16px;
+	padding: 24px;
+	border: 1px solid #f2f4fc;
+	border-radius: 8px;
+	background: var(--global-palette9);
+}
+
+.wp-block-details.vm-faq[open] {
+	border-color: var(--global-palette9);
+	background: #f2f4fc;
+}
+
+.wp-block-details.vm-faq > summary {
+	display: flex;
+	gap: 24px;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.31;
+	cursor: pointer;
+	list-style: none;
+}
+
+.wp-block-details.vm-faq > summary::-webkit-details-marker {
+	display: none;
+}
+
+.wp-block-details.vm-faq > summary::after {
+	content: "+";
+	flex: none;
+	font-family: var(--global-heading-font-family);
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.wp-block-details.vm-faq[open] > summary::after {
+	content: "\2212";
+}
+
+.wp-block-details.vm-faq > p {
+	margin: 16px 0 0;
+}
+
+@media (max-width: 767px) {
+	p.vm-step-number {
+		font-size: 40px;
+	}
+
+	.wp-block-details.vm-faq > summary {
+		font-size: 18px;
+	}
+
+	.vm-cta .kb-buttons-wrap {
+		gap: 16px;
+	}
+}
+
+/*
+ * Overrides that need to outrank the theme and Kadence Blocks defaults.
+ */
+
+/* The theme stretches full-width blocks to the viewport. A panel stays inset. */
+.entry-content .kb-row-layout-wrap.vm-panel.alignfull {
+	width: calc(var(--global-vw, 100vw) - 64px);
+	max-width: calc(var(--global-vw, 100vw) - 64px);
+	margin-right: calc(50% - var(--global-vw, 100vw) / 2 + 32px);
+	margin-left: calc(50% - var(--global-vw, 100vw) / 2 + 32px);
+	border-radius: 30px;
+}
+
+@media (max-width: 767px) {
+	.entry-content .kb-row-layout-wrap.vm-panel.alignfull {
+		width: calc(var(--global-vw, 100vw) - 24px);
+		max-width: calc(var(--global-vw, 100vw) - 24px);
+		margin-right: calc(50% - var(--global-vw, 100vw) / 2 + 12px);
+		margin-left: calc(50% - var(--global-vw, 100vw) / 2 + 12px);
+		border-radius: 20px;
+	}
+}
+
+.kb-row-layout-wrap.vm-cta {
+	border-radius: 26px;
+	overflow: hidden;
+}
+
+.vm-cta p.vm-subtitle {
+	max-width: 800px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+/* Space between the deal cards and the button under them. */
+.wp-block-query.vm-deals {
+	margin-bottom: 56px;
+}
+
+.vm-deals .wp-block-post-template.wp-block-post-template {
+	margin-bottom: 0;
+}
+
+.vm-deals .vm-deal-card .vm-h3-small {
+	margin-top: 8px;
+}
+
+/* On tablet and mobile every program shows its image first. */
+@media (max-width: 1024px) {
+	.vm-program .vm-program-image {
+		order: -1;
+	}
+}
+
+/*
+ * Figma sets the mobile subtitle to a 1.1 line height. On three or four
+ * lines that is too tight to read, so mobile keeps the desktop value.
+ */
+@media (max-width: 767px) {
+	.vm-subtitle {
+		line-height: 1.31;
+	}
+}
