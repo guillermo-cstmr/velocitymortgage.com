@@ -1,0 +1,35 @@
+# Velocity Mortgage: only the custom code is versioned.
+# WordPress core, uploads, third-party plugins and themes stay out.
+
+/*
+!.gitignore
+!.gitattributes
+!wp-content/
+
+wp-content/*
+!wp-content/themes/
+!wp-content/plugins/
+!wp-content/mu-plugins/
+
+# Themes: custom child themes only
+wp-content/themes/*
+!wp-content/themes/kadence-child/
+!wp-content/themes/velocity-kadence/
+
+# Plugins: custom plugins only
+wp-content/plugins/*
+!wp-content/plugins/velocity-insights/
+
+# Must-use plugins: Velocity functionality (CPTs, fields, tracking)
+wp-content/mu-plugins/*
+!wp-content/mu-plugins/velocity.php
+!wp-content/mu-plugins/velocity/
+
+# Noise
+node_modules/
+*.log
+*.bak
+*.swp
+*~
+.DS_Store
+Thumbs.db
