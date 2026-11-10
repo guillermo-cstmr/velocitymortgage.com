@@ -5,6 +5,7 @@
 !.gitignore
 !.gitattributes
 !wp-content/
+!.github/
 
 wp-content/*
 !wp-content/themes/
