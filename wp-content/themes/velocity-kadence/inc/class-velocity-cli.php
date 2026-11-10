@@ -164,6 +164,186 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Creates the header, the menus and the footer as Kadence block content.
+	 *
+	 * This builds the first version of each, so every environment starts from
+	 * the same point. After that they are edited in the block editor:
+	 * - Header: Kadence, Header, "Global Header".
+	 * - Menus: Kadence, Navigation.
+	 * - Footer: Kadence, Elements, "Global Footer".
+	 *
+	 * Without --execute it only reports what it would do. Anything that
+	 * already exists is left alone, so editor changes are never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Create what is missing.
+	 *
+	 * [--force]
+	 * : Also rebuild what already exists. This DISCARDS changes made in the
+	 * editor to the header, the menus and the footer.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-chrome
+	 *     wp velocity seed-chrome --execute
+	 *
+	 * @subcommand seed-chrome
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_chrome( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		foreach ( array( 'kadence_header', 'kadence_navigation', 'kadence_element' ) as $type ) {
+			if ( ! post_type_exists( $type ) ) {
+				WP_CLI::error( 'Post type ' . $type . ' is not registered. Kadence Blocks and Kadence Pro must be active.' );
+			}
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+		if ( $this->force ) {
+			WP_CLI::warning( '--force: existing header, menus and footer are rebuilt. Editor changes to them are lost.' );
+		}
+
+		$ids = array();
+
+		WP_CLI::log( '' );
+		WP_CLI::log( '== Menus ==' );
+		foreach ( Velocity_Seed::navigations() as $key => $nav ) {
+			$meta = array();
+			foreach ( $nav['meta'] as $name => $value ) {
+				$meta[ '_kad_navigation_' . $name ] = $value;
+			}
+
+			$items       = $nav['items'];
+			$ids[ $key ] = $this->seed_post(
+				$key,
+				'kadence_navigation',
+				$nav['title'],
+				static function ( $post_id ) use ( $items ) {
+					return Velocity_Seed::navigation_content( $post_id, $items );
+				},
+				$meta
+			);
+		}
+
+		WP_CLI::log( '' );
+		WP_CLI::log( '== Header ==' );
+		$header_id = $this->seed_post(
+			'header',
+			'kadence_header',
+			'Global Header',
+			static function ( $post_id ) use ( $ids ) {
+				return Velocity_Seed::header_content( $post_id, $ids['nav-header'], $ids['nav-mobile'] );
+			},
+			array(
+				'_kad_header_background' => array(
+					'type'  => 'normal',
+					'color' => 'palette3',
+				),
+			)
+		);
+
+		WP_CLI::log( '' );
+		WP_CLI::log( '== Footer ==' );
+		$this->seed_post(
+			'footer',
+			'kadence_element',
+			'Global Footer',
+			static function ( $post_id ) use ( $ids ) {
+				return Velocity_Seed::footer_content( $post_id, $ids );
+			},
+			array(
+				'_kad_element_type'              => 'default',
+				'_kad_element_hook'              => 'replace_footer',
+				'_kad_element_hook_priority'     => 10,
+				'_kad_element_show_conditionals' => '[{"rule":"general|site","select":"all","ids":[],"subRule":"","subSelection":[],"mustMatch":false}]',
+			)
+		);
+
+		if ( $this->execute ) {
+			// Tell the Kadence theme to render the block header instead of its own.
+			set_theme_mod( 'blocks_header', true );
+			set_theme_mod( 'blocks_header_id', $header_id );
+			wp_cache_flush();
+			WP_CLI::success( 'Header, menus and footer are in place. Edit them in the block editor from now on.' );
+		} else {
+			WP_CLI::success( 'Dry run finished. Nothing was changed.' );
+		}
+	}
+
+	/**
+	 * Create one seeded post, or leave it alone if it exists.
+	 *
+	 * @param string   $key     Seed key, stored in post meta to find it later.
+	 * @param string   $type    Post type.
+	 * @param string   $title   Post title.
+	 * @param callable $content Builds the content from the post ID.
+	 * @param array    $meta    Post meta to set.
+	 * @return int Post ID, or 0 on a dry run for a post that does not exist.
+	 */
+	private function seed_post( $key, $type, $title, $content, $meta ) {
+		$found = get_posts(
+			array(
+				'post_type'   => $type,
+				'post_status' => array( 'publish', 'draft', 'private' ),
+				'meta_key'    => Velocity_Seed::MARKER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'  => $key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'numberposts' => 1,
+				'fields'      => 'ids',
+			)
+		);
+
+		$post_id = $found ? (int) $found[0] : 0;
+
+		if ( $post_id && ! $this->force ) {
+			WP_CLI::log( sprintf( '  exists   #%d  %s (left as it is)', $post_id, $title ) );
+			return $post_id;
+		}
+
+		WP_CLI::log( sprintf( '  %s  %s  %s', $post_id ? 'rebuild' : 'create ', $type, $title ) );
+
+		if ( ! $this->execute ) {
+			return $post_id;
+		}
+
+		if ( ! $post_id ) {
+			$post_id = wp_insert_post(
+				array(
+					'post_type'   => $type,
+					'post_title'  => $title,
+					'post_status' => 'publish',
+				),
+				true
+			);
+
+			if ( is_wp_error( $post_id ) ) {
+				WP_CLI::error( $post_id->get_error_message() );
+			}
+
+			update_post_meta( $post_id, Velocity_Seed::MARKER, $key );
+		}
+
+		// Block unique IDs include the post ID, so content is built after insert.
+		wp_update_post(
+			array(
+				'ID'           => $post_id,
+				'post_content' => wp_slash( call_user_func( $content, $post_id ) ),
+			)
+		);
+
+		foreach ( $meta as $name => $value ) {
+			update_post_meta( $post_id, $name, $value );
+		}
+
+		return (int) $post_id;
+	}
+
+	/**
 	 * Save the options that are about to be deleted to a JSON file in uploads.
 	 */
 	private function backup_options() {
@@ -223,12 +403,24 @@ class Velocity_CLI {
 		$placeholders = implode( ',', array_fill( 0, count( self::POST_TYPES_TO_REMOVE ), '%s' ) );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-		$posts = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_type, post_status, post_title FROM {$wpdb->posts} WHERE post_type IN ($placeholders) AND post_status NOT IN ('trash','auto-draft','inherit') ORDER BY post_type, ID", self::POST_TYPES_TO_REMOVE ) );
+		$posts = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_type, post_status, post_title, post_name FROM {$wpdb->posts} WHERE post_type IN ($placeholders) AND post_status NOT IN ('trash','auto-draft','inherit') ORDER BY post_type, ID", self::POST_TYPES_TO_REMOVE ) );
 
 		$count = 0;
 		foreach ( $posts as $post ) {
 			if ( 'wp_block' === $post->post_type && in_array( $post->post_title, self::PROTECTED_BLOCK_TITLES, true ) ) {
 				WP_CLI::log( sprintf( '  keep    #%d  wp_block  %s (used by code)', $post->ID, $post->post_title ) );
+				continue;
+			}
+
+			// Global styles that belong to the active theme.
+			if ( 'wp_global_styles' === $post->post_type && 'wp-global-styles-' . get_stylesheet() === $post->post_name ) {
+				WP_CLI::log( sprintf( '  keep    #%d  wp_global_styles  (active theme)', $post->ID ) );
+				continue;
+			}
+
+			// The new header, menus and footer made by `wp velocity seed-chrome`.
+			if ( get_post_meta( $post->ID, Velocity_Seed::MARKER, true ) ) {
+				WP_CLI::log( sprintf( '  keep    #%d  %-20s %s (new build)', $post->ID, $post->post_type, $post->post_title ) );
 				continue;
 			}
 

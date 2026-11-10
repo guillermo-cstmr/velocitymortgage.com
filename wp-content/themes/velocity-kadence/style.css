@@ -84,3 +84,122 @@ Text Domain:  velocity-kadence
 		line-height: 1.1;
 	}
 }
+
+/*
+ * Kadence Blocks buttons.
+ * The theme button tokens do not reach the Advanced Button block by
+ * themselves. Kadence Blocks has its own design tokens for that block. Setting
+ * them here makes every button in the editor match the style guide without
+ * per-block settings. Both "control" tokens are only used by buttons.
+ * The doubled :root is on purpose: it has to outrank the plugin's own :root.
+ */
+:root:root {
+	--kb-token--semantic--radius--control: 9999px;
+	--kb-token--semantic--font-size--control: 20px;
+	--kb-token--preset--kadence-singlebtn--default--button-padding--top: 16px;
+	--kb-token--preset--kadence-singlebtn--default--button-padding--right: 24px;
+	--kb-token--preset--kadence-singlebtn--default--button-padding--bottom: 16px;
+	--kb-token--preset--kadence-singlebtn--default--button-padding--left: 24px;
+}
+
+.kb-button:where(.kb-btn-global-fill, .kb-btn-global-outline) {
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+/* Outline button: 1px Action Orange, fills with Deep Rust on hover. */
+.kb-button.kb-btn-global-outline {
+	border: 1px solid var(--global-palette1);
+	color: var(--global-palette1);
+	padding: 15px 23px;
+}
+
+.kb-button.kb-btn-global-outline:hover,
+.kb-button.kb-btn-global-outline:focus {
+	border-color: var(--global-palette2);
+	background: var(--global-palette2);
+	color: var(--global-palette9);
+}
+
+/*
+ * Header.
+ * Layout, colors and the menu come from the Global Header blocks.
+ * Only what those blocks cannot express is styled here.
+ */
+
+/* "Broker Login" is a text link, not a pill. */
+.wp-block-kadence-singlebtn.vm-login-link {
+	--kb-btn-padding: 8px 12px;
+}
+
+/*
+ * A dropdown item with the class vm-menu-featured sits apart from the rest:
+ * a rule above it, bold Deep Rust text and an arrow on the right.
+ */
+.kb-nav-sub-menu > .vm-menu-featured {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--global-palette5);
+}
+
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	font-weight: 700;
+	color: var(--global-palette2);
+}
+
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content::after {
+	content: "";
+	flex: none;
+	width: 16px;
+	height: 16px;
+	background-color: currentColor;
+	-webkit-mask: url("assets/images/icon-arrow-right.svg") center / contain no-repeat;
+	mask: url("assets/images/icon-arrow-right.svg") center / contain no-repeat;
+}
+
+/*
+ * Footer.
+ * Built with blocks in the Global Footer element.
+ */
+
+/*
+ * The rule above the disclosure and the legal links. It is drawn inside the
+ * content gutters, so it lines up with the columns instead of the viewport.
+ */
+.vm-footer-legal > .kt-row-column-wrap {
+	position: relative;
+	padding-top: 32px;
+}
+
+.vm-footer-legal > .kt-row-column-wrap::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: var(--global-content-edge-padding);
+	left: var(--global-content-edge-padding);
+	border-top: 1px solid var(--global-palette9);
+}
+
+.vm-footer-legal p {
+	line-height: 1.34;
+	letter-spacing: -0.01em;
+}
+
+.vm-footer-legal .kb-nav-link-content {
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.vm-footer-main p {
+	line-height: 1.5;
+}
+
+@media (min-width: 1025px) {
+	.vm-footer-legal .wp-block-kadence-navigation .kb-navigation {
+		justify-content: flex-end;
+	}
+}
