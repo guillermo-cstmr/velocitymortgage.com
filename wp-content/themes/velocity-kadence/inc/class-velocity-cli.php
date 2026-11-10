@@ -277,6 +277,66 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Fills the home page with its sections as block content.
+	 *
+	 * It writes to the page set as the front page in Settings, Reading.
+	 * Without --execute it only reports what it would do. A home page that
+	 * already has content is left alone, so editor work is never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Write the content if the page is empty.
+	 *
+	 * [--force]
+	 * : Replace the content even if the page has some. This DISCARDS what is
+	 * there. WordPress keeps the old version as a revision.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-home
+	 *     wp velocity seed-home --execute
+	 *
+	 * @subcommand seed-home
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_home( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		$page_id = (int) get_option( 'page_on_front' );
+		$page    = $page_id ? get_post( $page_id ) : null;
+
+		if ( ! $page || 'page' !== $page->post_type ) {
+			WP_CLI::error( 'No front page is set in Settings, Reading.' );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+		WP_CLI::log( sprintf( 'Front page: #%d "%s", %d bytes of content.', $page_id, $page->post_title, strlen( $page->post_content ) ) );
+
+		if ( '' !== trim( $page->post_content ) && ! $this->force ) {
+			WP_CLI::success( 'The page already has content. Left as it is.' );
+			return;
+		}
+
+		if ( ! $this->execute ) {
+			WP_CLI::success( 'Dry run finished. The page would be filled.' );
+			return;
+		}
+
+		wp_update_post(
+			array(
+				'ID'           => $page_id,
+				'post_content' => wp_slash( Velocity_Home::content( $page_id ) ),
+			)
+		);
+
+		WP_CLI::success( 'Home page content written. Edit it in the block editor from now on.' );
+	}
+
+	/**
 	 * Create one seeded post, or leave it alone if it exists.
 	 *
 	 * @param string   $key     Seed key, stored in post meta to find it later.

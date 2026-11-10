@@ -593,7 +593,7 @@ class Velocity_Seed {
 	 * @param array  $attrs   Extra attributes.
 	 * @return string
 	 */
-	private static function column( $post_id, $key, $inner, $attrs = array() ) {
+	public static function column( $post_id, $key, $inner, $attrs = array() ) {
 		$uid = self::uid( $post_id, $key );
 
 		return self::block(
@@ -606,7 +606,7 @@ class Velocity_Seed {
 				),
 				$attrs
 			),
-			'<div class="wp-block-kadence-column kadence-column' . $uid . '"><div class="kt-inside-inner-col">' . $inner . '</div></div>'
+			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"><div class="kt-inside-inner-col">' . $inner . '</div></div>'
 		);
 	}
 
@@ -619,7 +619,7 @@ class Velocity_Seed {
 	 * @param array  $attrs   Extra attributes.
 	 * @return string
 	 */
-	private static function row( $post_id, $key, $columns, $attrs = array() ) {
+	public static function row( $post_id, $key, $columns, $attrs = array() ) {
 		return self::block(
 			'kadence/rowlayout',
 			array_merge(
@@ -643,7 +643,7 @@ class Velocity_Seed {
 	 * @param string $align Text alignment, or empty.
 	 * @return string
 	 */
-	private static function paragraph( $text, $size, $align = '' ) {
+	public static function paragraph( $text, $size, $align = '' ) {
 		$attrs = array(
 			'style' => array(
 				'typography' => array( 'fontSize' => $size . 'px' ),
