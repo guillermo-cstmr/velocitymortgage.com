@@ -1,0 +1,35 @@
+name: Deploy to staging
+
+# Pushing to the `staging` branch copies the versioned code to the
+# WP Engine environment `stagevelocity`. `main` does not deploy anything.
+# Production is intentionally not wired up yet.
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy code to stagevelocity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Sync wp-content to WP Engine
+        uses: wpengine/github-action-wpe-site-deploy@v3
+        with:
+          WPE_SSHG_KEY_PRIVATE: ${{ secrets.WPE_SSHG_KEY_PRIVATE }}
+          WPE_ENV: stagevelocity
+          # Only the custom code tracked in this repo travels. Files are added
+          # and updated, never deleted on the server (no --delete flag).
+          SRC_PATH: "wp-content/"
+          REMOTE_PATH: "wp-content/"
+          FLAGS: '-azvr --inplace --exclude=".*"'
+          PHP_LINT: TRUE
+          CACHE_CLEAR: TRUE
