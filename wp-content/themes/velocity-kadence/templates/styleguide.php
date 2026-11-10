@@ -32,9 +32,14 @@ get_header();
 	.vm-sg .vm-sg-swatch p { margin: 8px 0 0; font-size: 14px; line-height: 1.3; }
 	.vm-sg .vm-sg-type > * { margin: 0 0 24px; }
 	.vm-sg .vm-sg-dark { background: var(--global-palette3); padding: 32px; border-radius: 8px; }
-	.vm-sg .vm-sg-card { background: var(--global-palette9); border: 1px solid var(--vm-border); border-radius: var(--vm-radius-card); box-shadow: var(--vm-shadow-medium); padding: 32px; max-width: 410px; text-align: center; }
+	.vm-sg .vm-sg-card { background: var(--global-palette9); border: 1px solid var(--vm-border); border-radius: 8px; box-shadow: var(--vm-shadow-medium); padding: 32px; max-width: 410px; text-align: center; }
 	.vm-sg .vm-sg-card > * { margin: 0 0 16px; }
 	.vm-sg .vm-sg-card > *:last-child { margin-bottom: 0; }
+	/* Text styles that pages set on each Text (Adv) block. Shown here for reference. */
+	.vm-sg .vm-subtitle { font-size: 20px; line-height: 1.31; }
+	.vm-sg .vm-body-small { font-size: 14px; line-height: 1.1; }
+	.vm-sg .vm-h3-small { font-family: var(--global-heading-font-family); font-size: 22px; font-weight: 700; line-height: 1.1; letter-spacing: 0; }
+	@media (max-width: 767px) { .vm-sg .vm-subtitle { font-size: 18px; } }
 </style>
 
 <div class="vm-sg">
@@ -67,7 +72,7 @@ get_header();
 			<?php foreach ( $vm_headings as $vm_tag => $vm_text ) : ?>
 				<<?php echo esc_attr( $vm_tag ); ?>><?php echo esc_html( $vm_text ); ?></<?php echo esc_attr( $vm_tag ); ?>>
 			<?php endforeach; ?>
-			<p class="vm-h3-small">H3 Small. Poppins Bold, 22. Class vm-h3-small</p>
+			<p class="vm-h3-small">Card title. H3 at 22, Poppins Bold</p>
 		</div>
 	</section>
 
