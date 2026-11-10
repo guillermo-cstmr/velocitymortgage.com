@@ -77,6 +77,9 @@ function vm_deal_info_shortcode() {
 			esc_url( VELOCITY_KADENCE_URI . '/assets/images/icon-bolt.svg' ),
 			esc_html( $closed )
 		);
+	} else {
+		// No closing time: keep the tag's space, so titles line up across cards.
+		$out .= '<p class="vm-deal-tag vm-deal-tag--empty" aria-hidden="true">&nbsp;</p>';
 	}
 
 	// Screen readers also hear the property's name, which tells the cards apart.
