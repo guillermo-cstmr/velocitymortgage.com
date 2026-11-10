@@ -62,6 +62,46 @@ The child theme sets its design tokens as defaults through the filters `kadence_
 - When switching to a new child theme, the old palette option has to be removed or overwritten, or the old colors stay.
 - If someone changes a token in the Customizer, that value hides the one in code from then on.
 
+## Header, menus and footer
+
+They are block content, edited in the block editor like any page.
+
+| What | Where to edit it |
+|---|---|
+| Header | Kadence, Header, "Global Header" |
+| Menus | Kadence, Navigation. One for the header, one for mobile, one per footer column, one for the legal links |
+| Footer | Kadence, Elements, "Global Footer" |
+
+The logos and icons are files in the theme, under `assets/images`, not media library items. That keeps them identical on every environment.
+
+A few details cannot be expressed in block settings and live in the theme's `style.css`: the pill shape and size of every Kadence button, the rule above the footer disclosure, and the featured menu item. To feature an item in a dropdown, give its navigation link the CSS class `vm-menu-featured`.
+
+The header menu and the mobile menu are two separate posts. A link added to one has to be added to the other.
+
+### Creating them on a new environment
+
+The first version of all of them is built by a command, so nobody has to rebuild them by hand on each environment.
+
+```bash
+wp velocity seed-chrome            # dry run: shows what it would create
+wp velocity seed-chrome --execute  # creates whatever is missing
+```
+
+It never touches something that already exists, so it is safe to run again. The `--force` flag rebuilds everything from scratch and **discards every change made in the editor**. Use it only on a database you are willing to lose.
+
+Menu links to pages that do not exist yet are created as `#` placeholders. Replace them in the editor as the pages get built.
+
+## Theme commands
+
+All of them are dry runs unless called with `--execute`.
+
+| Command | What it does |
+|---|---|
+| `wp velocity cleanup` | Removes the old Kadence and Beaver Builder front end. Keeps all content, and keeps the header, menus and footer made by `seed-chrome` |
+| `wp velocity seed-chrome` | Creates the header, the menus and the footer |
+
+On staging they run through the SSH Gateway. The gateway may run an older PHP than the website, so the theme's command code stays compatible with PHP 7.4.
+
 ## Launch
 
 Production keeps receiving form entries and content edits while the rebuild happens on staging. Replacing the production database with the staging one would lose that data. The launch plan has to import the new pages and Kadence posts into production, or agree a content freeze. This is not decided yet.

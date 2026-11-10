@@ -15,9 +15,11 @@ define( 'VELOCITY_KADENCE_DIR', get_stylesheet_directory() );
 define( 'VELOCITY_KADENCE_URI', get_stylesheet_directory_uri() );
 
 require_once VELOCITY_KADENCE_DIR . '/inc/tokens.php';
+require_once VELOCITY_KADENCE_DIR . '/inc/shortcodes.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/styleguide.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-seed.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-cli.php';
 }
 
@@ -35,3 +37,14 @@ function vm_enqueue_styles() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'vm_enqueue_styles', 20 );
+
+/**
+ * Load the same stylesheet inside the block editor, so buttons, the header
+ * and the footer look in the editor the way they do on the site.
+ */
+function vm_enqueue_editor_styles() {
+	if ( is_admin() ) {
+		vm_enqueue_styles();
+	}
+}
+add_action( 'enqueue_block_assets', 'vm_enqueue_editor_styles', 20 );
