@@ -543,3 +543,11 @@ h2 strong {
 		transition: none;
 	}
 }
+
+/*
+ * A deal without a closing time still reserves the tag's line, invisibly,
+ * so the titles sit at the same height on every card.
+ */
+.vm-deal-info .vm-deal-tag.vm-deal-tag--empty {
+	visibility: hidden;
+}

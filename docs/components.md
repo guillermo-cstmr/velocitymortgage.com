@@ -130,7 +130,7 @@ The text of a deal card comes from the shortcode `[vm_deal_info]`, defined in `i
 | Program | Loan program |
 | Name | Account executive |
 
-A line is left out when the property has no value for it, so an incomplete card means incomplete data on that property. The title links to the property, and that link covers the whole card.
+A line is left out when the property has no value for it, so an incomplete card means incomplete data on that property. The one exception is the closing time tag: without a value it still keeps its space, invisibly, so the titles line up across the cards. The title links to the property, and that link covers the whole card.
 
 It is a shortcode because core blocks cannot print a custom field, or a taxonomy term without turning it into a link. In the editor the block shows the shortcode text, not the result.
 
