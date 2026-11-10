@@ -948,35 +948,16 @@ class Velocity_Home {
 			'group',
 			array( 'className' => 'vm-deal-card' ),
 			'<div class="wp-block-group vm-deal-card">' .
+			// The photo: 160px tall, cropped to fill. Figma "deal-image-placeholder".
 			Velocity_Seed::block(
 				'post-featured-image',
 				array(
-					'isLink'      => true,
-					'aspectRatio' => '16/10',
+					'height' => '160px',
+					'scale'  => 'cover',
 				)
 			) . "\n\n" .
-			Velocity_Seed::block(
-				'post-terms',
-				array(
-					'term'      => 'velocity-property-type',
-					'className' => 'vm-deal-type',
-				)
-			) . "\n\n" .
-			Velocity_Seed::block(
-				'post-terms',
-				array(
-					'term'      => 'velocity-property-program',
-					'className' => 'vm-deal-program',
-				)
-			) . "\n\n" .
-			Velocity_Seed::block(
-				'post-title',
-				array(
-					'level'     => 3,
-					'isLink'    => true,
-					'className' => 'vm-deal-location',
-				)
-			) .
+			// The text of the card. See vm_deal_info_shortcode() in inc/shortcodes.php.
+			Velocity_Seed::block( 'shortcode', array(), '[vm_deal_info]' ) .
 			'</div>'
 		);
 
