@@ -62,6 +62,9 @@ class Velocity_CLI {
 	/**
 	 * Options that hold the old design. Backed up to a file, then deleted.
 	 *
+	 * Kadence Blocks rebuilds its two options from the active palette on the
+	 * next page load, so they show up again on a later dry run. That is expected.
+	 *
 	 * @var string[]
 	 */
 	const OPTIONS_TO_REMOVE = array(
@@ -301,6 +304,11 @@ class Velocity_CLI {
 
 			if ( in_array( $page->post_name, self::PAGE_SLUGS_TO_KEEP, true ) ) {
 				WP_CLI::log( sprintf( '  keep    #%d  /%s/  %s (content untouched)', $page->ID, $page->post_name, $page->post_title ) );
+				continue;
+			}
+
+			// Already empty: nothing to do. Keeps the command safe to run twice.
+			if ( 0 === (int) $page->content_length ) {
 				continue;
 			}
 
