@@ -787,3 +787,41 @@ p.vm-cta-note {
 		flex-basis: calc(50% - 8px);
 	}
 }
+
+/*
+ * The whole question box is clickable, not just its text. The padding moves
+ * from the box to the question, so the clickable area reaches the edges.
+ */
+.wp-block-details.vm-faq {
+	padding: 0;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.wp-block-details.vm-faq > summary {
+	padding: 24px;
+	border-radius: 8px;
+}
+
+.wp-block-details.vm-faq > summary:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+.wp-block-details.vm-faq:not([open]):hover {
+	border-color: var(--global-palette7);
+	background: var(--global-palette8);
+}
+
+/* The open one cannot be closed by clicking it, so it does not look clickable. */
+.wp-block-details.vm-faq[open] > summary {
+	cursor: default;
+}
+
+.wp-block-details.vm-faq > :not(summary) {
+	margin: 0;
+	padding: 0 24px 16px;
+}
+
+.wp-block-details.vm-faq > :not(summary):last-child {
+	padding-bottom: 24px;
+}
