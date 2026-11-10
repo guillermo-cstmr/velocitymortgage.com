@@ -6,6 +6,9 @@
 !.gitattributes
 !wp-content/
 !.github/
+!README.md
+!CONTRIBUTING.md
+!docs/
 
 wp-content/*
 !wp-content/themes/
