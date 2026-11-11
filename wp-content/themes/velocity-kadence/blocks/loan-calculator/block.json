@@ -1,0 +1,20 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "velocity/loan-calculator",
+	"title": "Loan Scenario Calculator",
+	"category": "widgets",
+	"icon": "calculator",
+	"description": "Suggests the loan program that fits an investor's scenario. Rules and copy are in config.php.",
+	"keywords": [ "calculator", "program", "loan" ],
+	"textdomain": "velocity-kadence",
+	"supports": {
+		"html": false,
+		"reusable": false,
+		"multiple": false
+	},
+	"editorScript": "file:./editor.js",
+	"viewScript": "file:./view.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

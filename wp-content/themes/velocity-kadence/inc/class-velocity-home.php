@@ -826,9 +826,7 @@ class Velocity_Home {
 	}
 
 	/**
-	 * Calculator: header, a placeholder for the calculator, and the follow-up.
-	 *
-	 * The calculator itself is custom development and is not built yet.
+	 * Calculator: header, the calculator block, and the follow-up.
 	 *
 	 * @param int $post_id Page ID.
 	 * @return string
@@ -841,16 +839,8 @@ class Velocity_Home {
 				'Grow Your Book With <br><strong>the Right Program</strong>',
 				'Our loan scenario calculator shows which program works best for you. Enter your deal’s numbers—we’ll do the rest.'
 			) . "\n\n" .
-			// vm-placeholder draws the dashed box. Delete this block when the calculator exists.
-			self::t(
-				$post_id,
-				'calculator-placeholder',
-				'Loan scenario calculator: to be built. This block marks where it goes.',
-				array(
-					'align' => 'center',
-					'class' => 'vm-placeholder',
-				)
-			) . "\n\n" .
+			// A block of the theme: blocks/loan-calculator.
+			Velocity_Seed::block( 'velocity/loan-calculator' ) . "\n\n" .
 			self::subtitle(
 				$post_id,
 				'calculator-note',

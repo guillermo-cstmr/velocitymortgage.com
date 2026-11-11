@@ -1,0 +1,243 @@
+/*
+ * Loan scenario calculator.
+ * A custom block, so its look lives here rather than in block settings.
+ * Loaded on the site and in the editor, only where the block is used.
+ * Measures from Figma, "calculator-visual".
+ */
+
+.vm-calc {
+	display: grid;
+	grid-template-columns: minmax(0, 294px) minmax(0, 475px);
+	gap: 20px;
+	justify-content: center;
+	max-width: 908px;
+	margin: 0 auto 48px;
+	padding: 40px 56px;
+	border: 1px solid var(--global-palette9);
+	border-radius: 12px;
+	background: #fff7ed;
+	color: var(--global-palette3);
+}
+
+/* Form. */
+.vm-calc .vm-calc__form {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	margin: 0;
+}
+
+.vm-calc .vm-calc__field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.vm-calc .vm-calc__label {
+	font-size: 16px;
+	line-height: 1.47;
+}
+
+.vm-calc .vm-calc__select {
+	position: relative;
+}
+
+.vm-calc .vm-calc__select::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: 16px;
+	width: 12px;
+	height: 7px;
+	background: currentColor;
+	pointer-events: none;
+	transform: translateY(-50%);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.vm-calc .vm-calc__select select {
+	width: 100%;
+	height: 48px;
+	margin: 0;
+	padding: 0 40px 0 14px;
+	border: 1px solid #bdbdbd;
+	border-radius: 11px;
+	background: var(--global-palette9);
+	box-shadow: none;
+	color: var(--global-palette3);
+	font-family: inherit;
+	font-size: 14px;
+	line-height: 1.1;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.vm-calc .vm-calc__select select:focus-visible {
+	border-color: var(--global-palette5);
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 1px;
+}
+
+.vm-calc .vm-calc__check {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	font-size: 14px;
+	line-height: 1.3;
+	cursor: pointer;
+}
+
+.vm-calc .vm-calc__check input {
+	flex: none;
+	width: 16px;
+	height: 16px;
+	margin: 1px 0 0;
+	accent-color: var(--global-palette1);
+}
+
+/* Calculate: an action styled as a link, as in the design. */
+.vm-calc .vm-calc__submit,
+.vm-calc .vm-calc__submit:hover,
+.vm-calc .vm-calc__submit:focus {
+	align-self: flex-start;
+	margin-top: 4px;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--global-palette1);
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.1;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	cursor: pointer;
+}
+
+.vm-calc .vm-calc__submit:hover {
+	color: var(--global-palette2);
+}
+
+.vm-calc .vm-calc__submit:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 3px;
+}
+
+/* Result. */
+.vm-calc .vm-calc__result {
+	display: flex;
+}
+
+.vm-calc .vm-calc__card {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: center;
+	padding: 48px 32px;
+	border: 1px solid rgba(211, 112, 49, 0.74);
+	border-radius: 20px;
+	background: rgba(211, 112, 49, 0.07);
+}
+
+.vm-calc .vm-calc__card[hidden] {
+	display: none;
+}
+
+.vm-calc .vm-calc__card-head {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.vm-calc .vm-calc__title {
+	margin: 0;
+	color: var(--global-palette3);
+	font-family: var(--global-heading-font-family);
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+}
+
+.vm-calc .vm-calc__badge {
+	display: inline-flex;
+	flex: none;
+	gap: 6px;
+	align-items: center;
+	padding: 4px 8px;
+	border-radius: 5px;
+	background: #ffcea1;
+	color: var(--global-palette2);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.vm-calc .vm-calc__desc {
+	margin: 16px 0 32px;
+	font-size: 16px;
+	line-height: 1.47;
+}
+
+.vm-calc .vm-calc__specs {
+	display: flex;
+	flex-direction: column;
+	gap: 21px;
+	margin: 0 0 36px;
+}
+
+.vm-calc .vm-calc__specs > div {
+	display: flex;
+	gap: 16px;
+	justify-content: space-between;
+}
+
+.vm-calc .vm-calc__specs dt,
+.vm-calc .vm-calc__specs dd {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.vm-calc .vm-calc__specs dd {
+	text-align: right;
+}
+
+.vm-calc .vm-calc__link {
+	align-self: flex-start;
+	color: var(--global-palette2);
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.1;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.vm-calc .vm-calc__link:hover {
+	color: var(--global-palette1);
+}
+
+.vm-calc .vm-calc__card--none .vm-calc__desc {
+	margin-bottom: 36px;
+}
+
+@media (max-width: 900px) {
+	.vm-calc {
+		grid-template-columns: minmax(0, 1fr);
+		padding: 24px 20px;
+	}
+
+	.vm-calc .vm-calc__card {
+		padding: 32px 24px;
+	}
+
+	.vm-calc .vm-calc__title {
+		font-size: 24px;
+	}
+}
