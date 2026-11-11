@@ -18,9 +18,16 @@ There are three layers. Each thing lives in exactly one of them.
 
 Select a section title in the editor and its Color, Font Size and Line Height are all empty. That is correct. The title is navy and 56px because every H2 on the site is, by token. Nothing is set on the block, so nothing shows in the block.
 
+An empty field inherits from the nearest place that sets it:
+
+1. The Row Layout or Section that contains the block, if that one has a text color. The hero and the trust strip work this way: the row sets the text color once and every text inside follows.
+2. Otherwise, the global style of the site.
+
+To find where a color comes from, select the block and use "Select parent block", the first button in the floating toolbar, until you reach a Row Layout or Section with a value.
+
 | You see in the sidebar | It means |
 |---|---|
-| An empty field | The block follows the global style. Change it globally in `inc/tokens.php` |
+| An empty field | The block inherits, from its row or from the global style |
 | A value | This block overrides the global style, on purpose |
 
 To see the global values, open Appearance, Customize, Colors & Fonts. They are listed there, read-only in practice: change them in `inc/tokens.php`, not in the Customizer.
