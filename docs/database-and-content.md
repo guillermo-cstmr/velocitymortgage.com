@@ -99,6 +99,8 @@ All of them are dry runs unless called with `--execute`.
 |---|---|
 | `wp velocity cleanup` | Removes the old Kadence and Beaver Builder front end. Keeps all content, and keeps the header, menus and footer made by `seed-chrome` |
 | `wp velocity seed-chrome` | Creates the header, the menus and the footer |
+| `wp velocity seed-home` | Fills the home page, if it is empty |
+| `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. Never overwrites a filled field |
 
 On staging they run through the SSH Gateway. The gateway may run an older PHP than the website, so the theme's command code stays compatible with PHP 7.4.
 

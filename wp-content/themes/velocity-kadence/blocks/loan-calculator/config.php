@@ -104,52 +104,29 @@ return array(
 	'default_program' => '30yf',
 
 	/*
-	 * Programs. "rules" are checked in order. Each rule is:
+	 * Programs. "term" is the program in Properties, Programs: its name,
+	 * description, terms and page link come from there, so they are edited
+	 * in one place. Run `wp velocity seed-programs` to fill them the first time.
+	 *
+	 * "rules" are checked in order. Each rule is:
 	 * field, the values that pass, and the message shown when it fails.
 	 * The field "events" is "yes" when the checkbox is ticked, "no" when not.
 	 */
 	'programs'        => array(
 		'30yf'        => array(
-			'name'        => '30-Year Fixed',
-			'description' => 'Long-term financing for investors who plan to hold.',
-			'url'         => '#',
-			'link'        => 'Explore 30-Year Fixed',
-			'specs'       => array(
-				'Loan amounts'  => '$75K – $2MM',
-				'Max LTV'       => '75%',
-				'Term'          => 'Fixed for 30 years',
-				'Time to close' => '2 weeks to 45 days',
-			),
+			'term'        => '30-year-fixed',
 			'rules'       => array(
 				array( 'ltv', array( 'up-50', '51-65', '66-75' ), 'Needs at least 25% down or equity.' ),
 			),
 		),
 		'fast50'      => array(
-			'name'        => 'Fast50',
-			'description' => 'Fixed for 30 years, for investors with plenty of equity, even with recent credit events.',
-			'url'         => '#',
-			'link'        => 'Explore Fast50',
-			'specs'       => array(
-				'Loan amounts'  => 'Up to $2MM',
-				'Max LTV'       => '50%',
-				'Term'          => 'Fixed for 30 years',
-				'Time to close' => '2 to 6 weeks',
-			),
+			'term'        => 'fast50',
 			'rules'       => array(
 				array( 'ltv', array( 'up-50' ), 'Needs at least 50% down or equity.' ),
 			),
 		),
 		'super-jumbo' => array(
-			'name'        => 'Super Jumbo',
-			'description' => 'The 30-Year Fixed at a larger size, for seasoned investors in major metro areas.',
-			'url'         => '#',
-			'link'        => 'Explore Super Jumbo',
-			'specs'       => array(
-				'Loan amounts'  => '$2MM – $10MM',
-				'Max LTV'       => '65%',
-				'Term'          => 'Fixed for 30 years',
-				'Time to close' => '2 weeks to 45 days',
-			),
+			'term'        => 'super-jumbo',
 			'rules'       => array(
 				// Assumption 4.
 				array( 'experience', array( 'seasoned' ), 'For seasoned investors only.' ),
@@ -161,16 +138,7 @@ return array(
 			),
 		),
 		'flex-io'     => array(
-			'name'        => 'Flex I/O',
-			'description' => 'A 24-month, interest-only bridge until your investor sells or refinances.',
-			'url'         => '#',
-			'link'        => 'Explore Flex I/O',
-			'specs'       => array(
-				'Loan amounts'  => '$75K – $2MM',
-				'Max LTV'       => '75%',
-				'Term'          => '24 months, interest only',
-				'Time to close' => '2 weeks to 45 days',
-			),
+			'term'        => 'flex-io',
 			'rules'       => array(
 				// Assumption 5: "Under $100K" passes.
 				array( 'amount', array( 'under-100k', '100k-2mm' ), 'Flex I/O loans go up to $2MM.' ),

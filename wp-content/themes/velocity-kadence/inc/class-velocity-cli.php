@@ -337,6 +337,153 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Fills in the details of each loan program, in Properties, Programs.
+	 *
+	 * Creates the programs the new site needs and does not have yet, and fills
+	 * the empty fields of every program it has data for. A field that already
+	 * has a value is never changed, so edits made in the admin are kept.
+	 *
+	 * Sources:
+	 * - 30-Year Fixed, Fast50, Super Jumbo, Flex I/O: Figma, notes of the
+	 *   homepage calculator.
+	 * - Foreign Investor, ARV Pro: the old Loan Programs page. Those details
+	 *   may be out of date.
+	 * - FlexTerm, FlexPerm: no source. Left empty.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-programs
+	 *     wp velocity seed-programs --execute
+	 *
+	 * @subcommand seed-programs
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_programs( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$taxonomy      = 'velocity-property-program';
+
+		if ( ! taxonomy_exists( $taxonomy ) ) {
+			WP_CLI::error( 'The program taxonomy is not registered. The Velocity must-use plugin must be active.' );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		// Slug => name and fields. Field keys are stored as velocity_program_{key}.
+		$programs = array(
+			'30-year-fixed'    => array(
+				'name'   => '30-Year Fixed',
+				'fields' => array(
+					'description'   => 'Long-term financing for investors who plan to hold.',
+					'loan_amounts'  => '$75K – $2MM',
+					'max_ltv'       => '75%',
+					'term'          => 'Fixed for 30 years',
+					'time_to_close' => '2 weeks to 45 days',
+				),
+			),
+			'fast50'           => array(
+				'name'   => 'Fast50',
+				'fields' => array(
+					'description'   => 'Fixed for 30 years, for investors with plenty of equity, even with recent credit events.',
+					'loan_amounts'  => 'Up to $2MM',
+					'max_ltv'       => '50%',
+					'term'          => 'Fixed for 30 years',
+					'time_to_close' => '2 to 6 weeks',
+				),
+			),
+			'super-jumbo'      => array(
+				'name'   => 'Super Jumbo',
+				'fields' => array(
+					'description'   => 'The 30-Year Fixed at a larger size, for seasoned investors in major metro areas.',
+					'loan_amounts'  => '$2MM – $10MM',
+					'max_ltv'       => '65%',
+					'term'          => 'Fixed for 30 years',
+					'time_to_close' => '2 weeks to 45 days',
+				),
+			),
+			'flex-io'          => array(
+				'name'   => 'Flex I/O',
+				'fields' => array(
+					'description'   => 'A 24-month, interest-only bridge until your investor sells or refinances.',
+					'loan_amounts'  => '$75K – $2MM',
+					'max_ltv'       => '75%',
+					'term'          => '24 months, interest only',
+					'time_to_close' => '2 weeks to 45 days',
+				),
+			),
+			'foreign-investor' => array(
+				'name'   => 'Foreign Investor',
+				'fields' => array(
+					'description' => 'For foreign investors seeking investment properties in the U.S. No U.S. credit required.',
+					'max_ltv'     => '65%',
+					'term'        => 'Fixed for 30 years',
+				),
+			),
+			'arv-pro'          => array(
+				'name'   => 'ARV Pro',
+				'fields' => array(
+					'description' => 'A short-term loan that finances improvements based on the property’s as-repaired value.',
+					'term'        => '1 year, interest only',
+				),
+			),
+		);
+
+		foreach ( $programs as $slug => $program ) {
+			$term = get_term_by( 'slug', $slug, $taxonomy );
+
+			if ( ! $term ) {
+				WP_CLI::log( sprintf( '  create   %s', $program['name'] ) );
+
+				if ( ! $this->execute ) {
+					foreach ( $program['fields'] as $key => $value ) {
+						WP_CLI::log( sprintf( '    fill   %-14s %s', $key, $value ) );
+					}
+					continue;
+				}
+
+				$created = wp_insert_term( $program['name'], $taxonomy, array( 'slug' => $slug ) );
+
+				if ( is_wp_error( $created ) ) {
+					WP_CLI::error( $created->get_error_message() );
+				}
+
+				$term_id = (int) $created['term_id'];
+			} else {
+				WP_CLI::log( sprintf( '  exists   %s (#%d, %d deals)', $term->name, $term->term_id, $term->count ) );
+				$term_id = (int) $term->term_id;
+			}
+
+			foreach ( $program['fields'] as $key => $value ) {
+				$meta_key = 'velocity_program_' . $key;
+				$current  = $term ? (string) get_term_meta( $term_id, $meta_key, true ) : '';
+
+				if ( '' !== trim( $current ) ) {
+					WP_CLI::log( sprintf( '    keep   %-14s %s', $key, $current ) );
+					continue;
+				}
+
+				WP_CLI::log( sprintf( '    fill   %-14s %s', $key, $value ) );
+
+				if ( $this->execute ) {
+					update_term_meta( $term_id, $meta_key, $value );
+				}
+			}
+		}
+
+		if ( $this->execute ) {
+			WP_CLI::success( 'Programs are filled in. Edit them in Properties, Programs.' );
+		} else {
+			WP_CLI::success( 'Dry run finished. Nothing was changed.' );
+		}
+	}
+
+	/**
 	 * Create one seeded post, or leave it alone if it exists.
 	 *
 	 * @param string   $key     Seed key, stored in post meta to find it later.
