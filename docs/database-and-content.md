@@ -14,13 +14,16 @@ Git moves files. It does not move anything stored in the database. On this site 
 
 ## Who owns the database
 
-**Staging owns the content.** Editors and developers build pages in the staging admin.
+**Staging's database is the reference for content.** How a page gets there is up to whoever builds it: directly in the staging admin, or on Local and then brought over with one of the methods below.
 
-- Local pulls the database from staging with LocalWP whenever it needs fresh content.
-- Local does not push its database to staging. A database push replaces the whole database. It has no merge and no table selection, so it would erase whatever was built on staging since the last pull.
+Two things are fixed, because they lose work:
+
+- Do not push a whole database from Local to staging. A database push replaces everything. It has no merge and no table selection, so it erases whatever was built on staging since the last pull.
 - Nobody pushes a database to production from LocalWP.
 
-The one exception is the initial setup of the rebuild, when the cleaned-up Local database is pushed to staging once, before anyone starts building there.
+Local pulls the database from staging with LocalWP whenever it needs fresh content.
+
+The rebuild itself was set up on staging with the theme commands over WP-CLI (see "Theme commands"), not with a database push.
 
 ### LocalWP settings
 
@@ -32,13 +35,14 @@ A database pull overwrites your Local database, including your Local admin passw
 
 ## Moving something you built on Local to staging
 
-Never by pushing the database. Use one of these.
+Pick whatever suits the job. Some options:
 
-1. **A block pattern in the theme.** Best for anything reusable. Save the section as a pattern file in the child theme, commit and deploy. It appears in the block inserter on staging.
-2. **Copy and paste the block markup.** Best for one page. In the Local editor, open the options menu and choose Copy all blocks. Paste into the page on staging. Only that page changes, and WordPress keeps a revision.
-3. **WP-CLI over the SSH Gateway.** For many pieces at once. WP Engine gives SSH access with WP-CLI to each environment, once your SSH key is added to your WP Engine profile.
+1. **Build it on staging directly.** No moving at all.
+2. **Copy and paste the block markup.** Handy for one page. In the Local editor, open the options menu and choose Copy all blocks. Paste into the page on staging. Only that page changes, and WordPress keeps a revision.
+3. **A block pattern in the theme.** Handy for anything reusable. Save the section as a pattern file in the child theme, commit and deploy. It appears in the block inserter on staging.
+4. **WP-CLI over the SSH Gateway.** Handy for many pieces at once, or for settings stored in the database. WP Engine gives SSH access with WP-CLI to each environment, once your SSH key is added to your WP Engine profile.
 
-Two things to watch:
+Whatever the method, watch two things:
 
 - **Images.** Blocks store the media library ID of each image, and IDs differ between environments. After pasting, select the images again on staging. In patterns, use images that ship with the theme.
 - **Header and navigation.** The Kadence header block points to its navigation posts by ID. Edit the header and its menus on staging only.
@@ -68,13 +72,13 @@ They are block content, edited in the block editor like any page.
 
 | What | Where to edit it |
 |---|---|
-| Header | Kadence, Header, "Global Header" |
-| Menus | Kadence, Navigation. One for the header and the mobile drawer, one per footer column, one for the legal links |
-| Footer | Kadence, Elements, "Global Footer" |
+| Header | Kadence Blocks > Headers, "Global Header" |
+| Menus | Kadence Blocks > Navigations. One for the header and the mobile drawer, one per footer column, one for the legal links |
+| Footer | Appearance > Elements, "Global Footer" |
 
 The logos and icons are files in the theme, under `assets/images`, not media library items. That keeps them identical on every environment.
 
-A few details cannot be expressed in block settings and live in the theme's `style.css`: the pill shape and size of every Kadence button, the rule above the footer disclosure, and the featured menu item. To feature an item in a dropdown, give its navigation link the CSS class `vm-menu-featured`.
+A few details cannot be expressed in block settings and live in the theme's `style.css`: the pill shape and size of every Kadence button, the rule above the footer disclosure, the featured menu item, and how the logo, buttons and mobile menu behave while the header is sticky. To feature an item in a dropdown, give its navigation link the CSS class `vm-menu-featured`. The sticky header is explained in [components.md](components.md), "Sticky header and mobile menu".
 
 The header and the mobile drawer share one menu, "Header". It turns vertical on tablet and mobile through its own responsive settings, so a link is added once. The footer columns are separate menus, one per column.
 
@@ -99,7 +103,7 @@ All of them are dry runs unless called with `--execute`.
 |---|---|
 | `wp velocity cleanup` | Removes the old Kadence and Beaver Builder front end. Keeps all content, and keeps the header, menus and footer made by `seed-chrome` |
 | `wp velocity seed-chrome` | Creates the header, the menus and the footer |
-| `wp velocity seed-home` | Fills the home page, if it is empty |
+| `wp velocity seed-home` | Fills the home page, if it is empty. `--force` rebuilds it and discards every change made in the editor |
 | `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. Never overwrites a filled field |
 
 On staging they run through the SSH Gateway. The gateway may run an older PHP than the website, so the theme's command code stays compatible with PHP 7.4.

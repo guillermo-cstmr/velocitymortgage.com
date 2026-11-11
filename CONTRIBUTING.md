@@ -54,6 +54,7 @@ The Customizer stays free for everything that is not a style guide token.
 
 - Pages are built with the block editor and Kadence Blocks.
 - If the editor sidebar can express a style, set it on the block. Borders, radius, shadows, padding, backgrounds and text sizes are block settings, not CSS. A CSS class is the exception, for what no block setting can do. [docs/components.md](docs/components.md) has the recipes and the list of classes.
+- When editors need to switch a CSS rule on block by block, register it as a block style (see `inc/block-styles.php` and `inc/animations.php`) so it shows in the block's Styles panel.
 - A section that is used on more than one page becomes a block pattern, saved as a file in the theme. Patterns travel through git and show up in the block inserter on every environment.
 - Patterns must not reference media library images by ID. IDs differ between environments. Use images that ship inside the theme.
 

@@ -33,6 +33,8 @@ git checkout main
 
 Watch the run in the repository's Actions tab. A normal run takes under a minute.
 
+The deploy only moves files. When a change also needs something stored in the database on staging, such as a header setting or a block on a page, that step is done separately: in the staging admin, or with WP-CLI over the SSH Gateway. Write it down in the pull request so it is not forgotten for production.
+
 ## Verifying a deploy
 
 - The run shows a green check.

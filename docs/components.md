@@ -10,9 +10,11 @@ There are three layers. Each thing lives in exactly one of them.
 |---|---|---|
 | Design tokens | Colors, fonts, heading sizes, button style | Code, `inc/tokens.php`. Apply on their own, everywhere |
 | Block settings | Borders, radius, shadows, padding, backgrounds, alignment, text sizes | The editor sidebar, on each block |
-| CSS classes | Only what the sidebar cannot do | `style.css`, listed at the end of this page |
+| CSS classes | Only what the sidebar cannot do | `style.css`, listed under "CSS classes" below |
 
 **If the sidebar can do it, do it in the sidebar.** A style set there is visible to whoever opens the block, and the editor shows exactly what the site shows. Reach for a CSS class only when a block has no setting for what you need.
+
+When such a CSS rule has to be chosen block by block by an editor, it is registered as a **block style**, so it shows up as an option in the block's Styles panel instead of a class to type. The program images and the heading animation work this way. See "Where block styles live in the sidebar".
 
 ## An empty field means "inherit"
 
@@ -118,7 +120,7 @@ To keep cards in a row the same height, turn on "Inner column height 100%" on th
 | Section title | H2. Nothing else, the token does the rest |
 | Intro under a title | Paragraph, size 20, mobile 18, line height 1.31 |
 | Card title | H3, size 22, weight 700 |
-| Closing line of a section | H3, size 30, mobile 22, weight 600, color Deep Rust |
+| Closing line of a section | Paragraph (HTML tag `p`), size 30, mobile 22, weight 600, color Deep Rust. It looks like a heading but is not one |
 | Big number | Paragraph, heading font, size 24, weight 700 |
 | Small label | Paragraph, size 14, line height 1.1 |
 | Pill label | Paragraph, size 14, with the word highlighted. Highlight: indigo text, light blue background, padding 4 and 8, radius 5, weight 600 |
@@ -224,9 +226,9 @@ Where each part lives:
 
 | Part | Where | Value |
 |---|---|---|
-| Sticky | Header settings (Appearance > Kadence Header, open the Global Header and select the Header block): Sticky | On, for desktop, tablet and mobile |
-| Shrink | Same place: Shrink Main Row, with its height per device | On; 72 desktop, 56 tablet, 56 mobile |
-| Background while stuck | Same place: the sticky background | Navy (palette 3). Empty would make the header transparent while stuck, and the white logo and menu would disappear |
+| Sticky | Kadence Blocks > Headers, open "Global Header" and select the Header block: **Sticky Header**, and **Sticky Section** | Yes, for desktop, tablet and mobile. Sticky Section: Whole Header |
+| Shrink | Same place: **Shrink Middle Row** and **Middle Row Shrink Height**, per device | On. 72 desktop, 56 tablet, 56 mobile |
+| Background while stuck | Same place, the header's background for the sticky state | Navy (palette 3). Empty would make the header transparent while stuck, and the white logo and menu would disappear |
 | Logo and buttons shrinking | `style.css`, "Sticky header" | Logo to 80%, buttons to 85%. Kadence only shrinks the row |
 
 The mobile and tablet menu (Off Canvas) opens **under** the header, which stays visible on top. Its top edge follows the header's height at that moment: 72 px at the top of the page, 56 px once scrolled. The hamburger turns into an X while the menu is open and closes it. The panel's own close button is hidden, but still reached with the keyboard. `assets/js/header.js` measures the header and adds the closing; the rules are in `style.css`.
@@ -300,7 +302,7 @@ Keep animations for a few blocks per page: too many make the page feel slow. New
 
 ## Accessibility
 
-The home, header and footer pass axe-core (WCAG 2.2 A and AA) except for color contrast of the brand orange, which is a design decision pending with the designer. Keep it that way when building pages:
+The home, header and footer pass axe-core (WCAG 2.2 A and AA) with one known exception, kept on purpose: the brand orange does not reach the 4.5:1 contrast ratio, on the buttons with white text, on orange text over light backgrounds and on the deal card tag. White text over the brightest frames of the hero video is also below 4.5:1. Both are design decisions. Keep everything else passing when building pages:
 
 - **Headings are structure, not style.** One H1 per page, then H2 for sections and H3 inside them, without skipping levels. A highlighted sentence that only needs to look big is a Text (Adv) block with the HTML tag set to `p` and the size set in its settings.
 - **Menus are named after their title.** Screen readers list every menu as "navigation", so `inc/accessibility.php` gives each Kadence Navigation the title of its menu as its accessible name ("Header", "Footer: Legal"). Rename the menu to change it.

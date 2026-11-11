@@ -30,7 +30,7 @@ Staging is password protected. The credentials are in the WP Engine portal, on t
 ## The three rules
 
 1. **Code travels only through git.** Do not upload tracked files by SFTP and do not push files from LocalWP. The next deploy would overwrite them.
-2. **Content travels only through the database, and staging owns it.** Pages, the header, the footer and Kadence settings are edited on staging. Local pulls the database from staging. Local never pushes its database over staging once the build has started.
+2. **Staging's database is the reference for content.** Pages, the header, the footer and Kadence settings live in the database. Build them on staging directly or on Local and bring them over, as suits you ([docs/database-and-content.md](docs/database-and-content.md) lists the options). Never push a whole Local database over staging: it erases what was built there.
 3. **Nothing goes to production from a laptop.** No LocalWP push to production, ever.
 
 ## Getting started
@@ -62,9 +62,27 @@ git push -u origin feature/short-description
 
 Open a pull request into `main`. To put the change on staging, merge `main` into `staging` and push. That push runs the deploy.
 
+## Project status (November 2026)
+
+Built and on staging:
+
+- The `velocity-kadence` child theme, with the Figma style guide as design tokens, and a style guide page.
+- Header (sticky, shrinking on scroll), menus and footer, as Kadence blocks.
+- The home page, including the background video, the animations and the loan scenario calculator.
+- The loan program details, stored on the programs (Properties > Programs) and read by the calculator.
+- Automatic deploy to staging.
+
+Open:
+
+- The calculator rules marked "Assumption" in `blocks/loan-calculator/config.php` wait for confirmation from Velocity.
+- Many links in menus and buttons point to `#` until their pages exist. The rest of the pages are not built yet.
+- The brand orange is below the WCAG AA contrast ratio. That was kept on purpose, as a design decision.
+- The hero video is the file exported from Figma. A higher quality source may replace it after QA.
+- Production deploys and the launch plan are not set up. See [docs/deployment.md](docs/deployment.md) and [docs/database-and-content.md](docs/database-and-content.md).
+
 ## More documentation
 
 - [CONTRIBUTING.md](CONTRIBUTING.md): branches, commit messages, coding standards, where each kind of code belongs.
 - [docs/deployment.md](docs/deployment.md): how the deploy works, how to verify it, how to roll back.
 - [docs/database-and-content.md](docs/database-and-content.md): how the database moves, how to move content between environments, how Kadence stores its settings.
-- [docs/components.md](docs/components.md): how pages are built. The block settings behind each piece of the home page, and the few CSS classes.
+- [docs/components.md](docs/components.md): how pages are built. The block settings behind each piece of the home page, the few CSS classes, the block styles, the animations, the hero video and the sticky header, with where to find each setting in the editor.
