@@ -546,7 +546,7 @@ class Velocity_Home {
 	}
 
 	/**
-	 * Trust strip: five numbers on the orange band.
+	 * Trust strip: three numbers on the orange band.
 	 *
 	 * @param int $post_id Page ID.
 	 * @return string
@@ -556,8 +556,6 @@ class Velocity_Home {
 			array( '$2B+', 'Annual lending volume' ),
 			array( '$13.8B+', 'Funded since 2004' ),
 			array( '3,000+', 'Approved broker partners' ),
-			array( '20+ years', 'Investor property lending' ),
-			array( 'NYSE: VEL', 'Publicly traded parent' ),
 		);
 
 		$columns = array();
@@ -624,7 +622,7 @@ class Velocity_Home {
 	public static function why( $post_id ) {
 		$cards = array(
 			array( 'icon-join.svg', 'Client Relationships That Last for Decades', 'We lend out for 30 years, so the client you place today stays yours for the long run.' ),
-			array( 'icon-approval-delegation.svg', 'Stable Funding in Shifting Markets', 'Our publicly held model keeps our funding steady—over $11B lent since 2004.' ),
+			array( 'icon-approval-delegation.svg', 'Stable Funding in Shifting Markets', 'Our publicly held model keeps our funding steady—over $13.8B lent since 2004.' ),
 			array( 'icon-directions-alt.svg', 'Direct Answers From Decision Makers', 'We lend and hold our own money, which means you never deal with intermediaries.' ),
 			array( 'icon-steppers.svg', 'Every Deal Sets Up the Next One', 'As your clients grow their portfolios, every new property is an opportunity for you.' ),
 			array( 'icon-trending-up.svg', 'Tools That Keep Your Business Growing', 'Put your own brand on flyers and brochures to make your marketing go further.' ),
@@ -1169,14 +1167,12 @@ class Velocity_Home {
 	 * Frequently asked questions, as native Details blocks.
 	 *
 	 * The class vm-faq styles them and groups them: opening one closes the
-	 * others. Only the first answer is in the design, the rest are placeholders.
+	 * others. Copy from the client-approved homepage copy doc (V1).
 	 *
 	 * @param int $post_id Page ID.
 	 * @return string
 	 */
 	public static function faq( $post_id ) {
-		$pending = 'Answer to be provided.';
-
 		$faqs = array(
 			array(
 				'Is Velocity a bank or a private lender?',
@@ -1185,10 +1181,34 @@ class Velocity_Home {
 					'Private lenders (what we call hard money lenders) only lend for 12 to 24 months, after which the client has to find a new loan, while banks turn down deals that don’t fit their rules. We take the best of both so your client gets the long-term loan they want and you retain your relationship.',
 				),
 			),
-			array( 'Who can work with Velocity?', array( $pending ) ),
-			array( 'Which states need a broker license?', array( $pending ) ),
-			array( 'What is a business purpose loan?', array( $pending ) ),
-			array( 'What is a wholesale lender, and is Velocity one?', array( $pending ) ),
+			array(
+				'Who can work with Velocity?',
+				array(
+					'Independent brokers who place investment property loans. We don’t lend to the public. Instead, brokers register with Velocity and submit loans for approval. Throughout, the broker remains the borrower’s contact.',
+					'Once your first deal is approved and your broker of record signs the approval package, you’re eligible to close loans with us for a year. Your account executive will walk you through all this so that paperwork never slows you down.',
+				),
+			),
+			array(
+				'Which states need a broker license?',
+				array(
+					'California, Nevada, Arizona, Idaho, and Oregon require a broker license to place loans with Velocity. Elsewhere, your brokerage needs to be an LLC or a corporation. Before your first deal, your account executive can confirm what applies to you.',
+					'Rest assured, we lend nationwide for everything from single rentals to commercial buildings. But if you want to be certain of where you stand, register and ask. The account executive who reaches out will know the answers for your state and license.',
+				),
+			),
+			array(
+				'What is a business purpose loan?',
+				array(
+					'A business purpose loan funds property that the borrower will only use for investment or commercial use—they won’t live there. They may be buying a property for cash flow, or cashing out to reinvest in real estate or grow a small business.',
+					'This is the only type of loan Velocity offers, which is why it matters to you as a broker. If your client plans to live in the property, they won’t be eligible. But they’ll qualify if they’re buying a rental, refinancing to buy another, or pulling equity from a rental to buy business equipment.',
+				),
+			),
+			array(
+				'What is a wholesale lender, and is Velocity one?',
+				array(
+					'Technically yes. Because a wholesale lender funds loans through independent mortgage brokers instead of lending to borrowers directly, that makes us one. But rather than passing the file to someone else, we lend our own money and keep the loan.',
+					'That matters because it means the client stays yours. It also means our own people make the decisions on your file. Register with Velocity once, and every deal you bring has that same lender behind it.',
+				),
+			),
 		);
 
 		$items = array();
