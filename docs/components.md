@@ -175,7 +175,7 @@ It is a shortcode because core blocks cannot print a custom field, or a taxonomy
 
 ## The loan calculator
 
-A block of the theme, "Loan Scenario Calculator", in `blocks/loan-calculator`. It has no settings in the editor: the editor shows it as it looks on the site.
+A block of the theme, "Loan Scenario Calculator", in `blocks/loan-calculator`. It has no settings in the editor: the editor shows it as it looks on the site, but it cannot be clicked there. To try it, use Preview or the published page.
 
 Everything it decides comes from one file, `blocks/loan-calculator/config.php`: the options of each select, the programs and their card copy, the rules of each program, and the message shown when no program fits. Changing a threshold or a text is an edit to that file.
 
