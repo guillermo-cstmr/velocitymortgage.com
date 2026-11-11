@@ -216,6 +216,23 @@ Then export the first frame as a WebP or JPEG image under 50 KB for the poster.
 
 The pause button is required by accessibility guidelines (WCAG 2.2.2) for motion longer than five seconds. Kadence has no style settings for it, so its look lives in `style.css`.
 
+## Sticky header and mobile menu
+
+The header stays at the top while the page scrolls, and its main row shrinks: from 103 to 72 px on desktop, from 72 to 56 px on tablet and mobile. The logo and the buttons shrink with it.
+
+Where each part lives:
+
+| Part | Where | Value |
+|---|---|---|
+| Sticky | Header settings (Appearance > Kadence Header, open the Global Header and select the Header block): Sticky | On, for desktop, tablet and mobile |
+| Shrink | Same place: Shrink Main Row, with its height per device | On; 72 desktop, 56 tablet, 56 mobile |
+| Background while stuck | Same place: the sticky background | Navy (palette 3). Empty would make the header transparent while stuck, and the white logo and menu would disappear |
+| Logo and buttons shrinking | `style.css`, "Sticky header" | Logo to 80%, buttons to 85%. Kadence only shrinks the row |
+
+The mobile and tablet menu (Off Canvas) opens **under** the header, which stays visible on top. Its top edge follows the header's height at that moment: 72 px at the top of the page, 56 px once scrolled. The hamburger turns into an X while the menu is open and closes it. The panel's own close button is hidden, but still reached with the keyboard. `assets/js/header.js` measures the header and adds the closing; the rules are in `style.css`.
+
+`style.css` also fixes a Kadence detail: after the menu closes, the hamburger got the inherited navy color on focus and disappeared on the navy header.
+
 ## Where block styles live in the sidebar
 
 Program images and heading animations are **block styles**. They are not in the gear tab, where most Kadence settings are. With the block selected, the top of the sidebar shows two icons: the **gear** (settings) and a **half-filled circle** (styles). Click the half-filled circle: the **Styles** section at the top lists the options, with **Default** meaning none.

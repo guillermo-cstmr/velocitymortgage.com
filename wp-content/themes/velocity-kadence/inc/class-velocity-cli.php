@@ -241,7 +241,18 @@ class Velocity_CLI {
 				return Velocity_Seed::header_content( $post_id, $ids['nav-header'] );
 			},
 			array(
-				'_kad_header_background' => array(
+				'_kad_header_background'             => array(
+					'type'  => 'normal',
+					'color' => 'palette3',
+				),
+				// Sticky on every size; the main row shrinks from 103 (72 on
+				// tablet and mobile) as the page scrolls. See docs/components.md.
+				'_kad_header_isSticky'               => '1',
+				'_kad_header_shrinkMain'             => true,
+				'_kad_header_shrinkMainHeight'       => '72',
+				'_kad_header_shrinkMainHeightTablet' => '56',
+				'_kad_header_shrinkMainHeightMobile' => '56',
+				'_kad_header_backgroundSticky'       => array(
 					'type'  => 'normal',
 					'color' => 'palette3',
 				),

@@ -71,6 +71,25 @@ function vm_enqueue_scripts() {
 add_action( 'wp_enqueue_scripts', 'vm_enqueue_scripts', 20 );
 
 /**
+ * Load the script that places the mobile menu under the sticky header.
+ */
+function vm_enqueue_header_script() {
+	$file = VELOCITY_KADENCE_DIR . '/assets/js/header.js';
+
+	wp_enqueue_script(
+		'velocity-kadence-header',
+		VELOCITY_KADENCE_URI . '/assets/js/header.js',
+		array(),
+		file_exists( $file ) ? (string) filemtime( $file ) : null,
+		array(
+			'strategy'  => 'defer',
+			'in_footer' => true,
+		)
+	);
+}
+add_action( 'wp_enqueue_scripts', 'vm_enqueue_header_script', 20 );
+
+/**
  * Load the same stylesheet inside the block editor, so buttons, the header
  * and the footer look in the editor the way they do on the site.
  */
