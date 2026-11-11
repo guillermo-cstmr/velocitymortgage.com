@@ -114,6 +114,30 @@ class Velocity_Home {
 	}
 
 	/**
+	 * Kadence Animate on Scroll settings: fade up by default, once, with a
+	 * delay that grows with the block's position so a row enters in turn.
+	 *
+	 * @param int    $position  Position of the block in its row, from 0.
+	 * @param string $animation Kadence animation name.
+	 * @return array
+	 */
+	private static function card_animation( $position, $animation = 'fade-up' ) {
+		return array(
+			'kadenceAnimation'  => $animation,
+			'kadenceAOSOptions' => array(
+				array(
+					'duration'    => 600,
+					'offset'      => '',
+					'easing'      => 'ease-out-cubic',
+					'once'        => true,
+					'delay'       => $position * ( 'fade-up' === $animation ? 100 : 150 ),
+					'delayOffset' => '',
+				),
+			),
+		);
+	}
+
+	/**
 	 * A Kadence Text (Adv) block.
 	 *
 	 * Options: tag (h1 to h6, or p), align, size [desktop, tablet, mobile],
@@ -225,6 +249,8 @@ class Velocity_Home {
 				'tag'    => 'h2',
 				'align'  => 'center',
 				'margin' => array( '0', '', '16', '' ),
+				// Block style "Reveal lines" (Styles panel). See inc/animations.php.
+				'class'  => 'is-style-vm-reveal-lines',
 			)
 		);
 	}
@@ -302,21 +328,25 @@ class Velocity_Home {
 	 * @param string $alt     Alternative text. Empty for decorative images.
 	 * @return string
 	 */
-	private static function image( $post_id, $key, $file, $width, $alt = '' ) {
-		$uid = Velocity_Seed::uid( $post_id, 'img-' . $key );
+	private static function image( $post_id, $key, $file, $width, $alt = '', $class = '' ) {
+		$uid   = Velocity_Seed::uid( $post_id, 'img-' . $key );
+		$attrs = array(
+			'imgMaxWidth'     => $width,
+			'linkDestination' => 'none',
+			'uniqueID'        => $uid,
+			'marginDesktop'   => array( '0', '', '0', '' ),
+		);
+		if ( $class ) {
+			$attrs['className'] = $class;
+		}
 
 		return Velocity_Seed::block(
 			'kadence/image',
-			array(
-				'imgMaxWidth'     => $width,
-				'linkDestination' => 'none',
-				'uniqueID'        => $uid,
-				'marginDesktop'   => array( '0', '', '0', '' ),
-			),
+			$attrs,
 			sprintf(
 				'<figure class="wp-block-kadence-image kb-image%1$s%2$s"><img src="%3$s" alt="%4$s" class="kb-img"/></figure>',
 				$uid,
-				'.svg' === substr( $file, -4 ) ? ' image-is-svg' : '',
+				( '.svg' === substr( $file, -4 ) ? ' image-is-svg' : '' ) . ( $class ? ' ' . $class : '' ),
 				esc_url( get_stylesheet_directory_uri() . '/assets/images/home/' . $file ),
 				esc_attr( $alt )
 			)
@@ -495,7 +525,7 @@ class Velocity_Home {
 	}
 
 	/**
-	 * Hero: headline, intro and the main call to action over the blue image.
+	 * Hero: headline, intro and the main call to action over the background video.
 	 *
 	 * @param int $post_id Page ID.
 	 * @return string
@@ -510,6 +540,7 @@ class Velocity_Home {
 					'tag'    => 'h1',
 					'align'  => 'center',
 					'margin' => array( '0', '', '24', '' ),
+					'class'  => 'is-style-vm-reveal-lines',
 				)
 			) . "\n\n" .
 			self::subtitle(
@@ -530,7 +561,24 @@ class Velocity_Home {
 			array(
 				'align'             => 'full',
 				'bgColor'           => Velocity_Seed::color( 'palette3' ),
-				'bgImg'             => get_stylesheet_directory_uri() . '/assets/images/home/hero-background.jpg',
+				// Background video with a pause button, set in the row's Background
+				// settings. bgImg is its poster. See docs/components.md, "Hero video".
+				'backgroundSettingTab' => 'video',
+				'backgroundVideoType'  => 'local',
+				'backgroundVideo'      => array(
+					array(
+						'youTube'  => '',
+						'local'    => get_stylesheet_directory_uri() . '/assets/video/hero.mp4',
+						'localID'  => '',
+						'vimeo'    => '',
+						'ratio'    => '16/9',
+						'btns'     => true,
+						'btnsMute' => false,
+						'loop'     => true,
+						'mute'     => true,
+					),
+				),
+				'bgImg'             => get_stylesheet_directory_uri() . '/assets/images/home/hero-poster.webp',
 				'bgImgSize'         => 'cover',
 				'bgImgPosition'     => 'center center',
 				'overlay'           => Velocity_Seed::color( 'palette3' ),
@@ -635,10 +683,13 @@ class Velocity_Home {
 			foreach ( $row_cards as $index => $card ) {
 				$key   = 'why-card-' . $row_index . '-' . $index;
 				$attrs = self::card(
-					array(
-						'textAlign'         => array( 'center', '', '' ),
-						'justifyContent'    => array( 'center', '', '' ),
-						'verticalAlignment' => 'middle',
+					array_merge(
+						array(
+							'textAlign'         => array( 'center', '', '' ),
+							'justifyContent'    => array( 'center', '', '' ),
+							'verticalAlignment' => 'middle',
+						),
+						self::card_animation( $index )
 					)
 				);
 				if ( $index ) {
@@ -676,7 +727,7 @@ class Velocity_Home {
 			'why-closing',
 			'We help brokers move forward when others hit limits.',
 			array(
-				'tag'    => 'h3',
+				'tag'    => 'p',
 				'align'  => 'center',
 				'color'  => Velocity_Seed::color( 'palette2' ),
 				'size'   => array( 30, '', 22 ),
@@ -717,6 +768,8 @@ class Velocity_Home {
 			$key         = 'program-' . $index;
 			$featured    = 0 === $index;
 			$image_first = 0 === $index || 2 === $index;
+			// Image left: blocks travel right. Image right: they travel left.
+			$slide = $featured ? array() : ( $image_first ? 'fade-right' : 'fade-left' );
 
 			$text = Velocity_Seed::column(
 				$post_id,
@@ -750,17 +803,19 @@ class Velocity_Home {
 					'verticalAlignment' => 'middle',
 					'padding'           => $featured ? array( '32', '24', '32', '0' ) : array( '', '', '', '' ),
 					'tabletPadding'     => $featured ? array( '0', '24', '32', '24' ) : array( '', '', '', '' ),
-				)
+				) + ( $slide ? self::card_animation( 1, $slide ) : array() )
 			);
 
 			$image = Velocity_Seed::column(
 				$post_id,
 				$key . '-image',
-				self::image( $post_id, $key, $program[4], $program[5], $program[6] ),
+				// The photo is a plain rectangle; the cut and the orange bar come from
+				// the image's block style. See inc/block-styles.php.
+				self::image( $post_id, $key, $program[4], $program[5], $program[6], $featured ? 'is-style-vm-cut-right-wide' : ( $image_first ? 'is-style-vm-cut-right' : 'is-style-vm-cut-left' ) ),
 				array(
 					'id'                => $image_first ? 1 : 2,
 					'verticalAlignment' => 'middle',
-				)
+				) + ( $slide ? self::card_animation( 0, $slide ) : array() )
 			);
 
 			$row = Velocity_Seed::row(
@@ -786,7 +841,7 @@ class Velocity_Home {
 					'background'   => Velocity_Seed::color( 'palette9' ),
 					'borderStyle'  => self::border( 'rgba(43,53,120,0.24)' ),
 					'borderRadius' => array( 16, 16, 16, 16 ),
-				)
+				) + self::card_animation( 0 )
 				: array();
 
 			$rows[] = Velocity_Seed::row(
@@ -1038,7 +1093,7 @@ class Velocity_Home {
 					'padding'           => array( '36', '24', '36', '24' ),
 					'rowGap'            => array( 24, '', '' ),
 					'verticalAlignment' => 'bottom',
-				)
+				) + self::card_animation( $index )
 			);
 			if ( $index ) {
 				$attrs['id'] = $index + 1;

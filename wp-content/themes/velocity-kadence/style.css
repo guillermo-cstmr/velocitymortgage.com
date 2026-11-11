@@ -249,6 +249,167 @@ h2 strong {
 }
 
 /*
+ * Background video pause button (hero). Kadence draws it when "Show play and
+ * pause buttons" is on in the row's video background settings, but offers no
+ * style settings for it. Pausing is required by WCAG 2.2.2 for motion that
+ * runs longer than five seconds. See docs/components.md, "Hero video".
+ */
+.kb-background-video-buttons-wrapper {
+	bottom: 24px;
+	right: 24px;
+}
+
+.kb-background-video-buttons-wrapper button.kb-toggle-video-btn {
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	margin: 0;
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-radius: 9999px;
+	background: rgba(1, 7, 57, 0.4);
+	opacity: 0.75;
+	line-height: 1;
+}
+
+.kb-background-video-buttons-wrapper button.kb-toggle-video-btn svg {
+	width: 12px;
+	height: 12px;
+	vertical-align: middle;
+}
+
+.kb-background-video-buttons-wrapper button.kb-toggle-video-btn:hover,
+.kb-background-video-buttons-wrapper button.kb-toggle-video-btn:focus-visible {
+	opacity: 1;
+}
+
+.kb-background-video-buttons-wrapper button.kb-toggle-video-btn:focus-visible {
+	outline: 2px solid var(--global-palette9, #fff);
+	outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+	.kb-background-video-buttons-wrapper {
+		bottom: 16px;
+		right: 16px;
+	}
+}
+
+/*
+ * Reveal lines: the "Reveal lines" block style on Text (Adv) and Heading.
+ * Each word sits in a mask and slides up; words on the same line move
+ * together, one line after the other. assets/js/reveal-lines.js wraps the
+ * words; until it has, the heading waits hidden (only while JS runs).
+ */
+html.vm-js .is-style-vm-reveal-lines:not(.vm-reveal-ready) {
+	visibility: hidden;
+}
+
+.is-style-vm-reveal-lines .vm-line-mask {
+	display: inline-block;
+	overflow: hidden;
+	vertical-align: top;
+	padding: 0.1em 0 0.15em;
+	margin: -0.1em 0 -0.15em;
+}
+
+/* Lines enter tilted by --vm-reveal-angle and straighten as they land.
+   --vm-drop (set by the script) lowers each word by its distance from the
+   start of its line, so the line, not the word, looks rotated. */
+.is-style-vm-reveal-lines .vm-line-word {
+	--vm-reveal-angle: 6deg;
+	display: inline-block;
+	transform: translateY(calc(115% + var(--vm-drop, 0px))) rotate(var(--vm-reveal-angle));
+	transform-origin: 0 100%;
+	transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+	transition-delay: calc(var(--vm-line, 0) * 0.12s);
+}
+
+.is-style-vm-reveal-lines.vm-reveal-in .vm-line-word {
+	transform: none;
+}
+
+/*
+ * Reduced motion: no heading reveal, and Kadence's Animate on Scroll (which
+ * ignores the setting) shows blocks in place.
+ */
+@media (prefers-reduced-motion: reduce) {
+	.is-style-vm-reveal-lines .vm-line-word {
+		transform: none;
+		transition: none;
+	}
+
+	[data-aos] {
+		opacity: 1 !important;
+		transform: none !important;
+		transition: none !important;
+	}
+}
+
+/*
+ * Program images: block styles "Program: cut left", "Program: cut right" and
+ * "Program: wide cut right" on the Image block (inc/block-styles.php). The
+ * photo is a plain rectangle; on desktop these rules cut its inner edge on a
+ * diagonal and lay an orange bar along the cut, measured from the Figma. On
+ * tablet and mobile the image sits above the text and shows whole.
+ */
+.wp-block-kadence-image[class*="is-style-vm-cut"] {
+	position: relative;
+}
+
+.wp-block-kadence-image[class*="is-style-vm-cut"] img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 16px;
+}
+
+/* The featured program sits inside a card with a 1px border. */
+.wp-block-kadence-image.is-style-vm-cut-right-wide img {
+	border-radius: 15px 15px 0 0;
+}
+
+@media (min-width: 1025px) {
+	.wp-block-kadence-image.is-style-vm-cut-left img {
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 8.21% 100%);
+		border-radius: 0 16px 16px 0;
+	}
+
+	.wp-block-kadence-image.is-style-vm-cut-right img {
+		clip-path: polygon(0 0, 100% 0, 91.79% 100%, 0 100%);
+		border-radius: 16px 0 0 16px;
+	}
+
+	.wp-block-kadence-image.is-style-vm-cut-right-wide img {
+		clip-path: polygon(0 0, 100% 0, 81.5% 100%, 0 100%);
+		border-radius: 15px 0 0 15px;
+	}
+
+	/* The orange bar, tilted like the cut (6.66 degrees). */
+	.wp-block-kadence-image.is-style-vm-cut-left::after,
+	.wp-block-kadence-image.is-style-vm-cut-right::after {
+		content: "";
+		position: absolute;
+		top: 60.84%;
+		width: 5.07%;
+		height: 40.53%;
+		background: var(--global-palette1);
+		pointer-events: none;
+	}
+
+	.wp-block-kadence-image.is-style-vm-cut-left::after {
+		left: 4.93%;
+		clip-path: polygon(0 6%, 93.26% 0, 100% 100%, 0 97.97%);
+		transform: rotate(-6.66deg);
+	}
+
+	.wp-block-kadence-image.is-style-vm-cut-right::after {
+		right: 4.93%;
+		clip-path: polygon(6.74% 0, 100% 6%, 100% 97.97%, 0 100%);
+		transform: rotate(6.66deg);
+	}
+}
+
+/*
  * vm-deals: a Query Loop of properties shown as deal cards.
  * The Query Loop is made of core blocks, which have no card settings in this
  * theme, and the whole card has to be clickable, which no block offers.

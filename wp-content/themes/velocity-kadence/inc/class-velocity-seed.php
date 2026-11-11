@@ -636,8 +636,33 @@ class Velocity_Seed {
 				),
 				$attrs
 			),
-			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"><div class="kt-inside-inner-col">' . $inner . '</div></div>'
+			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
 		);
+	}
+
+	/**
+	 * HTML attributes for Kadence's Animate on Scroll, as the block saves them.
+	 *
+	 * @param array $attrs Block attributes.
+	 * @return string
+	 */
+	public static function aos_markup( $attrs ) {
+		if ( empty( $attrs['kadenceAnimation'] ) ) {
+			return '';
+		}
+
+		$o   = isset( $attrs['kadenceAOSOptions'][0] ) ? $attrs['kadenceAOSOptions'][0] : array();
+		$out = ' data-aos="' . esc_attr( $attrs['kadenceAnimation'] ) . '"';
+		foreach ( array( 'offset', 'duration', 'delay', 'easing' ) as $key ) {
+			if ( ! empty( $o[ $key ] ) ) {
+				$out .= ' data-aos-' . $key . '="' . esc_attr( $o[ $key ] ) . '"';
+			}
+		}
+		if ( isset( $o['once'] ) && '' !== $o['once'] ) {
+			$out .= ' data-aos-once="' . ( true === $o['once'] ? 'true' : esc_attr( $o['once'] ) ) . '"';
+		}
+
+		return $out;
 	}
 
 	/**
@@ -822,6 +847,27 @@ class Velocity_Seed {
 			)
 		);
 
-		return $main . "\n\n" . $legal;
+		// One <footer> element around both rows: the Group's HTML element
+		// setting (Advanced). It is the page's footer landmark.
+		return self::footer_landmark( $main . "\n\n" . $legal );
+	}
+
+	/**
+	 * A Group block rendered as <footer>, with no spacing of its own.
+	 *
+	 * @param string $inner Inner blocks.
+	 * @return string
+	 */
+	public static function footer_landmark( $inner ) {
+		return self::block(
+			'group',
+			array(
+				'tagName'  => 'footer',
+				'metadata' => array( 'name' => 'Footer' ),
+				'style'    => array( 'spacing' => array( 'blockGap' => '0' ) ),
+				'layout'   => array( 'type' => 'default' ),
+			),
+			'<footer class="wp-block-group">' . "\n" . $inner . "\n" . '</footer>'
+		);
 	}
 }

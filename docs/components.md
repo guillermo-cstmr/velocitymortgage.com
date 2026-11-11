@@ -183,6 +183,115 @@ What it shows comes from the programs themselves, in Properties, Programs: name,
 
 The rules that are assumptions, pending confirmation from Velocity, are marked "Assumption" in that file.
 
+## Hero video
+
+The home hero plays a looping background video. It is set in the Hero row's own settings, so anyone can change it without code:
+
+1. Open the home page in the editor and select the **Hero** row (List View helps).
+2. In the sidebar, open **Background** and choose the **Video** tab.
+3. Replace the video file. Keep "Show play and pause buttons" on.
+4. Replace the **Background image** too, with a still of the video's first frame. It is the poster: what visitors see before the video starts, and what they keep if they asked for reduced motion or data saving.
+5. Update.
+
+### Preparing the file
+
+WordPress refuses video uploads over 2 MB, with a message that points here. To get a video under that, use [HandBrake](https://handbrake.fr/) (free):
+
+1. Open the video and pick the preset **Web > Creator 1080p60**, or any 1080p preset.
+2. **Dimensions:** width 1920 at most. Never enlarge a smaller video, it only adds weight.
+3. **Video:** encoder H.264 (x264), framerate "Same as source" and Constant Framerate, Constant Quality **RF 22**. If the file is still over 2 MB, raise RF one step at a time, up to 26. Above that, gradients turn blocky.
+4. **Audio:** remove every track. Background videos are muted.
+5. **Summary:** tick **Web Optimized**, so the video starts playing before it has fully downloaded.
+6. Keep it short, 10 to 15 seconds, and check that the last frame flows into the first: the video loops.
+
+Then export the first frame as a WebP or JPEG image under 50 KB for the poster.
+
+### What the theme does with it
+
+`inc/background-video.php` and `assets/js/bg-video.js` keep the video from slowing the page, for any row with a video background:
+
+- The poster of the first row on a page is preloaded with high priority. It is what Largest Contentful Paint measures.
+- The video file is only requested after the page has finished loading.
+- Visitors with reduced motion or data saving turned on keep the poster, and the play button is hidden.
+
+The pause button is required by accessibility guidelines (WCAG 2.2.2) for motion longer than five seconds. Kadence has no style settings for it, so its look lives in `style.css`.
+
+## Where block styles live in the sidebar
+
+Program images and heading animations are **block styles**. They are not in the gear tab, where most Kadence settings are. With the block selected, the top of the sidebar shows two icons: the **gear** (settings) and a **half-filled circle** (styles). Click the half-filled circle: the **Styles** section at the top lists the options, with **Default** meaning none.
+
+The **Preset** field under the gear is a Kadence feature unrelated to these styles.
+
+## Program images
+
+The program photos are plain rectangles, so anyone can replace one in the editor without a designer. The diagonal cut, the rounded corners and the orange bar along the cut come from the image's block style.
+
+To set or change it:
+
+1. Click the program image (Image block).
+2. In the sidebar, click the **half-filled circle** icon.
+3. Under **Styles**, pick the one for that program:
+
+| Style | Use it when | On desktop |
+|---|---|---|
+| Program: cut left | The image is on the right of the text (Fast50, Super Jumbo) | Cut on the left edge, orange bar along it |
+| Program: cut right | The image is on the left of the text (Flex I/O) | Cut on the right edge, orange bar along it |
+| Program: wide cut right | The featured program inside the white card (30-Year Fixed) | Wider cut on the right, no bar |
+
+To replace a photo, use **Replace** in the image toolbar: the style stays. Upload photos in landscape, about 1084 x 762 px (the featured one square, about 1043 x 1043). Anything drawn on the photo itself, like the orange arrow on 30-Year Fixed, is part of that photo and goes away when it is replaced.
+
+The cut shows in the editor too. On tablet and mobile the image sits above the text and shows whole, with rounded corners. The geometry, measured from the Figma, is in `style.css`, "Program images" (`inc/block-styles.php` registers the styles).
+
+## Animations
+
+Two kinds, set in different places. Neither plays inside the editor: check them on the page itself (save, then reload the page with Ctrl+F5). Visitors who turned on reduced motion in their system see everything still, and so do you if your computer has it on.
+
+### Headings: "Reveal lines"
+
+Each line slides up from behind a mask, tilted a few degrees and straightening as it lands, one line after the other. It plays on load for a heading on screen (the hero H1) and on scroll for the rest.
+
+To turn it on or off:
+
+1. Click the heading (Text (Adv) or Heading block).
+2. In the sidebar, click the **half-filled circle** icon.
+3. Under **Styles**, pick **Reveal lines** to animate it, or **Default** to stop.
+
+There is nothing else to set: timing and tilt are the same across the site. On the home it is on the H1 and every H2. Use it on main headings only (H1, H2), not on card titles or body text.
+
+For developers: `inc/animations.php`, `assets/js/reveal-lines.js` and "Reveal lines" in `style.css`. To change the tilt, edit `--vm-reveal-angle` in `style.css` and the angle at the top of the script.
+
+### Cards and program blocks: Animate on Scroll
+
+Kadence Blocks Pro's own setting, on the **Column** that holds the card or the image or text.
+
+1. Click anything inside the card, then select its **Column**: use the breadcrumb at the bottom of the editor, or List View (the icon with three lines at the top left).
+2. In the sidebar, stay on the **gear** icon and open the **Advanced** tab.
+3. Open **Animate on Scroll** and fill in the values below.
+
+Values used on the home:
+
+| Where | Animation | Duration | Delay | Easing | Once |
+|---|---|---|---|---|---|
+| Cards in a row (Why Velocity, Resources) | Fade up | 600 | 0, 100, 200 for the first, second and third card | Ease out cubic | On |
+| 30-Year Fixed (the white card's Column) | Fade up | 600 | 0 | Ease out cubic | On |
+| Other programs, image Column | Fade left if the image is on the right, Fade right if it is on the left | 600 | 0 | Ease out cubic | On |
+| Other programs, text Column | Same as its image | 600 | 150 | Ease out cubic | On |
+
+Leave **Offset** empty: the animation starts as the block comes into view. To remove an animation, set Animation to none.
+
+Keep animations for a few blocks per page: too many make the page feel slow. New cards in a row follow the same pattern: the delay grows 100 per card.
+
+## Accessibility
+
+The home, header and footer pass axe-core (WCAG 2.2 A and AA) except for color contrast of the brand orange, which is a design decision pending with the designer. Keep it that way when building pages:
+
+- **Headings are structure, not style.** One H1 per page, then H2 for sections and H3 inside them, without skipping levels. A highlighted sentence that only needs to look big is a Text (Adv) block with the HTML tag set to `p` and the size set in its settings.
+- **Menus are named after their title.** Screen readers list every menu as "navigation", so `inc/accessibility.php` gives each Kadence Navigation the title of its menu as its accessible name ("Header", "Footer: Legal"). Rename the menu to change it.
+- **The footer is one `<footer>` element.** In the Global Footer element, both rows sit inside a Group whose HTML element (Advanced) is `footer`. Keep new footer rows inside that Group.
+- **Images:** describe images that carry information in their Alt text. Leave Alt empty only for decoration, such as the card icons.
+- **Moving backgrounds keep their pause button.** See "Hero video".
+- **Text over images or video:** check contrast against the lightest part of the background. Raise the row's overlay opacity if needed.
+
 ## The style guide page
 
 `/?velocity-styleguide=1` renders the tokens as the theme outputs them. It is visible to logged-in administrators, and to anyone on a local environment.
