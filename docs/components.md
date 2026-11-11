@@ -156,7 +156,6 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-deal-card` | The Group around each post in that Query Loop | The card itself. Inside it go a Featured Image block and a Shortcode block with `[vm_deal_info]` |
 | `vm-faq` | Details | Styles a frequently asked question. Details has no styling settings. Questions placed one after another act as a group: opening one closes the others, and one always stays open. Tick "Open by default" on the first |
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule, bold text and an arrow. Navigation has no per-item styling |
-| `vm-placeholder` | Text (Adv) | Marks where something not built yet will go. Delete the block when the real thing exists |
 | `vm-footer-main`, `vm-footer-legal` | The two rows of the footer | Line heights, the rule above the legal text, and the underline on legal links |
 
 ## The deal card
@@ -173,6 +172,14 @@ The text of a deal card comes from the shortcode `[vm_deal_info]`, defined in `i
 A line is left out when the property has no value for it, so an incomplete card means incomplete data on that property. The one exception is the closing time tag: without a value it still keeps its space, invisibly, so the titles line up across the cards. The title links to the property, and that link covers the whole card.
 
 It is a shortcode because core blocks cannot print a custom field, or a taxonomy term without turning it into a link. In the editor the block shows the shortcode text, not the result.
+
+## The loan calculator
+
+A block of the theme, "Loan Scenario Calculator", in `blocks/loan-calculator`. It has no settings in the editor: the editor shows it as it looks on the site.
+
+Everything it decides comes from one file, `blocks/loan-calculator/config.php`: the options of each select, the programs and their card copy, the rules of each program, and the message shown when no program fits. Changing a threshold or a text is an edit to that file.
+
+The rules that are assumptions, pending confirmation from Velocity, are marked "Assumption" in that file.
 
 ## The style guide page
 

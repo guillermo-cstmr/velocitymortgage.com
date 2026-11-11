@@ -249,20 +249,6 @@ h2 strong {
 }
 
 /*
- * vm-placeholder: marks where something not built yet will go.
- * Delete the block when the real thing exists.
- */
-.vm-placeholder {
-	max-width: 908px;
-	margin: 0 auto 48px;
-	padding: 120px 24px;
-	border: 2px dashed var(--global-palette5);
-	border-radius: 16px;
-	background: var(--global-palette8);
-	color: var(--global-palette5);
-}
-
-/*
  * vm-deals: a Query Loop of properties shown as deal cards.
  * The Query Loop is made of core blocks, which have no card settings in this
  * theme, and the whole card has to be clickable, which no block offers.

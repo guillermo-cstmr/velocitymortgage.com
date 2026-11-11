@@ -25,6 +25,14 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 }
 
 /**
+ * Blocks that ship with the theme. Each one is a folder under blocks/.
+ */
+function vm_register_blocks() {
+	register_block_type( VELOCITY_KADENCE_DIR . '/blocks/loan-calculator' );
+}
+add_action( 'init', 'vm_register_blocks' );
+
+/**
  * Load the child theme stylesheet after Kadence's own styles.
  */
 function vm_enqueue_styles() {
