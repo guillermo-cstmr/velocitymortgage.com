@@ -17,13 +17,46 @@ defined( 'ABSPATH' ) || exit;
 $vm_calc = require __DIR__ . '/config.php';
 $vm_id   = wp_unique_id( 'vm-calc-' );
 
+/*
+ * Each program's name, copy and terms come from its entry in Properties,
+ * Programs. A field left empty there is left out of the card.
+ */
+$vm_programs = array();
+foreach ( $vm_calc['programs'] as $vm_key => $vm_program ) {
+	$vm_term = get_term_by( 'slug', $vm_program['term'], 'velocity-property-program' );
+	$vm_meta = array();
+
+	foreach ( array( 'description', 'loan_amounts', 'max_ltv', 'term', 'time_to_close', 'page' ) as $vm_field ) {
+		$vm_meta[ $vm_field ] = $vm_term ? trim( (string) get_term_meta( $vm_term->term_id, 'velocity_program_' . $vm_field, true ) ) : '';
+	}
+
+	$vm_name = $vm_term ? $vm_term->name : $vm_program['term'];
+
+	$vm_programs[ $vm_key ] = array(
+		'name'        => $vm_name,
+		'description' => $vm_meta['description'],
+		'url'         => '' !== $vm_meta['page'] ? $vm_meta['page'] : '#',
+		'link'        => 'Explore ' . $vm_name,
+		'specs'       => array_filter(
+			array(
+				'Loan amounts'  => $vm_meta['loan_amounts'],
+				'Max LTV'       => $vm_meta['max_ltv'],
+				'Term'          => $vm_meta['term'],
+				'Time to close' => $vm_meta['time_to_close'],
+			),
+			'strlen'
+		),
+		'rules'       => $vm_program['rules'],
+	);
+}
+
 // What the browser needs to decide: the rules, not the copy.
 $vm_rules = array(
 	'programs' => array(),
 	'reasons'  => $vm_calc['reasons'],
 	'noFit'    => $vm_calc['no_fit']['default'],
 );
-foreach ( $vm_calc['programs'] as $vm_key => $vm_program ) {
+foreach ( $vm_programs as $vm_key => $vm_program ) {
 	$vm_rules['programs'][ $vm_key ] = array(
 		'name'  => $vm_program['name'],
 		'rules' => $vm_program['rules'],
@@ -59,16 +92,18 @@ $vm_check = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" 
 	<div class="vm-calc__result">
 		<p class="screen-reader-text vm-calc__status" role="status" aria-live="polite"></p>
 
-		<?php foreach ( $vm_calc['programs'] as $vm_key => $vm_program ) : ?>
+		<?php foreach ( $vm_programs as $vm_key => $vm_program ) : ?>
 			<article class="vm-calc__card" data-program="<?php echo esc_attr( $vm_key ); ?>"<?php echo $vm_key === $vm_calc['default_program'] ? '' : ' hidden'; ?>>
 				<div class="vm-calc__card-head">
 					<h3 class="vm-calc__title"><?php echo esc_html( $vm_program['name'] ); ?></h3>
 					<span class="vm-calc__badge"><?php echo $vm_check; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>Fits</span>
 				</div>
-				<p class="vm-calc__desc"><?php echo esc_html( $vm_program['description'] ); ?></p>
+				<?php if ( '' !== $vm_program['description'] ) : ?>
+					<p class="vm-calc__desc"><?php echo esc_html( $vm_program['description'] ); ?></p>
+				<?php endif; ?>
 				<dl class="vm-calc__specs">
-					<?php foreach ( $vm_program['specs'] as $vm_term => $vm_value ) : ?>
-						<div><dt><?php echo esc_html( $vm_term ); ?></dt><dd><?php echo esc_html( $vm_value ); ?></dd></div>
+					<?php foreach ( $vm_program['specs'] as $vm_label => $vm_value ) : ?>
+						<div><dt><?php echo esc_html( $vm_label ); ?></dt><dd><?php echo esc_html( $vm_value ); ?></dd></div>
 					<?php endforeach; ?>
 				</dl>
 				<a class="vm-calc__link" href="<?php echo esc_url( $vm_program['url'] ); ?>"><?php echo esc_html( $vm_program['link'] ); ?></a>

@@ -14,6 +14,7 @@ class Velocity_Properties {
 
 		add_action( 'init', array( __CLASS__, 'cpt_setup' ) );
 		add_action( 'cmb2_admin_init', array( __CLASS__, 'info_meta_box' ) );
+		add_action( 'cmb2_admin_init', array( __CLASS__, 'program_meta_box' ) );
 		add_shortcode( 'velocity_property_date', array( __CLASS__, 'date_shortcode' ) );
 		add_shortcode( 'velocity_money_dollars', array( __CLASS__, 'money_shortcode' ) );
 	}
@@ -94,6 +95,65 @@ class Velocity_Properties {
 			)
 		);
 
+	}
+
+	/**
+	 * Fields on each loan program, in Properties, Programs.
+	 *
+	 * A program's description and terms are written here once. The loan
+	 * calculator and the program pages read them from here, so they never
+	 * disagree.
+	 */
+	public static function program_meta_box() {
+
+		$program = new_cmb2_box( array(
+			'id'           => 'velocity_program_meta_box',
+			'title'        => __( 'Program details', 'velocitymu' ),
+			'object_types' => array( 'term' ),
+			'taxonomies'   => array( 'velocity-property-program' ),
+		) );
+
+		$program->add_field( array(
+			'name' => __( 'Short description', 'velocitymu' ),
+			'id'   => 'velocity_program_description',
+			'type' => 'textarea_small',
+			'desc' => __( 'One sentence. Shown on the calculator result.', 'velocitymu' ),
+		) );
+
+		$program->add_field( array(
+			'name' => __( 'Loan amounts', 'velocitymu' ),
+			'id'   => 'velocity_program_loan_amounts',
+			'type' => 'text_medium',
+			'desc' => __( 'For example: $75K – $2MM', 'velocitymu' ),
+		) );
+
+		$program->add_field( array(
+			'name' => __( 'Max LTV', 'velocitymu' ),
+			'id'   => 'velocity_program_max_ltv',
+			'type' => 'text_small',
+			'desc' => __( 'For example: 75%', 'velocitymu' ),
+		) );
+
+		$program->add_field( array(
+			'name' => __( 'Term', 'velocitymu' ),
+			'id'   => 'velocity_program_term',
+			'type' => 'text_medium',
+			'desc' => __( 'For example: Fixed for 30 years', 'velocitymu' ),
+		) );
+
+		$program->add_field( array(
+			'name' => __( 'Time to close', 'velocitymu' ),
+			'id'   => 'velocity_program_time_to_close',
+			'type' => 'text_medium',
+			'desc' => __( 'For example: 2 weeks to 45 days', 'velocitymu' ),
+		) );
+
+		$program->add_field( array(
+			'name' => __( 'Program page', 'velocitymu' ),
+			'id'   => 'velocity_program_page',
+			'type' => 'text_url',
+			'desc' => __( 'Link to the page about this program. Leave empty until the page exists.', 'velocitymu' ),
+		) );
 	}
 
 	/**

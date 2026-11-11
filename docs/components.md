@@ -177,7 +177,9 @@ It is a shortcode because core blocks cannot print a custom field, or a taxonomy
 
 A block of the theme, "Loan Scenario Calculator", in `blocks/loan-calculator`. It has no settings in the editor: the editor shows it as it looks on the site, but it cannot be clicked there. To try it, use Preview or the published page.
 
-Everything it decides comes from one file, `blocks/loan-calculator/config.php`: the options of each select, the programs and their card copy, the rules of each program, and the message shown when no program fits. Changing a threshold or a text is an edit to that file.
+What it decides comes from `blocks/loan-calculator/config.php`: the options of each select, the rules of each program, and the messages shown when no program fits.
+
+What it shows comes from the programs themselves, in Properties, Programs: name, short description, loan amounts, max LTV, term, time to close and the link to the program page. Those are the same programs the deals are tagged with, so a program's details are written once. A field left empty is left out of the card.
 
 The rules that are assumptions, pending confirmation from Velocity, are marked "Assumption" in that file.
 
