@@ -48,6 +48,23 @@ class Velocity_Case_Studies {
 		add_action( 'cmb2_admin_init', array( __CLASS__, 'info_meta_box' ) );
 		add_action( 'save_post_' . self::POST_TYPE, array( __CLASS__, 'refresh' ), 99 );
 		add_action( 'save_post_velocity-property', array( __CLASS__, 'refresh_from_deal' ), 99 );
+		add_filter( 'wpseo_metabox_prio', array( __CLASS__, 'yoast_below' ) );
+	}
+
+	/**
+	 * Keeps Yoast below the deal box on case studies, so the deal is the
+	 * first thing under the content.
+	 */
+	public static function yoast_below( $priority ) {
+
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+			if ( $screen && self::POST_TYPE === $screen->post_type ) {
+				return 'low';
+			}
+		}
+
+		return $priority;
 	}
 
 	/**
@@ -102,6 +119,7 @@ class Velocity_Case_Studies {
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
+			'closed'       => false,
 			'show_names'   => true,
 		) );
 
