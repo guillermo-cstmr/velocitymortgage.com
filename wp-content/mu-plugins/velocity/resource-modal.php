@@ -31,6 +31,9 @@ class Velocity_Resource_Modal {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 		add_filter( 'gform_pre_render_' . self::FORM_ID, array( __CLASS__, 'button_text' ) );
 		add_filter( 'gform_submit_button_' . self::FORM_ID, array( __CLASS__, 'follow_up_text' ) );
+		// The form lives in a modal: no scrolling to it after sending. Gravity
+		// Forms' scroll fails there and stops the confirmation event.
+		add_filter( 'gform_confirmation_anchor_' . self::FORM_ID, '__return_false' );
 	}
 
 	/**
