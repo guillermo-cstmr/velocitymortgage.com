@@ -111,6 +111,59 @@ The application form on the job page is Gravity Form 3, "Career Application". On
 
 `wp velocity cleanup` keeps all of these. The list is in `PROTECTED_POSTS` and `PAGE_SLUGS_TO_KEEP` in `inc/class-velocity-cli.php`.
 
+## Deals and case studies
+
+Both are defined in the must-use plugin: deals in `cpt-properties.php`, case studies in `cpt-case-studies.php`.
+
+### Deals
+
+Deals are the posts under Properties. Featured Deals lists them.
+
+Their taxonomies are Program, Purpose, Type, AE and Region.
+
+Region starts empty. It gets its terms once the client sends the list of regions, and then each deal is tagged.
+
+"Days to Close" is a number of days. "Processed Details Text" stays as free text for the card's closing time tag.
+
+### Sorting
+
+Loan amounts are typed as text, for example `1,120,000`, which does not sort as a number. On every save, the plugin keeps a plain number copy next to it. The Kadence sort options use these fields:
+
+| Sort | Field | Type |
+|---|---|---|
+| Amount, deals | `velocity_property_loan_amount_number` | Numeric |
+| Date, deals | `velocity_property_date_funded` | Text. Dates are saved as `2026-04-13`, which sorts correctly as text |
+| Amount, case studies | `velocity_case_study_loan_amount_number` | Numeric |
+| Date, case studies | `velocity_case_study_date` | Text |
+
+### Case studies
+
+A case study tells the story of one deal. In its "Deal at a glance" box, choose that deal. On save, the case study copies from it:
+
+- the program, purpose, type, AE and region terms;
+- the amount, date, days to close and location.
+
+Those fields are then locked on the case study. They are edited on the deal, and every case study linked to it updates when the deal is saved.
+
+A story that is not one of the deals is entered by hand: leave "Deal" on "None" and fill the fields and the terms on the case study.
+
+The copies exist because Kadence query cards, filters and sorting only read the post they list. They cannot reach into a linked deal.
+
+For Kadence dynamic content, a case study also has these fields:
+
+| Field | Holds |
+|---|---|
+| `velocity_case_study_program` | Program name |
+| `velocity_case_study_program_url` | The program's page, from the program's "Program page" field |
+| `velocity_case_study_purpose` | Purpose name |
+| `velocity_case_study_ae_name` | AE name |
+| `velocity_case_study_ae_title` | AE title, from the AE's profile |
+| `velocity_case_study_ae_photo`, `velocity_case_study_ae_photo_id` | AE photo, from the AE's profile |
+
+The AE's title and photo need the AE linked to their profile once. Open Properties > AEs, edit the AE, and choose the profile in "AE profile". The profiles are the posts under AEs.
+
+The summary on the case study cards and header is the case study's excerpt.
+
 ## Staging does not send email or leads
 
 Staging started as a copy of production, so its forms pointed at real inboxes and at the production lead pipeline. Two settings in the staging database stop that:

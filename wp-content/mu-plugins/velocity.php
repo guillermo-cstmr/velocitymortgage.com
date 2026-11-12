@@ -39,6 +39,7 @@ require_once VELOCITY_PATH . 'global-scripts.php';
 require_once VELOCITY_PATH . 'cpt-careers.php';
 require_once VELOCITY_PATH . 'cpt-press.php';
 require_once VELOCITY_PATH . 'cpt-properties.php';
+require_once VELOCITY_PATH . 'cpt-case-studies.php';
 require_once VELOCITY_PATH . 'cpt-win.php';
 require_once VELOCITY_PATH . 'cpt-staff.php';
 require_once VELOCITY_PATH . 'cpt-account-executive.php';

@@ -15,6 +15,10 @@ class Velocity_Properties {
 		add_action( 'init', array( __CLASS__, 'cpt_setup' ) );
 		add_action( 'cmb2_admin_init', array( __CLASS__, 'info_meta_box' ) );
 		add_action( 'cmb2_admin_init', array( __CLASS__, 'program_meta_box' ) );
+		add_action( 'cmb2_admin_init', array( __CLASS__, 'ae_meta_box' ) );
+		add_action( 'added_post_meta', array( __CLASS__, 'sync_loan_amount_number' ), 10, 4 );
+		add_action( 'updated_post_meta', array( __CLASS__, 'sync_loan_amount_number' ), 10, 4 );
+		add_action( 'deleted_post_meta', array( __CLASS__, 'delete_loan_amount_number' ), 10, 4 );
 		add_shortcode( 'velocity_property_date', array( __CLASS__, 'date_shortcode' ) );
 		add_shortcode( 'velocity_money_dollars', array( __CLASS__, 'money_shortcode' ) );
 	}
@@ -92,6 +96,20 @@ class Velocity_Properties {
 				'singular' => __( 'AE', 'velocitymu' ),
 				'plural'   => __( 'AEs', 'velocitymu' ),
 				'slug'     => 'property-ae',
+			)
+		);
+
+		register_extended_taxonomy(
+			'velocity-property-region',
+			'velocity-property',
+			array(
+				'hierarchical' => true,
+				'show_in_rest' => true,
+			),
+			array(
+				'singular' => __( 'Region', 'velocitymu' ),
+				'plural'   => __( 'Regions', 'velocitymu' ),
+				'slug'     => 'property-region',
 			)
 		);
 
@@ -244,6 +262,113 @@ class Velocity_Properties {
 			'type' => 'text_medium',
 			'desc' => 'Example: Closed in 15 days',
 		) );
+
+		$info_meta_box->add_field( array(
+			'name'       => __( 'Days to Close', 'velocitymu' ),
+			'id'         => 'velocity_property_days_to_close',
+			'type'       => 'text_small',
+			'desc'       => __( 'Number of days from application to funding, ex. 21', 'velocitymu' ),
+			'attributes' => array(
+				'type' => 'number',
+				'min'  => '0',
+			),
+		) );
+	}
+
+	/**
+	 * Links each AE term to its profile in AEs, for the photo and title.
+	 */
+	public static function ae_meta_box() {
+
+		$ae = new_cmb2_box( array(
+			'id'           => 'velocity_property_ae_meta_box',
+			'title'        => __( 'AE profile', 'velocitymu' ),
+			'object_types' => array( 'term' ),
+			'taxonomies'   => array( 'velocity-property-ae' ),
+		) );
+
+		$ae->add_field( array(
+			'name'       => __( 'AE profile', 'velocitymu' ),
+			'id'         => 'velocity_property_ae_profile',
+			'type'       => 'select',
+			'desc'       => __( 'The page in AEs for this person. Case studies take the photo and title from it.', 'velocitymu' ),
+			'options_cb' => array( __CLASS__, 'ae_profile_options' ),
+		) );
+	}
+
+	/**
+	 * Options for the AE profile select.
+	 */
+	public static function ae_profile_options() {
+
+		$options = array( '' => __( '— None —', 'velocitymu' ) );
+		$aes     = get_posts( array(
+			'post_type'      => 'velocity-ae',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		) );
+
+		foreach ( $aes as $ae ) {
+			$options[ $ae->ID ] = $ae->post_title;
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Loan amounts are typed as text, ex. 1,120,000. A copy as a plain
+	 * number is kept next to it, so lists can sort by amount.
+	 */
+	public static function sync_loan_amount_number( $meta_id, $post_id, $meta_key, $meta_value ) {
+
+		$keys = array(
+			'velocity_property_loan_amount'   => 'velocity_property_loan_amount_number',
+			'velocity_case_study_loan_amount' => 'velocity_case_study_loan_amount_number',
+		);
+
+		if ( ! isset( $keys[ $meta_key ] ) ) {
+			return;
+		}
+
+		$number = self::to_number( $meta_value );
+
+		if ( null === $number ) {
+			delete_post_meta( $post_id, $keys[ $meta_key ] );
+			return;
+		}
+
+		update_post_meta( $post_id, $keys[ $meta_key ], $number );
+	}
+
+	/**
+	 * Removes the number copy when the loan amount is removed.
+	 */
+	public static function delete_loan_amount_number( $meta_ids, $post_id, $meta_key, $meta_value ) {
+
+		$keys = array(
+			'velocity_property_loan_amount'   => 'velocity_property_loan_amount_number',
+			'velocity_case_study_loan_amount' => 'velocity_case_study_loan_amount_number',
+		);
+
+		if ( isset( $keys[ $meta_key ] ) ) {
+			delete_post_meta( $post_id, $keys[ $meta_key ] );
+		}
+	}
+
+	/**
+	 * Turns a typed amount like $1,120,000.00 into 1120000.
+	 */
+	public static function to_number( $value ) {
+
+		$value = preg_replace( '/[^0-9.]/', '', (string) $value );
+
+		if ( '' === $value || ! is_numeric( $value ) ) {
+			return null;
+		}
+
+		return (int) round( (float) $value );
 	}
 
 	/**
