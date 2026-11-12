@@ -107,9 +107,22 @@ The careers listing and the job pages are not part of the redesign. They are the
 | Breadcrumb on job pages | Appearance > Elements, "Career Breadcrumb row" |
 | The jobs themselves | Careers, in the admin menu. City and short description are fields on each job |
 
-The application form on the job page is Gravity Form 3, "Career Application". It sends real notifications, so check where they go before testing it on staging.
+The application form on the job page is Gravity Form 3, "Career Application". On production it notifies HR. On staging no email leaves the site (see "Staging does not send email or leads").
 
 `wp velocity cleanup` keeps all of these. The list is in `PROTECTED_POSTS` and `PAGE_SLUGS_TO_KEEP` in `inc/class-velocity-cli.php`.
+
+## Staging does not send email or leads
+
+Staging started as a copy of production, so its forms pointed at real inboxes and at the production lead pipeline. Two settings in the staging database stop that:
+
+| Setting | Where | State on staging |
+|---|---|---|
+| Gravity SMTP test mode | Gravity SMTP > Settings | On. No email is sent. Each one is kept under Gravity SMTP > Email Log |
+| Webhook "Salesforce Lead Integration" on Form 14, Broker Toolkit | Forms > Broker Toolkit Item Request > Settings > Webhooks | Off. Toolkit requests do not reach Salesforce |
+
+To check what a form would have sent, open the Email Log.
+
+Both are database settings. They travel with any copy of the staging database, including a LocalWP pull. If staging content is ever moved to production, these two must be on again in production, or production stops sending email and leads.
 
 ## Theme commands
 
