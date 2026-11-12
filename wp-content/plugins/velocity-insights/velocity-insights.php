@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Velocity Insights
- * Description: Adds the Insights article section (/insights/), topic filtering, per-article SEO fields, a bottom-of-article CTA, and a draft → review → publish workflow for the agency (CSTMR).
- * Version:     1.5.0
+ * Description: Adds the Insights article section (/insights/), topic filtering, a featured article, per-article SEO fields, an optional bottom-of-article CTA, and a draft → review → publish workflow for the agency (CSTMR).
+ * Version:     1.6.0
  * Author:      Velocity Mortgage
  * Requires at least: 6.2
  * Requires PHP: 7.4
@@ -29,7 +29,8 @@ function vmi_per_page() {
 }
 
 // Show topic filter links above the index list (nice-to-have in the ticket).
-define( 'VMI_TOPIC_FILTER', true );
+// Off since the redesign: the Insights page has its own topic filter, built with Kadence.
+define( 'VMI_TOPIC_FILTER', false );
 
 // Use this plugin's own index/article templates instead of the theme's
 // generic archive.php/single.php. Only applies to classic (non-block) themes.
@@ -45,6 +46,10 @@ define( 'VMI_CTA_PATTERN_TITLE', 'Insights CTA' );
 
 // Where the default CTA button goes (same as the header "Get a Loan Quote" button).
 define( 'VMI_CTA_URL', 'https://www.generatevelocity.com/#/SignIn' );
+
+// Add the CTA under every article. Off since the redesign: articles end with
+// related articles instead, and the newsletter sign-up appears while reading.
+define( 'VMI_SHOW_CTA', false );
 
 
 /* -------------------------------------------------------------------------
@@ -258,10 +263,84 @@ function vmi_cta_html() {
 
 add_filter( 'the_content', 'vmi_append_cta', 20 );
 function vmi_append_cta( $content ) {
-	if ( is_singular( 'insight' ) && in_the_loop() && is_main_query() && ! vmi_plugin_templates_active() ) {
+	if ( VMI_SHOW_CTA && is_singular( 'insight' ) && in_the_loop() && is_main_query() && ! vmi_plugin_templates_active() ) {
 		$content .= vmi_cta_html();
 	}
 	return $content;
+}
+
+/* -------------------------------------------------------------------------
+ * Featured article
+ *
+ * One article at a time is featured at the top of the Insights page. The
+ * Kadence query for that spot lists the insight whose "vmi_featured" field
+ * is 1. Featuring an article takes the flag off the one featured before.
+ * ---------------------------------------------------------------------- */
+
+add_action( 'add_meta_boxes_insight', 'vmi_add_featured_box' );
+function vmi_add_featured_box() {
+	add_meta_box( 'vmi_featured', 'Featured article', 'vmi_render_featured_box', 'insight', 'side', 'high' );
+}
+
+function vmi_featured_ids( $exclude = 0 ) {
+	return get_posts(
+		array(
+			'post_type'      => 'insight',
+			'post_status'    => 'any',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'meta_key'       => 'vmi_featured',
+			'meta_value'     => '1',
+			'post__not_in'   => $exclude ? array( $exclude ) : array(),
+		)
+	);
+}
+
+function vmi_render_featured_box( $post ) {
+	wp_nonce_field( 'vmi_featured_save', 'vmi_featured_nonce' );
+	$is_featured = '1' === get_post_meta( $post->ID, 'vmi_featured', true );
+	$others      = vmi_featured_ids( $post->ID );
+
+	printf(
+		'<p style="margin-top:0"><label><input type="checkbox" name="vmi_featured" value="1"%s> Feature this article at the top of the Insights page</label></p>',
+		checked( $is_featured, true, false )
+	);
+
+	if ( $is_featured ) {
+		echo '<p class="description">This is the featured article.</p>';
+		return;
+	}
+
+	if ( $others ) {
+		$current = get_post( $others[0] );
+		$status  = 'publish' === $current->post_status ? '' : ' (' . esc_html( $current->post_status ) . ')';
+		printf(
+			'<p class="description">Current featured: <a href="%s">%s</a>%s. Featuring this article removes it from that one.</p>',
+			esc_url( get_edit_post_link( $current->ID ) ),
+			esc_html( get_the_title( $current ) ),
+			$status // phpcs:ignore WordPress.Security.EscapeOutput -- escaped above.
+		);
+	} else {
+		echo '<p class="description">No article is featured right now.</p>';
+	}
+}
+
+add_action( 'save_post_insight', 'vmi_save_featured_box' );
+function vmi_save_featured_box( $post_id ) {
+	if ( ! isset( $_POST['vmi_featured_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['vmi_featured_nonce'] ) ), 'vmi_featured_save' ) ) {
+		return;
+	}
+	if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+	if ( empty( $_POST['vmi_featured'] ) ) {
+		delete_post_meta( $post_id, 'vmi_featured' );
+		return;
+	}
+	update_post_meta( $post_id, 'vmi_featured', '1' );
+	foreach ( vmi_featured_ids( $post_id ) as $other_id ) {
+		delete_post_meta( $other_id, 'vmi_featured' );
+	}
 }
 
 /* -------------------------------------------------------------------------
