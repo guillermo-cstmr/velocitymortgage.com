@@ -256,14 +256,30 @@ class Velocity_Toolkit {
 		}
 
 		$file_id = absint( get_post_meta( $post_id, $version ? 'velocity_toolkit_file_wl_id' : 'velocity_toolkit_file_id', true ) );
-		$url     = $file_id ? wp_get_attachment_url( $file_id ) : '';
+		$path    = $file_id ? get_attached_file( $file_id ) : '';
 
-		if ( ! $url ) {
-			wp_die( esc_html__( 'This file is no longer available.', 'velocitymu' ), '', array( 'response' => 404 ) );
+		if ( ! $path || ! is_readable( $path ) ) {
+			// File not on this server, for example uploads served from elsewhere.
+			$url = $file_id ? wp_get_attachment_url( $file_id ) : '';
+			if ( ! $url ) {
+				wp_die( esc_html__( 'This file is no longer available.', 'velocitymu' ), '', array( 'response' => 404 ) );
+			}
+			nocache_headers();
+			wp_redirect( $url );
+			exit;
 		}
 
+		// Sent as a download: the visitor stays on the page, and the file's
+		// address is never shown.
 		nocache_headers();
-		wp_redirect( $url );
+		header( 'Content-Type: ' . ( get_post_mime_type( $file_id ) ? get_post_mime_type( $file_id ) : 'application/pdf' ) );
+		header( 'Content-Disposition: attachment; filename="' . sanitize_file_name( wp_basename( $path ) ) . '"' );
+		header( 'Content-Length: ' . filesize( $path ) );
+		header( 'X-Robots-Tag: noindex' );
+		while ( ob_get_level() ) {
+			ob_end_clean();
+		}
+		readfile( $path );
 		exit;
 	}
 

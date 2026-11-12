@@ -196,7 +196,7 @@ One Kadence query loop per section: post type "Toolkit Documents", filtered by t
 | White Label button | Link: post custom field `velocity_toolkit_link_wl`. Put it, with its "White Label" label, inside a block with the CSS class `vm-toolkit-wl`. That block hides itself when the document has no White Label file |
 | "New" tag | Post custom field `velocity_toolkit_new` |
 
-The buttons never carry the PDF's address. They point to the site's download address for that document.
+The buttons never carry the PDF's address. They point to the site's download address for that document, which sends the file as a download: the visitor stays on the page.
 
 ### Unlocking
 
