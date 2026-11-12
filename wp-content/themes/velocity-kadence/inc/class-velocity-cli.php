@@ -46,6 +46,18 @@ class Velocity_CLI {
 	const PROTECTED_BLOCK_TITLES = array( 'Insights CTA' );
 
 	/**
+	 * Kadence posts of the careers listing and job pages, moved to the new
+	 * theme and kept. Post type => titles.
+	 *
+	 * @var array
+	 */
+	const PROTECTED_POSTS = array(
+		'kadence_element'    => array( 'Careers Single', 'Career Breadcrumb row' ),
+		'kadence_query'      => array( 'Careers' ),
+		'kadence_query_card' => array( 'Career' ),
+	);
+
+	/**
 	 * Published pages that are removed instead of emptied.
 	 *
 	 * @var string[]
@@ -53,11 +65,12 @@ class Velocity_CLI {
 	const PAGE_SLUGS_TO_REMOVE = array( 'example-content' );
 
 	/**
-	 * Pages whose content is left untouched. Legal text.
+	 * Pages whose content is left untouched. Legal text, and the careers
+	 * listing, which was moved to the new theme as it was.
 	 *
 	 * @var string[]
 	 */
-	const PAGE_SLUGS_TO_KEEP = array( 'privacy', 'terms-of-use' );
+	const PAGE_SLUGS_TO_KEEP = array( 'privacy', 'terms-of-use', 'careers' );
 
 	/**
 	 * Options that hold the old design. Backed up to a file, then deleted.
@@ -627,6 +640,11 @@ class Velocity_CLI {
 		foreach ( $posts as $post ) {
 			if ( 'wp_block' === $post->post_type && in_array( $post->post_title, self::PROTECTED_BLOCK_TITLES, true ) ) {
 				WP_CLI::log( sprintf( '  keep    #%d  wp_block  %s (used by code)', $post->ID, $post->post_title ) );
+				continue;
+			}
+
+			if ( isset( self::PROTECTED_POSTS[ $post->post_type ] ) && in_array( $post->post_title, self::PROTECTED_POSTS[ $post->post_type ], true ) ) {
+				WP_CLI::log( sprintf( '  keep    #%d  %-20s %s (careers)', $post->ID, $post->post_type, $post->post_title ) );
 				continue;
 			}
 

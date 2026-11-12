@@ -95,13 +95,29 @@ It never touches something that already exists, so it is safe to run again. The 
 
 Menu links to pages that do not exist yet are created as `#` placeholders. Replace them in the editor as the pages get built.
 
+## Careers
+
+The careers listing and the job pages are not part of the redesign. They are the production version, moved to the new theme: same content, with the site's colors, content width and buttons.
+
+| What | Where to edit it |
+|---|---|
+| Listing page | Pages > Careers. Its job list is the Kadence query "Careers" |
+| Job card in the list | Kadence Blocks > Query Cards, "Career" |
+| Job page layout | Appearance > Elements, "Careers Single". Shows on every job |
+| Breadcrumb on job pages | Appearance > Elements, "Career Breadcrumb row" |
+| The jobs themselves | Careers, in the admin menu. City and short description are fields on each job |
+
+The application form on the job page is Gravity Form 3, "Career Application". It sends real notifications, so check where they go before testing it on staging.
+
+`wp velocity cleanup` keeps all of these. The list is in `PROTECTED_POSTS` and `PAGE_SLUGS_TO_KEEP` in `inc/class-velocity-cli.php`.
+
 ## Theme commands
 
 All of them are dry runs unless called with `--execute`.
 
 | Command | What it does |
 |---|---|
-| `wp velocity cleanup` | Removes the old Kadence and Beaver Builder front end. Keeps all content, and keeps the header, menus and footer made by `seed-chrome` |
+| `wp velocity cleanup` | Removes the old Kadence and Beaver Builder front end. Keeps all content, the header, menus and footer made by `seed-chrome`, and the careers pages (see "Careers") |
 | `wp velocity seed-chrome` | Creates the header, the menus and the footer |
 | `wp velocity seed-home` | Fills the home page, if it is empty. `--force` rebuilds it and discards every change made in the editor |
 | `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. Never overwrites a filled field |
