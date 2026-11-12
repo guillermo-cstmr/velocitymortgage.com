@@ -508,6 +508,278 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Creates the Broker Toolkit documents from the old toolkit.
+	 *
+	 * Each PDF comes from the toolkit form's conditional confirmations, and
+	 * each image and description from the old Broker Toolkit page, or from its
+	 * last revision with toolkit buttons. Documents whose request ID already
+	 * exists are left alone, so it is safe to run again.
+	 *
+	 * Without --execute it only reports what it would do.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-toolkit
+	 *     wp velocity seed-toolkit --execute
+	 *
+	 * @subcommand seed-toolkit
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_toolkit( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+
+		if ( ! class_exists( 'Velocity_Toolkit' ) || ! class_exists( 'GFAPI' ) ) {
+			WP_CLI::error( 'The Velocity must-use plugin and Gravity Forms must be active.' );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		// Design order. Section => list of title, request ID, White Label request ID, New tag, status.
+		$plan = array(
+			'Matrices'                  => array(
+				array( 'Commercial Matrix', 'matricesrs', '', false, 'publish' ),
+				array( '1-4 Matrix', 'matrices1to4', '', false, 'publish' ),
+				array( 'Commercial White Label Matrix', 'matricesrswl', '', false, 'publish' ),
+				array( '1-4 White Label Matrix', 'matrices1to4wl', '', false, 'publish' ),
+			),
+			'Program Flyers'            => array(
+				array( '30-Year Fixed Flyer', 'mpfftf', '', false, 'publish' ),
+				array( 'Short Term Bridge Loan Flyer', 'mpfstb', 'mpfstbwl', false, 'publish' ),
+				array( 'Fast 50 Flyer', 'mpff50', 'mpff50wl', false, 'publish' ),
+				array( 'Blanket Loans Flyer', 'mpfblf', '', false, 'publish' ),
+				array( 'Commercial Loan Flyer', 'clf', 'clfwl', true, 'publish' ),
+				array( 'Mixed-Use Program Flyer', 'mup', 'mupwl', true, 'publish' ),
+				array( '90% CLTV Non Owner Properties Flyer', 'cltv', '', true, 'publish' ),
+				array( 'Assisted Living Homes Flyer', 'assisted', 'assistedwl', true, 'publish' ),
+				// In the form but not on the page: kept as drafts.
+				array( 'ARV Pro Flyer', 'mpfarvpro', '', false, 'draft' ),
+				array( 'Fix and Flip Loans Flyer', 'fixflip', '', false, 'draft' ),
+				array( 'Fast 50 Enhanced Flyer', 'mpff50eb', 'mpff50ewl', false, 'draft' ),
+			),
+			'Foreign Investor Flyers'   => array(
+				array( 'Foreign Investor Flyer (English)', 'mpffi', 'mpffiwl', false, 'publish' ),
+				array( 'Foreign Investor Flyer in Spanish', 'mpffispan', '', false, 'publish' ),
+				array( 'Foreign Investor Flyer in Chinese', 'mpffichi', '', false, 'publish' ),
+				array( 'Foreign Investor Flyer in Vietnamese', 'mpffivie', '', false, 'publish' ),
+				array( 'Foreign Investor Flyer in Farsi', 'mpffifar', '', false, 'publish' ),
+				array( 'Foreign Investor Flyer in Portuguese', 'mpffipor', '', false, 'publish' ),
+			),
+			'About Velocity'            => array(
+				array( 'White Label Brochure', 'mpfwlb', '', false, 'publish' ),
+				array( "Let's Talk Loans Flyer", 'mpfltlwl', '', false, 'publish' ),
+				array( 'Why Choose Velocity Flyer', 'whychoose', '', true, 'publish' ),
+			),
+			'How to Customize a Flyer'  => array(
+				array( 'General Instructions', 'mpfgi', '', false, 'publish' ),
+			),
+			'Residential Forms Library' => array(),
+			'Commercial Forms Library'  => array(),
+		);
+
+		// Request ID => PDF.
+		$files = array();
+		$form  = GFAPI::get_form( Velocity_Toolkit::FORM_ID );
+		foreach ( (array) rgar( $form, 'confirmations' ) as $confirmation ) {
+			$request_id = isset( $confirmation['conditionalLogic']['rules'][0]['value'] ) ? $confirmation['conditionalLogic']['rules'][0]['value'] : '';
+			$urls       = wp_extract_urls( (string) rgar( $confirmation, 'message' ) );
+			if ( $request_id && $urls ) {
+				$files[ $request_id ] = $this->media_id( $urls[0] );
+			}
+		}
+
+		// Request ID => image and description.
+		$extras = $this->toolkit_page_extras();
+
+		$order = 0;
+		foreach ( $plan as $section => $docs ) {
+			$term = term_exists( $section, Velocity_Toolkit::TAXONOMY );
+			WP_CLI::log( sprintf( '%s %s', $term ? 'section  ' : 'add section', $section ) );
+			if ( ! $term && $this->execute ) {
+				$term = wp_insert_term( $section, Velocity_Toolkit::TAXONOMY );
+			}
+			$term_id = is_array( $term ) ? (int) $term['term_id'] : 0;
+
+			foreach ( $docs as $doc ) {
+				list( $title, $request_id, $wl_request_id, $is_new, $status ) = $doc;
+				$order += 10;
+
+				$exists = get_posts(
+					array(
+						'post_type'      => Velocity_Toolkit::POST_TYPE,
+						'post_status'    => 'any',
+						'posts_per_page' => 1,
+						'fields'         => 'ids',
+						'meta_key'       => 'velocity_toolkit_request_id',
+						'meta_value'     => $request_id,
+					)
+				);
+				if ( $exists ) {
+					WP_CLI::log( sprintf( '  keep     %s', $title ) );
+					continue;
+				}
+
+				$file    = isset( $files[ $request_id ] ) ? $files[ $request_id ] : 0;
+				$file_wl = ( $wl_request_id && isset( $files[ $wl_request_id ] ) ) ? $files[ $wl_request_id ] : 0;
+				$extra   = isset( $extras[ $request_id ] ) ? $extras[ $request_id ] : array(
+					'image' => 0,
+					'text'  => '',
+				);
+
+				if ( ! $file ) {
+					WP_CLI::warning( sprintf( '%s (%s): no PDF found in the form, skipped.', $title, $request_id ) );
+					continue;
+				}
+
+				WP_CLI::log(
+					sprintf(
+						'  add      %s (%s, %s)%s%s',
+						$title,
+						$request_id,
+						$status,
+						$file_wl ? ', with White Label' : '',
+						$extra['image'] ? '' : ', no image'
+					)
+				);
+
+				if ( ! $this->execute ) {
+					continue;
+				}
+
+				$post_id = wp_insert_post(
+					array(
+						'post_type'    => Velocity_Toolkit::POST_TYPE,
+						'post_status'  => $status,
+						'post_title'   => $title,
+						'post_excerpt' => $extra['text'],
+						'menu_order'   => $order,
+					)
+				);
+
+				update_post_meta( $post_id, 'velocity_toolkit_request_id', $request_id );
+				update_post_meta( $post_id, 'velocity_toolkit_file', wp_get_attachment_url( $file ) );
+				update_post_meta( $post_id, 'velocity_toolkit_file_id', $file );
+				if ( $file_wl ) {
+					update_post_meta( $post_id, 'velocity_toolkit_file_wl', wp_get_attachment_url( $file_wl ) );
+					update_post_meta( $post_id, 'velocity_toolkit_file_wl_id', $file_wl );
+				}
+				update_post_meta( $post_id, 'velocity_toolkit_locked', 'on' );
+				if ( $is_new ) {
+					update_post_meta( $post_id, 'velocity_toolkit_new', 'on' );
+				}
+				if ( $extra['image'] ) {
+					set_post_thumbnail( $post_id, $extra['image'] );
+				}
+				if ( $term_id ) {
+					wp_set_object_terms( $post_id, array( $term_id ), Velocity_Toolkit::TAXONOMY );
+				}
+				Velocity_Toolkit::fill_links( $post_id );
+			}
+		}
+
+		if ( $this->execute ) {
+			WP_CLI::success( 'Toolkit documents created. Edit them in Broker Toolkit.' );
+		} else {
+			WP_CLI::success( 'Dry run finished. Nothing was changed.' );
+		}
+	}
+
+	/**
+	 * Image and description of each document on the old Broker Toolkit page,
+	 * by request ID. Reads the page, or its last revision with toolkit
+	 * buttons when the page was already emptied.
+	 *
+	 * @return array Request ID => array( image, text ).
+	 */
+	private function toolkit_page_extras() {
+		$page = get_page_by_path( 'broker-toolkit' );
+		if ( ! $page ) {
+			return array();
+		}
+
+		$source = false !== strpos( $page->post_content, 'pdfrequest' ) ? $page->post_content : '';
+		if ( ! $source ) {
+			foreach ( wp_get_post_revisions( $page->ID ) as $revision ) {
+				if ( false !== strpos( $revision->post_content, 'pdfrequest' ) ) {
+					$source = $revision->post_content;
+					break;
+				}
+			}
+		}
+
+		$extras   = array();
+		$last_img = 0;
+		$last_p   = '';
+		$walk     = function ( $blocks ) use ( &$walk, &$extras, &$last_img, &$last_p ) {
+			foreach ( $blocks as $block ) {
+				if ( empty( $block['blockName'] ) ) {
+					continue;
+				}
+				if ( false !== strpos( $block['blockName'], 'image' ) ) {
+					if ( ! empty( $block['attrs']['id'] ) ) {
+						$last_img = (int) $block['attrs']['id'];
+					} elseif ( preg_match( '/src="([^"]+)"/', $block['innerHTML'], $match ) ) {
+						$last_img = $this->media_id( $match[1] );
+					}
+					$last_p = '';
+				} elseif ( preg_match( '/paragraph|text/', $block['blockName'] ) ) {
+					$text = trim( html_entity_decode( wp_strip_all_tags( $block['innerHTML'] ) ) );
+					if ( $text ) {
+						$last_p = preg_replace( '/\s+/u', ' ', str_replace( "\xc2\xa0", ' ', $text ) );
+					}
+				} elseif ( 'kadence/singlebtn' === $block['blockName'] && ! empty( $block['attrs']['link'] ) ) {
+					if ( preg_match( '/resource_id=([a-z0-9_-]+)/i', $block['attrs']['link'], $match ) && ! isset( $extras[ $match[1] ] ) ) {
+						$extras[ $match[1] ] = array(
+							'image' => $last_img,
+							'text'  => $last_p,
+						);
+					}
+				}
+				if ( ! empty( $block['innerBlocks'] ) ) {
+					$walk( $block['innerBlocks'] );
+				}
+			}
+		};
+		$walk( parse_blocks( $source ) );
+
+		return $extras;
+	}
+
+	/**
+	 * Media ID of a file URL. Falls back to the path under uploads, for URLs
+	 * that still carry another environment's domain.
+	 *
+	 * @param string $url File URL.
+	 * @return int Media ID, or 0.
+	 */
+	private function media_id( $url ) {
+		$id = attachment_url_to_postid( $url );
+		if ( $id ) {
+			return $id;
+		}
+
+		$path = (string) wp_parse_url( $url, PHP_URL_PATH );
+		$at   = strpos( $path, '/uploads/' );
+		if ( false === $at ) {
+			return 0;
+		}
+
+		global $wpdb;
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND meta_value = %s LIMIT 1",
+				substr( $path, $at + 9 )
+			)
+		);
+	}
+
+	/**
 	 * Create one seeded post, or leave it alone if it exists.
 	 *
 	 * @param string   $key     Seed key, stored in post meta to find it later.

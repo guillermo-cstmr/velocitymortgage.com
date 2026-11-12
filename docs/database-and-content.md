@@ -164,6 +164,63 @@ The AE's title and photo need the AE linked to their profile once. Open Properti
 
 The summary on the case study cards and header is the case study's excerpt.
 
+## Broker Toolkit
+
+Every file on the Broker Toolkit page is a post under **Broker Toolkit** in the admin menu. Code in `cpt-toolkit.php` and `resource-modal.php`, in the must-use plugin.
+
+### A document
+
+| Field | Use |
+|---|---|
+| Title | Name shown on the page |
+| Excerpt | Description shown under the name |
+| Featured image | The flyer's cover. Upload it as an image; it is not taken from the PDF |
+| PDF | The Velocity branded file. To replace a file, choose the new PDF here |
+| White Label PDF | Optional. When set, the document has a second button |
+| Section | Where it is listed: Matrices, Program Flyers, Foreign Investor Flyers, About Velocity, How to Customize a Flyer, or one of the two forms libraries |
+| Requires unlock | Ticked: the visitor fills the toolkit form once before downloading. Unticked: anyone can download it |
+| New | Shows the "New" tag |
+| Request ID | Saved with each form entry and sent to Salesforce, to know which file was asked for. Filled from the title when empty. Do not change it once the document is in use |
+
+The order on the page is the order in the admin list. Drag the rows there to change it.
+
+Documents have no page of their own and stay out of search and the sitemap.
+
+### Building the page
+
+One Kadence query loop per section: post type "Toolkit Documents", filtered by the section, ordered by "Menu Order", ascending. In the query card:
+
+| Element | Source |
+|---|---|
+| Button | Link: post custom field `velocity_toolkit_link`. Text: "Unlock to Download" |
+| White Label button | Link: post custom field `velocity_toolkit_link_wl`. Put it, with its "White Label" label, inside a block with the CSS class `vm-toolkit-wl`. That block hides itself when the document has no White Label file |
+| "New" tag | Post custom field `velocity_toolkit_new` |
+
+The buttons never carry the PDF's address. They point to the site's download address for that document.
+
+### Unlocking
+
+1. A visitor clicks a document that requires unlock. The "Unlock the Toolkit" form opens instead of the download. It is Gravity Form 14.
+2. On sending it, a cookie remembers the unlock on that browser for a year, and the file they asked for downloads.
+3. From then on every button says "Download" and downloads straight away, on this visit and the next ones. The page also gets the class `vm-toolkit-unlocked`.
+
+The cookie is per browser. Another device, a private window or cleared cookies ask for the form again.
+
+The form always shows the message from the design. Its 32 old conditional confirmations, one per file, are no longer used.
+
+Old links of the form `#pdfrequest&resource_id=matricesrs` still open the form and download that file.
+
+### Creating the documents on a new environment
+
+```bash
+wp velocity seed-toolkit            # dry run: shows what it would create
+wp velocity seed-toolkit --execute  # creates whatever is missing
+```
+
+It takes each PDF from the toolkit form's old confirmations, and each image and description from the old Broker Toolkit page or its last revision. It skips documents that already exist. ARV Pro, Fix and Flip, and Fast 50 Enhanced are in the form but were not on the page, so they are created as drafts.
+
+The two forms libraries start empty: their files were not on the old toolkit page.
+
 ## Staging does not send email or leads
 
 Staging started as a copy of production, so its forms pointed at real inboxes and at the production lead pipeline. Two settings in the staging database stop that:
@@ -187,9 +244,15 @@ All of them are dry runs unless called with `--execute`.
 | `wp velocity seed-chrome` | Creates the header, the menus and the footer |
 | `wp velocity seed-home` | Fills the home page, if it is empty. `--force` rebuilds it and discards every change made in the editor |
 | `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. Never overwrites a filled field |
+| `wp velocity seed-toolkit` | Creates the Broker Toolkit documents from the old toolkit form and page. Skips the ones that exist (see "Broker Toolkit") |
 
 On staging they run through the SSH Gateway. The gateway may run an older PHP than the website, so the theme's command code stays compatible with PHP 7.4.
 
 ## Launch
 
 Production keeps receiving form entries and content edits while the rebuild happens on staging. Replacing the production database with the staging one would lose that data. The launch plan has to import the new pages and Kadence posts into production, or agree a content freeze. This is not decided yet.
+
+Whatever the plan, production needs these once the code is there:
+
+- `wp velocity seed-programs --execute` and `wp velocity seed-toolkit --execute`. They read production's own data, so they do not depend on the staging database.
+- The loan amounts of existing deals saved as numbers, so Featured Deals sorts by amount. Saving each deal once does it, or a script can.
