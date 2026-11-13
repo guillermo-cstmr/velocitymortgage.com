@@ -888,7 +888,6 @@ body .gform_wrapper.gravity-theme .gform_footer .gform_button {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 8px;
 	width: 100%;
 	margin: 0;
 	padding: 16px 24px;
@@ -912,6 +911,13 @@ body .gform_wrapper.gravity-theme .gform_footer .gform_button:focus {
 body .gform_wrapper.gravity-theme .gform_footer .gform_button:focus-visible {
 	outline: 2px solid var(--global-palette5);
 	outline-offset: 2px;
+}
+
+/* The arrow added to every submit button, also on forms with older markup. */
+.vm-form__arrow {
+	flex: none;
+	margin-left: 8px;
+	vertical-align: -2px;
 }
 
 .gform_confirmation_message {
