@@ -175,6 +175,29 @@ A line is left out when the property has no value for it, so an incomplete card 
 
 It is a shortcode because core blocks cannot print a custom field, or a taxonomy term without turning it into a link. In the editor the block shows the shortcode text, not the result.
 
+## Forms
+
+Forms are Gravity Forms. A page never embeds one by its number. It uses a pattern, found in the inserter under Patterns, "Velocity":
+
+| Pattern | What it places |
+|---|---|
+| Contact form | The card with the "Contact Us" title and the contact form |
+| Newsletter sign-up | Heading, intro and the newsletter form. Put it inside a section or panel, which gives it its background |
+
+Inside each pattern the form is a Shortcode block: `[vm_form name="contact"]` or `[vm_form name="newsletter"]`. The shortcode finds the right form on each environment, so a page keeps working when it moves from staging to production. In the editor the block shows the shortcode text, not the form. Use Preview to see it.
+
+The card, the heading and the spacing around a form are normal blocks, edited in the sidebar. Do not rebuild the fields, the consent text or the button in the page.
+
+| Form | Edited in | Notes |
+|---|---|---|
+| Contact | Forms, "Contact Us Page" (form 12) | The consent checkbox is required. Notifications are the ones the form already had |
+| Newsletter | Forms, "Newsletter Signup" | Stores each sign-up as an entry and sends no email. The newsletter service is connected to this form once it is chosen. The consent line under the field is printed by the shortcode |
+| Broker Toolkit unlock | Forms, "Broker Toolkit Item Request" (form 14) | Opens by itself from the toolkit buttons. See [database-and-content.md](database-and-content.md), "Broker Toolkit" |
+
+The look of every Gravity Form is in the theme's `style.css`, "Forms": fields, labels, checkbox, errors and the submit button, which follows the primary button and gets its arrow from `inc/forms.php`. A form with the CSS class `vm-form-inline`, set in its Gravity Forms settings, puts the field and the button on one line.
+
+`wp velocity seed-forms` prepares both forms on a new environment. See [database-and-content.md](database-and-content.md), "Theme commands".
+
 ## The loan calculator
 
 A block of the theme, "Loan Scenario Calculator", in `blocks/loan-calculator`. It has no settings in the editor: the editor shows it as it looks on the site, but it cannot be clicked there. To try it, use Preview or the published page.

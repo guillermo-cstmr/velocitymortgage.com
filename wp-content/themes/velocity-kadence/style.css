@@ -5,7 +5,7 @@ Template:     kadence
 Author:       CSTMR
 Author URI:   https://cstmr.com
 Description:  Kadence child theme for the Velocity Mortgage Capital rebuild. Design tokens come from the Figma style guide and are defined in inc/tokens.php.
-Version:      0.1.0
+Version:      0.2.0
 Requires PHP: 7.4
 Text Domain:  velocity-kadence
 */
@@ -719,6 +719,256 @@ body .wp-block-kadence-header .wp-block-kadence-off-canvas .kb-off-canvas-inner-
  */
 .vm-deal-info .vm-deal-tag.vm-deal-tag--empty {
 	visibility: hidden;
+}
+
+/*
+ * Forms.
+ * Gravity Forms has no design settings of its own in this setup, so the look
+ * of every form is here: fields, labels, the consent checkbox, errors and
+ * the submit button, which follows the site's primary button.
+ * Measures and colors are from Figma, "Contact form" on Contact & Locations.
+ * The card around a form is not here. It is a Kadence Section in the page.
+ * "body" leads each selector because Gravity Forms loads its own styles
+ * after this file, with the same weight.
+ */
+body .gform_wrapper.gravity-theme {
+	--vm-field-border: #99a2dd;
+}
+
+body .gform_wrapper.gravity-theme .gform_fields {
+	grid-column-gap: 16px;
+	grid-row-gap: 20px;
+}
+
+body .gform_wrapper.gravity-theme .gfield_label {
+	margin-bottom: 8px;
+	color: var(--global-palette3);
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.5;
+}
+
+body .gform_wrapper.gravity-theme .gfield_required {
+	color: inherit;
+}
+
+body .gform_wrapper.gravity-theme .gform_required_legend {
+	display: none;
+}
+
+body .gform_wrapper.gravity-theme .gfield input:where([type="text"], [type="email"], [type="tel"], [type="url"], [type="number"], [type="password"]),
+body .gform_wrapper.gravity-theme .gfield select,
+body .gform_wrapper.gravity-theme .gfield textarea {
+	width: 100%;
+	min-height: 48px;
+	padding: 11px 14px;
+	border: 1px solid var(--vm-field-border);
+	border-radius: 8px;
+	background-color: var(--global-palette9);
+	box-shadow: none;
+	color: var(--global-palette3);
+	font-size: 16px;
+	line-height: 1.5;
+}
+
+body .gform_wrapper.gravity-theme .gfield textarea,
+body .gform_wrapper.gravity-theme .gfield textarea.large {
+	height: 112px;
+	min-height: 112px;
+	resize: vertical;
+}
+
+body .gform_wrapper.gravity-theme .gfield ::placeholder {
+	color: var(--global-palette6);
+	opacity: 1;
+}
+
+/* The select draws its own arrow, so it lines up with the text fields. */
+body .gform_wrapper.gravity-theme .gfield select {
+	padding-right: 44px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8' fill='none' stroke='%23010739' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l6 6 6-6'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 14px center;
+	appearance: none;
+}
+
+/* Until a topic is chosen, the select reads as a placeholder. */
+body .gform_wrapper.gravity-theme .gfield select:has(option.gf_placeholder:checked) {
+	color: var(--global-palette6);
+}
+
+body .gform_wrapper.gravity-theme .gfield input:focus,
+body .gform_wrapper.gravity-theme .gfield select:focus,
+body .gform_wrapper.gravity-theme .gfield textarea:focus {
+	border-color: var(--global-palette5);
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 1px;
+}
+
+/* Consent and other single checkboxes. */
+body .gform_wrapper.gravity-theme .ginput_container_consent {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+body .gform_wrapper.gravity-theme .ginput_container_consent input[type="checkbox"] {
+	flex: none;
+	width: 18px;
+	height: 18px;
+	margin: 0;
+	accent-color: var(--global-palette5);
+}
+
+body .gform_wrapper.gravity-theme .gfield_consent_label {
+	color: var(--global-palette3);
+	font-size: 14px;
+	line-height: 1.3;
+}
+
+body .gform_wrapper.gravity-theme .gfield_consent_label a,
+.vm-form__note a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+/* Errors, in the Alert color. */
+body .gform_wrapper.gravity-theme .gfield_error input,
+body .gform_wrapper.gravity-theme .gfield_error select,
+body .gform_wrapper.gravity-theme .gfield_error textarea {
+	border-color: var(--global-palette13);
+}
+
+body .gform_wrapper.gravity-theme .gfield_validation_message,
+body .gform_wrapper.gravity-theme .validation_message {
+	margin-top: 6px;
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	color: var(--global-palette13);
+	font-size: 14px;
+	line-height: 1.3;
+}
+
+body .gform_wrapper.gravity-theme .gfield_error .gfield_label,
+body .gform_wrapper.gravity-theme .gfield_error .gfield_consent_label {
+	color: var(--global-palette3);
+}
+
+body .gform_wrapper.gravity-theme .gform_validation_errors {
+	margin-bottom: 20px;
+	padding: 12px 16px 12px 48px;
+	border: 1px solid var(--global-palette13);
+	border-radius: 8px;
+	background: var(--global-palette9);
+	box-shadow: none;
+}
+
+body .gform_wrapper.gravity-theme .gform_validation_errors > h2 {
+	color: var(--global-palette13);
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.3;
+}
+
+/* Submit button: the site's primary button, as wide as the form. */
+body .gform_wrapper.gravity-theme .gform_footer {
+	margin: 24px 0 0;
+	padding: 0;
+}
+
+body .gform_wrapper.gravity-theme,
+body .gform_wrapper.gravity-theme form {
+	margin: 0;
+}
+
+body .gform_wrapper.gravity-theme .gform_footer .gform_button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	margin: 0;
+	padding: 16px 24px;
+	border: 0;
+	border-radius: 9999px;
+	background: var(--global-palette-btn-bg);
+	box-shadow: none;
+	color: var(--global-palette-btn);
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.1;
+	cursor: pointer;
+}
+
+body .gform_wrapper.gravity-theme .gform_footer .gform_button:hover,
+body .gform_wrapper.gravity-theme .gform_footer .gform_button:focus {
+	background: var(--global-palette-btn-bg-hover);
+	color: var(--global-palette-btn-hover);
+}
+
+body .gform_wrapper.gravity-theme .gform_footer .gform_button:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+.gform_confirmation_message {
+	color: var(--global-palette3);
+	font-size: 18px;
+}
+
+/*
+ * One-line forms, like the newsletter: field and button side by side.
+ * The form has the CSS class "vm-form-inline" in its Gravity Forms settings.
+ */
+.vm-form--newsletter {
+	max-width: 630px;
+	margin-inline: auto;
+}
+
+body .gform_wrapper.gravity-theme form.vm-form-inline {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+body .gform_wrapper.gravity-theme form.vm-form-inline .gform_body {
+	flex: 1;
+	min-width: 0;
+}
+
+body .gform_wrapper.gravity-theme form.vm-form-inline .gform_footer {
+	flex: none;
+	margin: 0;
+}
+
+body .gform_wrapper.gravity-theme form.vm-form-inline .gform_footer .gform_button {
+	width: auto;
+	min-height: 54px;
+	white-space: nowrap;
+}
+
+body .gform_wrapper.gravity-theme form.vm-form-inline .gfield input[type="email"] {
+	min-height: 54px;
+}
+
+.vm-form .vm-form__note {
+	margin: 12px 0 0;
+	font-size: 12px;
+	line-height: 1.3;
+}
+
+@media (max-width: 600px) {
+	body .gform_wrapper.gravity-theme form.vm-form-inline {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	body .gform_wrapper.gravity-theme form.vm-form-inline .gform_footer .gform_button {
+		width: 100%;
+	}
 }
 
 /*

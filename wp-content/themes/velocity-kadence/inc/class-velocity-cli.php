@@ -780,6 +780,220 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Prepares the shared forms.
+	 *
+	 * Contact (Gravity Form 12, "Contact Us Page"): labels, placeholders and
+	 * button from the design, email and phone side by side, and a required
+	 * consent checkbox. Its entries, notifications and confirmation are kept.
+	 * Once the consent field exists, the form is left alone.
+	 *
+	 * Newsletter: creates the form "Newsletter Signup" if it does not exist.
+	 * It stores each sign-up as an entry and sends no email. The connection to
+	 * the newsletter service is added to this form later.
+	 *
+	 * Without --execute it only reports what it would do.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-forms
+	 *     wp velocity seed-forms --execute
+	 *
+	 * @subcommand seed-forms
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_forms( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+
+		if ( ! class_exists( 'GFAPI' ) ) {
+			WP_CLI::error( 'Gravity Forms must be active.' );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		$this->seed_contact_form();
+		$this->seed_newsletter_form();
+
+		if ( $this->execute ) {
+			WP_CLI::success( 'Forms are ready.' );
+		} else {
+			WP_CLI::success( 'Dry run finished. Nothing was changed.' );
+		}
+	}
+
+	/**
+	 * Brings the contact form in line with the design.
+	 */
+	private function seed_contact_form() {
+		$form = GFAPI::get_form( VM_CONTACT_FORM_ID );
+
+		if ( ! $form ) {
+			WP_CLI::warning( sprintf( 'Form %d, the contact form, does not exist. Skipped.', VM_CONTACT_FORM_ID ) );
+			return;
+		}
+
+		foreach ( $form['fields'] as $field ) {
+			if ( 'consent' === $field->type ) {
+				WP_CLI::log( sprintf( '  keep     Contact form (#%d): it already has the consent field.', $form['id'] ) );
+				return;
+			}
+		}
+
+		// Field ID => label, placeholder, columns out of 12.
+		$design = array(
+			1 => array( 'First name', 'First name', 6 ),
+			7 => array( 'Last name', 'Last name', 6 ),
+			3 => array( 'Work email', 'you@brokerage.com', 6 ),
+			4 => array( 'Phone', '(000) 000-0000', 6 ),
+			2 => array( 'Company', 'Company name', 12 ),
+			8 => array( 'Inquiry Type', 'Select a topic', 12 ),
+			9 => array( 'Message', 'How can we help?', 12 ),
+		);
+
+		$max_id      = 0;
+		$email_group = '';
+		foreach ( $form['fields'] as $field ) {
+			$max_id = max( $max_id, (int) $field->id );
+			if ( 3 === (int) $field->id ) {
+				$email_group = $field->layoutGroupId;
+			}
+		}
+
+		foreach ( $form['fields'] as $field ) {
+			$id = (int) $field->id;
+			if ( ! isset( $design[ $id ] ) ) {
+				continue;
+			}
+			WP_CLI::log( sprintf( '  update   Contact field %d: "%s", placeholder "%s"', $id, $design[ $id ][0], $design[ $id ][1] ) );
+			$field->label                = $design[ $id ][0];
+			$field->placeholder          = $design[ $id ][1];
+			$field->layoutGridColumnSpan = $design[ $id ][2];
+			// Email and phone share a row.
+			if ( 4 === $id && $email_group ) {
+				$field->layoutGroupId = $email_group;
+			}
+		}
+
+		$consent_id = $max_id + 1;
+		WP_CLI::log( sprintf( '  add      Contact field %d: consent checkbox, required', $consent_id ) );
+		WP_CLI::log( '  update   Contact button: "Send Message"' );
+
+		$form['fields'][] = GF_Fields::create(
+			array(
+				'type'                 => 'consent',
+				'id'                   => $consent_id,
+				'formId'               => $form['id'],
+				'label'                => 'Consent',
+				'labelPlacement'       => 'hidden_label',
+				'isRequired'           => true,
+				'checkboxLabel'        => 'I agree that Velocity may contact me about my inquiry. I have read the <a href="/privacy/">Privacy Policy</a>.',
+				'description'          => '',
+				'layoutGridColumnSpan' => 12,
+				'inputs'               => array(
+					array(
+						'id'    => $consent_id . '.1',
+						'label' => 'Consent',
+						'name'  => '',
+					),
+					array(
+						'id'       => $consent_id . '.2',
+						'label'    => 'Text',
+						'name'     => '',
+						'isHidden' => true,
+					),
+					array(
+						'id'       => $consent_id . '.3',
+						'label'    => 'Description',
+						'name'     => '',
+						'isHidden' => true,
+					),
+				),
+				'choices'              => array(
+					array(
+						'text'       => 'Checked',
+						'value'      => '1',
+						'isSelected' => false,
+					),
+				),
+			)
+		);
+
+		$form['button']['text'] = 'Send Message';
+
+		if ( $this->execute ) {
+			$result = GFAPI::update_form( $form );
+			if ( is_wp_error( $result ) ) {
+				WP_CLI::error( $result->get_error_message() );
+			}
+		}
+	}
+
+	/**
+	 * Creates the newsletter form.
+	 */
+	private function seed_newsletter_form() {
+		$existing = (int) GFFormsModel::get_form_id( VM_NEWSLETTER_FORM_TITLE );
+
+		if ( $existing ) {
+			WP_CLI::log( sprintf( '  keep     Newsletter form (#%d)', $existing ) );
+			return;
+		}
+
+		WP_CLI::log( sprintf( '  add      Newsletter form "%s": one email field, no notification', VM_NEWSLETTER_FORM_TITLE ) );
+
+		if ( ! $this->execute ) {
+			return;
+		}
+
+		$result = GFAPI::add_form(
+			array(
+				'title'                => VM_NEWSLETTER_FORM_TITLE,
+				'description'          => '',
+				'labelPlacement'       => 'top_label',
+				'descriptionPlacement' => 'below',
+				'cssClass'             => 'vm-form-inline',
+				'enableHoneypot'       => true,
+				'button'               => array(
+					'type'     => 'text',
+					'text'     => 'Sign Me Up',
+					'imageUrl' => '',
+				),
+				'fields'               => array(
+					array(
+						'type'           => 'email',
+						'id'             => 1,
+						'label'          => 'Work email',
+						'labelPlacement' => 'hidden_label',
+						'placeholder'    => 'Your work email',
+						'isRequired'     => true,
+						'size'           => 'large',
+					),
+				),
+				'notifications'        => array(),
+				'confirmations'        => array(
+					'vmnewsletter1' => array(
+						'id'        => 'vmnewsletter1',
+						'name'      => 'Default Confirmation',
+						'isDefault' => true,
+						'type'      => 'message',
+						'message'   => 'Thanks for subscribing. Look for the next issue in your inbox.',
+					),
+				),
+			)
+		);
+
+		if ( is_wp_error( $result ) ) {
+			WP_CLI::error( $result->get_error_message() );
+		}
+	}
+
+	/**
 	 * Create one seeded post, or leave it alone if it exists.
 	 *
 	 * @param string   $key     Seed key, stored in post meta to find it later.

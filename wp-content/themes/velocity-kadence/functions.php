@@ -21,6 +21,7 @@ require_once VELOCITY_KADENCE_DIR . '/inc/background-video.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/accessibility.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/animations.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/block-styles.php';
+require_once VELOCITY_KADENCE_DIR . '/inc/forms.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-seed.php';
