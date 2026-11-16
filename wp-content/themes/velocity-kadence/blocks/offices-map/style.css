@@ -1,0 +1,156 @@
+/*
+ * Offices map block. Markup from inc/offices.php.
+ * The map is a drawing, the pins are placed over it by percentage, so they
+ * stay in place at any width. A pin's card opens above it on hover, focus or
+ * click (view.js). Below 768px there is no room for that: the pins are
+ * decoration and the cards are listed under the map.
+ * Measures and colors are from Figma, "Our offices" on Contact & Locations.
+ */
+.vm-offices__map {
+	position: relative;
+	max-width: 904px;
+	margin-inline: auto;
+}
+
+.vm-offices__drawing {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+/* The pin's tip sits on the office. Its width follows the map's: 24 of 904. */
+.vm-offices__pin {
+	position: absolute;
+	width: 2.655%;
+	min-width: 14px;
+	transform: translate(-50%, -100%);
+}
+
+.vm-offices__pin.is-open {
+	z-index: 2;
+}
+
+.vm-offices__pin-button {
+	display: block;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+	line-height: 0;
+	cursor: pointer;
+	transform-origin: 50% 100%;
+	transition: transform 0.2s ease;
+}
+
+.vm-offices__pin-button:hover,
+.vm-offices__pin-button:focus {
+	background: none;
+	box-shadow: none;
+}
+
+.vm-offices__pin-button:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+/* The pin of the open card is larger, as in the design: 29 against 24. */
+.vm-offices__pin.is-open .vm-offices__pin-button {
+	transform: scale(1.22);
+}
+
+.vm-offices__pin-icon {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: visible;
+	filter: drop-shadow(0 4px 2px rgba(0, 0, 0, 0.53));
+}
+
+.vm-offices__card {
+	padding: 24px;
+	border: 1px solid var(--vm-border);
+	border-radius: 10px;
+	background: #f9f9f9;
+	box-shadow: var(--vm-shadow-medium);
+	color: var(--global-palette3);
+	text-align: left;
+}
+
+.vm-offices .vm-offices__city {
+	margin: 0 0 16px;
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: 0;
+}
+
+.vm-offices .vm-offices__address {
+	margin: 0;
+	font-size: 16px;
+	line-height: 1.47;
+}
+
+/* The card of a pin: above it, centered, 4px away from the larger pin. */
+.vm-offices__pin .vm-offices__card {
+	position: absolute;
+	bottom: calc(122% + 4px);
+	left: 50%;
+	width: 302px;
+	transform: translateX(-50%);
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.15s ease, visibility 0.15s;
+}
+
+.vm-offices__pin.is-open .vm-offices__card {
+	visibility: visible;
+	opacity: 1;
+}
+
+.vm-offices .vm-offices__list {
+	display: none;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* With less room at the sides, cards near an edge open towards the middle. */
+@media (max-width: 1240px) {
+	.vm-offices__pin--start .vm-offices__card {
+		left: -12px;
+		transform: none;
+	}
+
+	.vm-offices__pin--end .vm-offices__card {
+		right: -12px;
+		left: auto;
+		transform: none;
+	}
+}
+
+@media (max-width: 767px) {
+	.vm-offices__pin-button {
+		cursor: default;
+		pointer-events: none;
+	}
+
+	.vm-offices__pin .vm-offices__card {
+		display: none;
+	}
+
+	.vm-offices .vm-offices__list {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+		gap: 16px;
+		margin-top: 32px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.vm-offices__pin-button,
+	.vm-offices__pin .vm-offices__card {
+		transition: none;
+	}
+}

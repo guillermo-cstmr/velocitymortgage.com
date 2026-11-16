@@ -361,6 +361,85 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Fills the Contact page with its sections as block content.
+	 *
+	 * It writes to the page with the slug "contact-us": the heading, the ways
+	 * to reach Velocity, the contact form and the offices map. Each office's
+	 * address is looked up in the US Census Bureau geocoder to place its pin.
+	 *
+	 * Without --execute it only reports what it would do. A page that already
+	 * has content is left alone, so editor work is never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Write the content if the page is empty.
+	 *
+	 * [--force]
+	 * : Replace the content even if the page has some. This DISCARDS what is
+	 * there. WordPress keeps the old version as a revision.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-contact
+	 *     wp velocity seed-contact --execute
+	 *
+	 * @subcommand seed-contact
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_contact( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		$page = get_page_by_path( 'contact-us' );
+
+		if ( ! $page ) {
+			WP_CLI::error( 'There is no page with the slug "contact-us".' );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+		WP_CLI::log( sprintf( 'Contact page: #%d "%s", %d bytes of content.', $page->ID, $page->post_title, strlen( $page->post_content ) ) );
+
+		if ( '' !== trim( $page->post_content ) && ! $this->force ) {
+			WP_CLI::success( 'The page already has content. Left as it is.' );
+			return;
+		}
+
+		if ( ! $this->execute ) {
+			WP_CLI::success( 'Dry run finished. The page would be filled.' );
+			return;
+		}
+
+		list( $offices, $missing ) = Velocity_Contact::offices();
+
+		foreach ( $offices as $office ) {
+			if ( '' !== $office['lat'] ) {
+				WP_CLI::log( sprintf( '  office   %s: %s, %s%s', $office['city'], $office['lat'], $office['lng'], 'city' === $office['precision'] ? ' (street not found, placed on the city)' : '' ) );
+			}
+		}
+
+		foreach ( $missing as $city ) {
+			WP_CLI::warning( sprintf( 'Address not found for %s. It has no pin: look it up again in the block settings.', $city ) );
+		}
+
+		// How each address was found is only for this report.
+		foreach ( $offices as $i => $office ) {
+			unset( $offices[ $i ]['precision'] );
+		}
+
+		wp_update_post(
+			array(
+				'ID'           => $page->ID,
+				'post_content' => wp_slash( Velocity_Contact::content( $page->ID, $offices ) ),
+			)
+		);
+
+		WP_CLI::success( 'Contact page content written. Edit it in the block editor from now on.' );
+	}
+
+	/**
 	 * Fills in the details of each loan program, in Properties, Programs.
 	 *
 	 * Creates the programs the new site needs and does not have yet, and fills

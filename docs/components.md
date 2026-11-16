@@ -198,6 +198,51 @@ The look of every Gravity Form is in the theme's `style.css`, "Forms": fields, l
 
 `wp velocity seed-forms` prepares both forms on a new environment. See [database-and-content.md](database-and-content.md), "Theme commands".
 
+## Offices map
+
+The map on the Contact page is the block **Offices Map**. It is one of the theme's own blocks, in `blocks/offices-map`, like the loan calculator.
+
+### Editing the offices
+
+Select the map in the editor. The block settings in the sidebar list the offices, one panel each.
+
+| Field | Use |
+|---|---|
+| City | The title of the card, for example "Las Vegas, NV" |
+| Address | As it reads on the card, one line per row: street and suite, then city, state and ZIP code |
+| Latitude, Longitude | Filled in from the address. They can be typed by hand |
+| Move pin right, Move pin down | Optional. To separate pins that sit on top of each other, in pixels of the full size map, which is 904 wide |
+
+To add an office, press "Add office", type the city and the address, and click outside the address field. The pin appears on the map in the editor. "Move up" and "Move down" change the order of the cards in the list shown on phones.
+
+The offices are saved in the block, with the page. Copying the block to another environment brings them along.
+
+### How a pin is placed
+
+1. When an address is typed or changed, the editor asks the site for its coordinates. The site looks the exact address up in the US Census Bureau geocoder.
+2. The Census Bureau does not know every street, office parks in particular. For those, the last line of the address (city, state and ZIP code) is looked up in OpenStreetMap instead, and the pin goes on the town. On a map of the whole country that is the same place. The editor says which of the two happened.
+3. The theme turns the coordinates into a position on the drawing.
+
+Neither service needs a key. Nothing is looked up when a visitor opens the page: the coordinates are stored in the block.
+
+Only US addresses are found. For any other place, or if both lookups fail, type the latitude and longitude by hand.
+
+### The seven offices of the design
+
+The design moves some pins away from their real place so that neighboring offices can be told apart, mostly in Southern California. The offices created by `wp velocity seed-contact` carry those moves in "Move pin right" and "Move pin down", so they sit exactly where the design draws them. A new office starts at its real place.
+
+### The drawing
+
+`assets/images/us-map.svg` is the map from Figma, without the pins. It follows the Albers USA projection, with Alaska and Hawaii drawn smaller in the bottom left corner. `inc/offices.php` projects a place the standard way and then scales it onto the drawing, with one scale for the lower 48 states, one for Alaska and one for Hawaii. Those numbers were measured against this drawing: for the lower 48, a state's outline and its projection agree within about 3 pixels.
+
+If the drawing is replaced with a different one, the numbers have to be measured again, or the pins will be off.
+
+### On the page
+
+- Hovering a pin, focusing it with the keyboard or clicking it opens the office's card above it. A click keeps it open until another pin is clicked, Escape is pressed or the visitor clicks elsewhere.
+- Below 768px there is no room for that. The pins are decoration and the cards are listed under the map.
+- The card's look and the pin are in the block's `style.css`.
+
 ## The loan calculator
 
 A block of the theme, "Loan Scenario Calculator", in `blocks/loan-calculator`. It has no settings in the editor: the editor shows it as it looks on the site, but it cannot be clicked there. To try it, use Preview or the published page.

@@ -636,7 +636,8 @@ class Velocity_Seed {
 				),
 				$attrs
 			),
-			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
+			// Kadence adds a class for a direction other than the default, vertical.
+			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['direction'][0] ) ? '' : ' kb-section-dir-' . esc_attr( $attrs['direction'][0] ) ) . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
 		);
 	}
 

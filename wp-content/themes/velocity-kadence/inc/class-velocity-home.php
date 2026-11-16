@@ -73,7 +73,7 @@ class Velocity_Home {
 	 * @param string $color Border color.
 	 * @return array
 	 */
-	private static function border( $color ) {
+	public static function border( $color ) {
 		$side = array( $color, '', 1 );
 
 		return array(
@@ -143,7 +143,8 @@ class Velocity_Home {
 	 * Options: tag (h1 to h6, or p), align, size [desktop, tablet, mobile],
 	 * weight, lh (unitless line height), color and background (palette slug or
 	 * any CSS color), margin and padding [top, right, bottom, left], transform,
-	 * family ("heading" for the heading font), width (max width in px), class.
+	 * family ("heading" for the heading font), width (max width in px), class,
+	 * link and link_hover (colors of the links inside the text).
 	 *
 	 * @param int    $post_id Page ID.
 	 * @param string $key     Key for the unique ID.
@@ -151,7 +152,7 @@ class Velocity_Home {
 	 * @param array  $o       Options.
 	 * @return string
 	 */
-	private static function t( $post_id, $key, $text, $o = array() ) {
+	public static function t( $post_id, $key, $text, $o = array() ) {
 		$uid     = Velocity_Seed::uid( $post_id, 't-' . $key );
 		$tag     = isset( $o['tag'] ) ? $o['tag'] : 'p';
 		$attrs   = array( 'uniqueID' => $uid );
@@ -209,6 +210,15 @@ class Velocity_Home {
 			$attrs['maxWidth'] = array( $o['width'], '', '' );
 		}
 
+		// Color of the links inside the text, and on hover.
+		if ( ! empty( $o['link'] ) ) {
+			$attrs['linkColor'] = $o['link'];
+		}
+
+		if ( ! empty( $o['link_hover'] ) ) {
+			$attrs['linkHoverColor'] = $o['link_hover'];
+		}
+
 		// A highlighted word drawn as a pill, using Kadence's text highlight.
 		if ( ! empty( $o['pill'] ) ) {
 			$attrs['markColor']        = Velocity_Seed::color( 'palette5' );
@@ -240,7 +250,7 @@ class Velocity_Home {
 	 * @param string $text    Title. May contain inline HTML.
 	 * @return string
 	 */
-	private static function title( $post_id, $key, $text ) {
+	public static function title( $post_id, $key, $text ) {
 		return self::t(
 			$post_id,
 			$key . '-title',
@@ -264,7 +274,7 @@ class Velocity_Home {
 	 * @param array  $o       Extra options for t().
 	 * @return string
 	 */
-	private static function subtitle( $post_id, $key, $text, $o = array() ) {
+	public static function subtitle( $post_id, $key, $text, $o = array() ) {
 		return self::t(
 			$post_id,
 			$key . '-subtitle',
@@ -380,7 +390,7 @@ class Velocity_Home {
 	 * @param string  $align   left or center.
 	 * @return string
 	 */
-	private static function buttons( $post_id, $key, $buttons, $align = 'center' ) {
+	public static function buttons( $post_id, $key, $buttons, $align = 'center' ) {
 		$wrap  = Velocity_Seed::uid( $post_id, $key . 'btns' );
 		$inner = array();
 
@@ -432,7 +442,7 @@ class Velocity_Home {
 	 * @param int    $width   Max width in px.
 	 * @return string
 	 */
-	private static function section_header( $post_id, $key, $title, $intro = '', $width = 846 ) {
+	public static function section_header( $post_id, $key, $title, $intro = '', $width = 846 ) {
 		$inner = self::title( $post_id, $key, $title );
 
 		if ( $intro ) {
@@ -461,7 +471,7 @@ class Velocity_Home {
 	 * @param array  $attrs   Extra row settings.
 	 * @return string
 	 */
-	private static function section( $post_id, $key, $inner, $name, $attrs = array() ) {
+	public static function section( $post_id, $key, $inner, $name, $attrs = array() ) {
 		return Velocity_Seed::row(
 			$post_id,
 			$key,

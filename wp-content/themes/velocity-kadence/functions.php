@@ -22,10 +22,12 @@ require_once VELOCITY_KADENCE_DIR . '/inc/accessibility.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/animations.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/block-styles.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/forms.php';
+require_once VELOCITY_KADENCE_DIR . '/inc/offices.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-seed.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-home.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-contact.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-cli.php';
 }
 
@@ -34,6 +36,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
  */
 function vm_register_blocks() {
 	register_block_type( VELOCITY_KADENCE_DIR . '/blocks/loan-calculator' );
+	register_block_type( VELOCITY_KADENCE_DIR . '/blocks/offices-map' );
 }
 add_action( 'init', 'vm_register_blocks' );
 
