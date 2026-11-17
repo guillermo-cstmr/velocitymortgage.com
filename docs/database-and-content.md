@@ -254,6 +254,7 @@ All of them are dry runs unless called with `--execute`.
 | `wp velocity seed-forms` | Updates the contact form to the design and adds its consent checkbox, and creates the newsletter form. Leaves them alone once done (see [components.md](components.md), "Forms") |
 | `wp velocity seed-contact` | Fills the Contact page, if it is empty: heading, ways to reach Velocity, the contact form and the offices map. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "Offices map") |
 | `wp velocity seed-company` | Creates the About Us page if it is missing and fills it, if it is empty. Its people and careers sections read Staff and Careers, so they need no seeding. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The About Us page") |
+| `wp velocity rename-pages` | Moves the Contact, Loan Programs and Broker Tools pages to their addresses in the new site (`/contact/`, `/loan-programs/`, `/broker-tools/`), updates the links to them in pages, menus, header and footer, and adds a 301 redirect from each old address in Yoast SEO Premium. Safe to run again |
 
 On staging they run through the SSH Gateway. The gateway may run an older PHP than the website, so the theme's command code stays compatible with PHP 7.4.
 
@@ -264,6 +265,7 @@ Production keeps receiving form entries and content edits while the rebuild happ
 Whatever the plan, production needs these once the code is there:
 
 - `wp velocity seed-programs --execute`, `wp velocity seed-toolkit --execute` and `wp velocity seed-forms --execute`. They read production's own data, so they do not depend on the staging database.
+- `wp velocity rename-pages --execute`, before the menus are rebuilt. The list of pages is `PAGE_SLUG_CHANGES` in `inc/class-velocity-cli.php`.
 - The About Us page: copy its blocks from staging, or run `wp velocity seed-company --execute`, which also creates the page. Then `wp velocity seed-chrome --menus --force --execute`, so "About Us" and "Our Team" in the menus point to it.
 - The Contact page: copy its blocks from staging, or run `wp velocity seed-contact --execute` after `seed-forms`, which it needs for the form.
 - The loan amounts of existing deals saved as numbers, so Featured Deals sorts by amount. Saving each deal once does it, or a script can.

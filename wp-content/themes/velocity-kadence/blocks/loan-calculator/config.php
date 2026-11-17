@@ -161,7 +161,7 @@ return array(
 	'no_fit'          => array(
 		'title'   => 'Talk to an account executive',
 		'default' => 'This scenario needs a closer look.',
-		'url'     => home_url( '/contact-us/' ),
+		'url'     => home_url( '/contact/' ),
 		'link'    => 'Talk to an account executive',
 	),
 );

@@ -877,7 +877,7 @@ class Velocity_Home {
 				'One Lender, <br>Four Programs to Grow',
 				'Long-term financing meets the flexibility of private lending, available on anything from single rentals to commercial buildings nationwide.'
 			) . "\n\n" . implode( "\n\n", $rows ) . "\n\n" .
-			self::buttons( $post_id, 'programs-all', array( array( 'See Programs Side by Side', home_url( '/mortgage-programs/' ) ) ) ) . "\n\n" .
+			self::buttons( $post_id, 'programs-all', array( array( 'See Programs Side by Side', home_url( '/loan-programs/' ) ) ) ) . "\n\n" .
 			self::subtitle(
 				$post_id,
 				'programs-note',
@@ -918,7 +918,7 @@ class Velocity_Home {
 					'margin' => array( '0', '', '32', '' ),
 				)
 			) . "\n\n" .
-			self::buttons( $post_id, 'calculator', array( array( 'Bring Us Your Deal', home_url( '/contact-us/' ) ) ) );
+			self::buttons( $post_id, 'calculator', array( array( 'Bring Us Your Deal', home_url( '/contact/' ) ) ) );
 
 		return self::section( $post_id, 'calculator', $inner, 'Calculator' );
 	}
@@ -1092,9 +1092,9 @@ class Velocity_Home {
 	 */
 	public static function resources( $post_id ) {
 		$cards = array(
-			array( 'Broker Toolkit', 'Forms, Flyers, and Marketing Tools', 'Everything you need to fund deals, educate borrowers, and win more clients.', home_url( '/broker-toolkit/' ) ),
+			array( 'Broker Toolkit', 'Forms, Flyers, and Marketing Tools', 'Everything you need to fund deals, educate borrowers, and win more clients.', home_url( '/broker-tools/' ) ),
 			array( 'Blog', 'News and Insights For Brokers', 'What’s trending in investor lending, from the people who make these loans every day.', home_url( '/insights/' ) ),
-			array( 'Case Studies', 'Case Studies and Success Stories', 'How brokers like you placed the hard deals, and what winning looked like.', '#' ),
+			array( 'Case Studies', 'Case Studies and Success Stories', 'How brokers like you placed the hard deals, and what winning looked like.', home_url( '/case-studies/' ) ),
 		);
 
 		$columns = array();
@@ -1180,7 +1180,7 @@ class Velocity_Home {
 			'Ready to Close More Deals?',
 			array(
 				array( 'Become a Partner', home_url( '/become-a-partner/' ) ),
-				array( 'Start a Conversation', home_url( '/contact-us/' ), 'outline', self::on_dark() ),
+				array( 'Start a Conversation', home_url( '/contact/' ), 'outline', self::on_dark() ),
 			)
 		);
 	}

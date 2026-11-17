@@ -251,7 +251,7 @@ If the drawing is replaced with a different one, the numbers have to be measured
 
 ## The About Us page
 
-The page at `/about-us/` is built from the recipes above plus four pieces of its own: a timeline, a photo with figures over it, a list of people and a carousel. `wp velocity seed-company` creates its first version.
+The page at `/about/` is built from the recipes above plus four pieces of its own: a timeline, a photo with figures over it, a list of people and a carousel. `wp velocity seed-company` creates its first version.
 
 ### Timeline
 
@@ -292,7 +292,7 @@ The labels under the figures are 14px. The design draws them at 9.5px and 8px, w
 
 Who is listed is set on the Query Loop: Staff, filtered by Type. The seed sets it to "Sales Directors". To add someone, create the person in Staff with that type. The order is each person's Order field, under Page Attributes, lowest first.
 
-The section has the HTML anchor `team`, so `/about-us/#team` lands on it. "Our Team" in the menu uses that address.
+The section has the HTML anchor `team`, so `/about/#team` lands on it. "Our Team" in the menu uses that address.
 
 ### Carousel
 

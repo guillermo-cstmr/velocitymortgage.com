@@ -73,6 +73,36 @@ class Velocity_CLI {
 	const PAGE_SLUGS_TO_KEEP = array( 'privacy', 'terms-of-use', 'careers' );
 
 	/**
+	 * Pages whose address changes with the new site. Old slug => new slug.
+	 * From the client's URL list. See rename_pages().
+	 *
+	 * @var array
+	 */
+	const PAGE_SLUG_CHANGES = array(
+		'contact-us'        => 'contact',
+		'mortgage-programs' => 'loan-programs',
+		'broker-toolkit'    => 'broker-tools',
+	);
+
+	/**
+	 * A page by its slug in the new site, or by the slug it had before
+	 * `wp velocity rename-pages` ran.
+	 *
+	 * @param string $slug New slug.
+	 * @return WP_Post|null
+	 */
+	private function page( $slug ) {
+		$page = get_page_by_path( $slug );
+		$old  = array_search( $slug, self::PAGE_SLUG_CHANGES, true );
+
+		if ( ! $page && $old ) {
+			$page = get_page_by_path( $old );
+		}
+
+		return $page ? $page : null;
+	}
+
+	/**
 	 * Options that hold the old design. Backed up to a file, then deleted.
 	 *
 	 * Kadence Blocks rebuilds its two options from the active palette on the
@@ -381,7 +411,7 @@ class Velocity_CLI {
 	/**
 	 * Fills the Contact page with its sections as block content.
 	 *
-	 * It writes to the page with the slug "contact-us": the heading, the ways
+	 * It writes to the page with the slug "contact": the heading, the ways
 	 * to reach Velocity, the contact form and the offices map. Each office's
 	 * address is looked up in the US Census Bureau geocoder to place its pin.
 	 *
@@ -411,10 +441,10 @@ class Velocity_CLI {
 		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
 		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
 
-		$page = get_page_by_path( 'contact-us' );
+		$page = $this->page( 'contact' );
 
 		if ( ! $page ) {
-			WP_CLI::error( 'There is no page with the slug "contact-us".' );
+			WP_CLI::error( 'There is no page with the slug "contact".' );
 		}
 
 		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
@@ -460,7 +490,7 @@ class Velocity_CLI {
 	/**
 	 * Fills the About Us page with its sections as block content.
 	 *
-	 * It writes to the page with the slug "about-us", and creates that page
+	 * It writes to the page with the slug "about", and creates that page
 	 * if it does not exist. The people section lists the staff of the type
 	 * "Sales Directors", and the careers section the published careers: both
 	 * read what is in the admin, so they stay up to date on their own.
@@ -493,7 +523,7 @@ class Velocity_CLI {
 
 		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
 
-		$page = get_page_by_path( Velocity_Company::SLUG );
+		$page = $this->page( Velocity_Company::SLUG );
 
 		if ( $page ) {
 			WP_CLI::log( sprintf( 'About Us page: #%d "%s", %d bytes of content.', $page->ID, $page->post_title, strlen( $page->post_content ) ) );
@@ -548,6 +578,206 @@ class Velocity_CLI {
 
 		WP_CLI::success( 'About Us page content written. Edit it in the block editor from now on.' );
 		WP_CLI::log( 'To point the menus at it: wp velocity seed-chrome --menus --force --execute' );
+	}
+
+	/**
+	 * Moves pages to their addresses in the new site's URL list.
+	 *
+	 * For each page in PAGE_SLUG_CHANGES that still has its old slug, it
+	 * changes the slug and then updates the links to the old address inside
+	 * pages, the header, the menus, the footer and synced patterns.
+	 *
+	 * WordPress does not redirect a page's old address by itself, so it also
+	 * adds a 301 redirect from each old address to the new one in Yoast SEO
+	 * Premium (SEO, Redirects), and repoints existing redirects that led to
+	 * an old address.
+	 *
+	 * Without --execute it only reports what it would do. A page that already
+	 * has its new slug is left alone, so it is safe to run again.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity rename-pages
+	 *     wp velocity rename-pages --execute
+	 *
+	 * @subcommand rename-pages
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function rename_pages( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		$moved    = array();
+		$inactive = ! $this->redirects( true );
+
+		foreach ( self::PAGE_SLUG_CHANGES as $old => $new ) {
+			$page = get_page_by_path( $old );
+
+			if ( ! $page ) {
+				WP_CLI::log( sprintf( '  %s  /%s/ %s', get_page_by_path( $new ) ? 'done    ' : 'missing ', $new, get_page_by_path( $new ) ? '' : '(no page at /' . $old . '/ either)' ) );
+				continue;
+			}
+
+			if ( get_page_by_path( $new ) ) {
+				WP_CLI::warning( sprintf( 'Both /%1$s/ and /%2$s/ exist. Left as they are: remove or merge one of them by hand.', $old, $new ) );
+				continue;
+			}
+
+			WP_CLI::log( sprintf( '  rename    #%d "%s": /%s/ to /%s/', $page->ID, $page->post_title, $old, $new ) );
+
+			// Addresses are compared before and after, so child pages are covered too.
+			$before = get_permalink( $page );
+
+			if ( $this->execute ) {
+				wp_update_post(
+					array(
+						'ID'        => $page->ID,
+						'post_name' => $new,
+					)
+				);
+				$moved[ $before ] = get_permalink( $page->ID );
+			} else {
+				$moved[ $before ] = home_url( '/' . $new . '/' );
+			}
+		}
+
+		if ( ! $moved && $inactive ) {
+			WP_CLI::success( 'Every page is at its address, with its redirect. Nothing to do.' );
+			return;
+		}
+
+		if ( ! $moved ) {
+			$this->redirects();
+			if ( $this->execute ) {
+				WP_CLI::success( 'Redirects are in place.' );
+			} else {
+				WP_CLI::success( 'Dry run finished. Nothing was changed.' );
+			}
+			return;
+		}
+
+		WP_CLI::log( '' );
+		WP_CLI::log( '== Links to the old addresses ==' );
+
+		$posts = get_posts(
+			array(
+				'post_type'   => array( 'page', 'kadence_header', 'kadence_navigation', 'kadence_element', 'wp_block' ),
+				'post_status' => array( 'publish', 'draft', 'private' ),
+				'numberposts' => -1,
+			)
+		);
+
+		$total = 0;
+		foreach ( $posts as $post ) {
+			$content = $post->post_content;
+			$count   = 0;
+
+			foreach ( $moved as $before => $after ) {
+				$content = str_replace( $before, $after, $content, $found );
+				$count  += $found;
+			}
+
+			if ( ! $count ) {
+				continue;
+			}
+
+			$total += $count;
+			WP_CLI::log( sprintf( '  %s  %d in %s #%d "%s"', $this->execute ? 'updated ' : 'would update', $count, $post->post_type, $post->ID, $post->post_title ) );
+
+			if ( $this->execute ) {
+				wp_update_post(
+					array(
+						'ID'           => $post->ID,
+						'post_content' => wp_slash( $content ),
+					)
+				);
+			}
+		}
+
+		if ( ! $total ) {
+			WP_CLI::log( '  none' );
+		}
+
+		$this->redirects();
+
+		if ( $this->execute ) {
+			flush_rewrite_rules();
+			wp_cache_flush();
+			WP_CLI::success( 'Pages are at their new addresses.' );
+		} else {
+			WP_CLI::success( 'Dry run finished. Nothing was changed.' );
+		}
+	}
+
+	/**
+	 * Adds the redirects from the old page addresses to the new ones, in
+	 * Yoast SEO Premium, and repoints redirects that led to an old address.
+	 *
+	 * @param bool $check_only Only tell whether there is anything to do.
+	 * @return bool Whether there is, or was, anything to do.
+	 */
+	private function redirects( $check_only = false ) {
+		if ( ! class_exists( 'WPSEO_Redirect_Manager' ) || ! class_exists( 'WPSEO_Redirect' ) ) {
+			if ( ! $check_only ) {
+				WP_CLI::log( '' );
+				WP_CLI::warning( 'Yoast SEO Premium is not active, so no redirects were added. The old addresses will not be found.' );
+			}
+			return false;
+		}
+
+		$manager = new WPSEO_Redirect_Manager();
+		$todo    = array();
+
+		foreach ( self::PAGE_SLUG_CHANGES as $old => $new ) {
+			if ( ! $manager->get_redirect( $old ) ) {
+				$todo[] = array( 'add', $old, $new, null );
+			}
+		}
+
+		foreach ( $manager->get_all_redirects() as $redirect ) {
+			$target = trim( $redirect->get_target(), '/' );
+
+			if ( isset( self::PAGE_SLUG_CHANGES[ $target ] ) ) {
+				$todo[] = array( 'repoint', $redirect->get_origin(), self::PAGE_SLUG_CHANGES[ $target ], $redirect );
+			}
+		}
+
+		if ( $check_only ) {
+			return (bool) $todo;
+		}
+
+		WP_CLI::log( '' );
+		WP_CLI::log( '== Redirects ==' );
+
+		if ( ! $todo ) {
+			WP_CLI::log( '  none to add' );
+		}
+
+		foreach ( $todo as $item ) {
+			WP_CLI::log( sprintf( '  %s  /%s/ to /%s/', 'add' === $item[0] ? 'redirect' : 'repoint ', $item[1], $item[2] ) );
+
+			if ( ! $this->execute ) {
+				continue;
+			}
+
+			$redirect = new WPSEO_Redirect( $item[1], $item[2], 301 );
+
+			if ( 'add' === $item[0] ) {
+				$manager->create_redirect( $redirect );
+			} else {
+				$manager->update_redirect( $item[3], $redirect );
+			}
+		}
+
+		return (bool) $todo;
 	}
 
 	/**
@@ -888,7 +1118,7 @@ class Velocity_CLI {
 	 * @return array Request ID => array( image, text ).
 	 */
 	private function toolkit_page_extras() {
-		$page = get_page_by_path( 'broker-toolkit' );
+		$page = $this->page( 'broker-tools' );
 		if ( ! $page ) {
 			return array();
 		}

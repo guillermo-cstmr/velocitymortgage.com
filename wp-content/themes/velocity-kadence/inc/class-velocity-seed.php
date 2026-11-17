@@ -46,7 +46,7 @@ class Velocity_Seed {
 				'#',
 				'',
 				array(
-					array( 'Programs Overview', '/mortgage-programs/' ),
+					array( 'Programs Overview', '/loan-programs/' ),
 					array( '30-Year-Fixed', '#' ),
 					array( 'Flex I/O', '#' ),
 					array( 'Fast50', '#' ),
@@ -60,8 +60,8 @@ class Velocity_Seed {
 				array(
 					array( 'News and Insights', '/insights/' ),
 					array( 'Featured Deals', '/featured-investment-property-loans/' ),
-					array( 'Case Studies', '#' ),
-					array( 'Broker Tools', '/broker-toolkit/' ),
+					array( 'Case Studies', '/case-studies/' ),
+					array( 'Broker Tools', '/broker-tools/' ),
 				),
 			),
 			array(
@@ -69,13 +69,13 @@ class Velocity_Seed {
 				'#',
 				'',
 				array(
-					array( 'About Us', '/about-us/' ),
+					array( 'About Us', '/about/' ),
 					// The design sends "Our Team" to the people section of About Us.
-					array( 'Our Team', '/about-us/#team' ),
+					array( 'Our Team', '/about/#team' ),
 					array( 'Careers', '/careers/' ),
 				),
 			),
-			array( 'Contact', '/contact-us/' ),
+			array( 'Contact', '/contact/' ),
 		);
 	}
 
@@ -299,7 +299,7 @@ class Velocity_Seed {
 			$target = $item[1];
 			$anchor = '';
 
-			// "/about-us/#team": the page, then the section to land on.
+			// "/about/#team": the page, then the section to land on.
 			if ( '#' !== $target && false !== strpos( $target, '#' ) ) {
 				list( $target, $anchor ) = explode( '#', $target, 2 );
 			}

@@ -29,7 +29,7 @@ class Velocity_Company {
 	/**
 	 * Slug of the page this class fills.
 	 */
-	const SLUG = 'about-us';
+	const SLUG = 'about';
 
 	/**
 	 * Name of the staff type listed in the people section.
@@ -37,7 +37,7 @@ class Velocity_Company {
 	const STAFF_TYPE = 'Sales Directors';
 
 	/**
-	 * ID of the people section, for links such as /about-us/#team.
+	 * ID of the people section, for links such as /about/#team.
 	 */
 	const TEAM_ANCHOR = 'team';
 
