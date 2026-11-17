@@ -500,6 +500,8 @@ class Velocity_Home {
 	 * The outer row only provides the side gutters. The Section inside it
 	 * carries the background, the radius and the padding. On mobile the
 	 * gutters and the radius drop to zero, so the panel runs edge to edge.
+	 * On very wide screens the panel stops growing: with its gutters it
+	 * never takes more than 1920px, and stays centered.
 	 *
 	 * @param int    $post_id Page ID.
 	 * @param string $key     Key for the unique IDs.
@@ -531,6 +533,8 @@ class Velocity_Home {
 			),
 			array(
 				'align'         => 'full',
+				// The panel and its two gutters.
+				'maxWidth'      => 1920,
 				'padding'       => array( '0', '32', '0', '32' ),
 				'mobilePadding' => array( '0', '0', '0', '0' ),
 				'metadata'      => array( 'name' => $name ),

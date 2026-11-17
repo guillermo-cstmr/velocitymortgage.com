@@ -261,6 +261,9 @@ class Velocity_Company {
 				'verticalAlignment' => 'middle',
 				'tabletLayout'      => 'row',
 				'mobileLayout'      => 'row',
+				// On wide screens the panel keeps growing, up to 1920px, and
+				// its content stops here, like the panels of the home page.
+				'maxWidth'          => 1280,
 				'padding'           => array( '0', '', '0', '' ),
 				'metadata'          => array( 'name' => 'Mission and promise' ),
 			)
@@ -531,6 +534,9 @@ class Velocity_Company {
 				'verticalAlignment' => 'middle',
 				'tabletLayout'      => 'row',
 				'mobileLayout'      => 'row',
+				// On wide screens the panel keeps growing, up to 1920px, and
+				// its content stops here, like the panels of the home page.
+				'maxWidth'          => 1280,
 				'padding'           => array( '0', '', '0', '' ),
 				'metadata'          => array( 'name' => 'Story' ),
 			)

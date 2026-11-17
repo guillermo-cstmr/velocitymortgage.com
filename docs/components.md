@@ -85,10 +85,12 @@ Row Layout, one column.
 
 The rounded, colored area that sits inset from the page edges, as in Programs and in the five steps.
 
-- **Outer Row Layout**: full width, no background. Padding 32 left and right. Mobile padding 0.
+- **Outer Row Layout**: full width, no background. Max width 1920. Padding 32 left and right. Mobile padding 0.
 - **Section inside it**: carries the look. Background color or gradient. Border radius 30, mobile 0. Padding 112 top and bottom, 64 sides. Tablet 80 and 32. Mobile 64 and 20.
 
 On mobile the gutters and the radius drop to zero, so the panel runs edge to edge. That is the rule for any section wider than the content column.
+
+On very wide screens a panel stops growing at 1920px, gutters included, and stays centered. A row inside a panel gets its own max width, 1280 for a full row, so the content lines up with the rest of the page while the panel grows. A section with a plain full-width background, such as the people on the About Us page, has no limit.
 
 ### A card
 
