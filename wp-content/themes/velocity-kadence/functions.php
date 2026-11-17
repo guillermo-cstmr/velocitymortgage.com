@@ -27,13 +27,13 @@ require_once VELOCITY_KADENCE_DIR . '/inc/carousel.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/dynamic-content.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-seed.php';
-	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-home.php';
-	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-contact.php';
-	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-company.php';
-	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-programs.php';
-	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-process.php';
-	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-cli.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-seed.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-home.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-contact.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-company.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-programs.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-process.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-cli.php';
 }
 
 /**

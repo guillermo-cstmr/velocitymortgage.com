@@ -115,7 +115,7 @@ The careers listing and the job pages are not part of the redesign. They are the
 
 The application form on the job page is Gravity Form 3, "Career Application". On production it notifies HR. On staging no email leaves the site (see "Staging does not send email or leads").
 
-`wp velocity cleanup` keeps all of these. The list is in `PROTECTED_POSTS` and `PAGE_SLUGS_TO_KEEP` in `inc/class-velocity-cli.php`.
+`wp velocity cleanup` keeps all of these. The list is in `PROTECTED_POSTS` and `PAGE_SLUGS_TO_KEEP` in `inc/seed/class-velocity-cli.php`.
 
 ## Deals and case studies
 
@@ -267,7 +267,7 @@ Production keeps receiving form entries and content edits while the rebuild happ
 Whatever the plan, production needs these once the code is there:
 
 - `wp velocity seed-programs --execute`, `wp velocity seed-toolkit --execute` and `wp velocity seed-forms --execute`. They read production's own data, so they do not depend on the staging database.
-- `wp velocity rename-pages --execute`, before the menus are rebuilt. The list of pages is `PAGE_SLUG_CHANGES` in `inc/class-velocity-cli.php`.
+- `wp velocity rename-pages --execute`, before the menus are rebuilt. The list of pages is `PAGE_SLUG_CHANGES` in `inc/seed/class-velocity-cli.php`.
 - The Process page: copy its blocks from staging, or run `wp velocity seed-process --execute`, which also creates the page.
 - The Programs Overview page: copy its blocks from staging, or run `wp velocity seed-programs-page --execute` after `rename-pages`.
 - The About Us page: run `wp velocity seed-company --execute`, which also creates the page and its two Kadence queries. Copying the page's blocks alone is not enough: the queries are posts of their own, and their IDs differ between environments. Then `wp velocity seed-chrome --menus --force --execute`, so "About Us" and "Our Team" in the menus point to it.
