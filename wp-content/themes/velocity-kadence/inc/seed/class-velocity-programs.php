@@ -34,13 +34,18 @@ class Velocity_Programs {
 	const SLUG = 'loan-programs';
 
 	/**
-	 * Address of each program's own page. None is built yet, so they are
-	 * placeholders. Order: 30-Year Fixed, Fast50, Flex I/O, Super Jumbo.
+	 * Address of each program's own page. Order: 30-Year Fixed, Fast50,
+	 * Flex I/O, Super Jumbo.
 	 *
 	 * @return string[]
 	 */
 	private static function links() {
-		return array( '#', '#', '#', '#' );
+		return array(
+			Velocity_Program::url( '30-year-fixed' ),
+			Velocity_Program::url( 'fast50' ),
+			Velocity_Program::url( 'flex-io' ),
+			Velocity_Program::url( 'super-jumbo' ),
+		);
 	}
 
 	/**
@@ -507,11 +512,26 @@ class Velocity_Programs {
 	 * @param string   $key     Key for the unique IDs.
 	 * @param string[] $head    Header cells. May contain inline HTML.
 	 * @param array[]  $rows    Rows of cells. A cell is a string, or a list of items.
+	 * @param array    $o       Options: size (text size in px, 14), first (width of
+	 *                          the first column in percent, 22), label (weight of
+	 *                          a row's label, 400), class and name.
 	 * @return string
 	 */
-	private static function table( $post_id, $key, $head, $rows ) {
+	public static function table( $post_id, $key, $head, $rows, $o = array() ) {
+		$o = array_merge(
+			array(
+				'size'  => 14,
+				'first' => 22,
+				'label' => '400',
+				// Keeps a readable width on small screens and scrolls sideways. See style.css.
+				'class' => 'vm-compare',
+				'name'  => 'Comparison table',
+			),
+			$o
+		);
+
 		$plain = array(
-			'size'   => array( 14, '', '' ),
+			'size'   => array( $o['size'], '', '' ),
 			'weight' => '400',
 			'lh'     => 1.3,
 			'margin' => array( '0', '', '0', '' ),
@@ -562,7 +582,15 @@ class Velocity_Programs {
 						)
 					);
 				} else {
-					$inner = Velocity_Home::t( $post_id, $cell_key, $cell, 0 === $r ? array_merge( $plain, array( 'size' => array( 16, '', '' ) ) ) : $plain );
+					$text = $plain;
+					if ( 0 === $r ) {
+						$text['size'] = array( 16, '', '' );
+					}
+					if ( 0 === $c ) {
+						$text['weight'] = $o['label'];
+					}
+
+					$inner = Velocity_Home::t( $post_id, $cell_key, $cell, $text );
 				}
 
 				$cells[] = Velocity_Seed::block(
@@ -591,42 +619,48 @@ class Velocity_Programs {
 		foreach ( $head as $c => $cell ) {
 			$columns[] = array(
 				'useAuto' => 0 !== $c,
-				'width'   => 0 === $c ? 22 : '',
+				'width'   => 0 === $c ? $o['first'] : '',
 				'unit'    => '%',
 			);
 		}
 
 		$none = array( '', '', '' );
 
+		$attrs = array(
+			'uniqueID'            => Velocity_Seed::uid( $post_id, $key ),
+			'columns'             => count( $head ),
+			'isFirstRowHeader'    => true,
+			'isFirstColumnHeader' => true,
+			'evenOddBackground'   => true,
+			'backgroundColorOdd'  => '#f2f4fc',
+			'backgroundColorEven' => Velocity_Seed::color( 'palette9' ),
+			'cellPadding'         => array( '16', '16', '16', '16' ),
+			'mobileCellPadding'   => array( '12', '12', '12', '12' ),
+			'headerAlign'         => 'left',
+			'headerTypography'    => Velocity_Seed::typography( 16, '600', 1.47 ),
+			'dataTypography'      => Velocity_Seed::typography( $o['size'], '', 1.3 ),
+			'columnSettings'      => $columns,
+			'className'           => $o['class'],
+			'borderStyle'         => array(
+				array(
+					'top'    => $none,
+					'right'  => $none,
+					'bottom' => $none,
+					'left'   => $none,
+					'unit'   => 'px',
+				),
+			),
+			'metadata'            => array( 'name' => $o['name'] ),
+		);
+
+		// No class leaves the table to shrink with the screen.
+		if ( ! $attrs['className'] ) {
+			unset( $attrs['className'] );
+		}
+
 		return Velocity_Seed::block(
 			'kadence/table',
-			array(
-				'uniqueID'            => Velocity_Seed::uid( $post_id, $key ),
-				'columns'             => count( $head ),
-				'isFirstRowHeader'    => true,
-				'isFirstColumnHeader' => true,
-				'evenOddBackground'   => true,
-				'backgroundColorOdd'  => '#f2f4fc',
-				'backgroundColorEven' => Velocity_Seed::color( 'palette9' ),
-				'cellPadding'         => array( '16', '16', '16', '16' ),
-				'mobileCellPadding'   => array( '12', '12', '12', '12' ),
-				'headerAlign'         => 'left',
-				'headerTypography'    => Velocity_Seed::typography( 16, '600', 1.47 ),
-				'dataTypography'      => Velocity_Seed::typography( 14, '', 1.3 ),
-				'columnSettings'      => $columns,
-				// Keeps a readable width on small screens and scrolls sideways. See style.css.
-				'className'           => 'vm-compare',
-				'borderStyle'         => array(
-					array(
-						'top'    => $none,
-						'right'  => $none,
-						'bottom' => $none,
-						'left'   => $none,
-						'unit'   => 'px',
-					),
-				),
-				'metadata'            => array( 'name' => 'Comparison table' ),
-			),
+			$attrs,
 			implode( "\n\n", $table_rows )
 		);
 	}

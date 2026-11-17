@@ -41,6 +41,7 @@ class Velocity_Toolkit {
 		add_filter( 'gform_confirmation_' . self::FORM_ID, array( __CLASS__, 'confirmation' ), 20 );
 		add_filter( 'wpseo_sitemap_exclude_post_type', array( __CLASS__, 'yoast_sitemap_exclude' ), 10, 2 );
 		add_filter( 'wpseo_accessible_post_types', array( __CLASS__, 'yoast_hide' ) );
+		add_filter( 'is_post_type_viewable', array( __CLASS__, 'listable' ), 10, 2 );
 	}
 
 	/**
@@ -374,6 +375,27 @@ class Velocity_Toolkit {
 	public static function yoast_hide( $post_types ) {
 		unset( $post_types[ self::POST_TYPE ] );
 		return $post_types;
+	}
+
+	/**
+	 * Lets the page list the documents.
+	 *
+	 * Kadence's query and its dynamic content only work with post types
+	 * WordPress calls viewable, which normally means having pages of their
+	 * own. Documents have none, on purpose, and still do not: this only
+	 * answers "viewable" on the front end, so the Broker Tools page can list
+	 * them and print their names and download links. In the admin they keep
+	 * no "View" link.
+	 *
+	 * @param bool         $viewable  What WordPress worked out.
+	 * @param WP_Post_Type $post_type The post type asked about.
+	 * @return bool
+	 */
+	public static function listable( $viewable, $post_type ) {
+		if ( ! is_admin() && is_object( $post_type ) && self::POST_TYPE === $post_type->name ) {
+			return true;
+		}
+		return $viewable;
 	}
 
 }

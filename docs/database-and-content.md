@@ -192,23 +192,44 @@ The order on the page is the order in the admin list. Drag the rows there to cha
 
 Documents have no page of their own and stay out of search and the sitemap.
 
-### Building the page
+### The page
 
-One Kadence query loop per section: post type "Toolkit Documents", filtered by the section, ordered by "Menu Order", ascending. In the query card:
+`/broker-tools/` is built by `wp velocity seed-toolkit-page`, and edited in the block editor after that. It has no file typed into it. Each list is a Kadence query (Kadence > Queries, "Toolkit: ...") that reads one section, in the order of the admin list. The seven queries share two cards (Kadence > Query Cards):
+
+| Card | Used by | Shows |
+|---|---|---|
+| "Toolkit: form card" | The two forms libraries | Name, file type and a "Download" button, on one line |
+| "Toolkit: document card" | Matrices and the four groups of flyers | "New" tag, name and description on the left; the download buttons on the right |
+
+In the cards:
 
 | Element | Source |
 |---|---|
 | Button | Link: post custom field `velocity_toolkit_link`. Text: "Unlock to Download" |
-| White Label button | Link: post custom field `velocity_toolkit_link_wl`. Put it, with its "White Label" label, inside a block with the CSS class `vm-toolkit-wl`. That block hides itself when the document has no White Label file |
-| "New" tag | Post custom field `velocity_toolkit_new` |
+| White Label button | Link: post custom field `velocity_toolkit_link_wl`, in the Section with the class `vm-toolkit-wl`. That Section hides itself when the document has no White Label file, and so does the "Velocity Branded" label, which has the class `vm-toolkit-branded` |
+| "New" tag | "Toolkit: "New" tag", under Velocity in the dynamic content list |
+| File type | "Toolkit: file type", in the same list: the file's extension, such as PDF or XLSX |
+
+A text with the class `vm-hide-empty` is not printed when it has no value: the "New" tag of a document that is not new, the description of one with none.
 
 The buttons never carry the PDF's address. They point to the site's download address for that document, which sends the file as a download: the visitor stays on the page.
 
+A section with no documents shows its title and nothing under it. That is the state of the two forms libraries until their files are uploaded.
+
+The links under the title ("Forms", "Matrices", "Flyers", "Links") jump to the sections of the page. Each section's row has that anchor, under Advanced.
+
 ### Unlocking
 
-1. A visitor clicks a document that requires unlock. The "Unlock the Toolkit" form opens instead of the download. It is Gravity Form 14.
+The form is Gravity Form 14, and the site prints it once. On the Broker Tools page it shows in the "Unlock the Toolkit" panel: the empty Section with the class `vm-toolkit-inline` is where it lands. When a button opens the form in a window, the same form moves into the window, and back when the window closes.
+
+1. A visitor fills the form on the page, or clicks a document that requires unlock: then the form opens in a window instead of the download.
 2. On sending it, a cookie remembers the unlock on that browser for a year, and the file they asked for downloads.
 3. From then on every button says "Download" and downloads straight away, on this visit and the next ones. The page also gets the class `vm-toolkit-unlocked`.
+4. On the next visits the "Unlock the Toolkit" panel is not shown: the panel has the class `vm-toolkit-form`, which hides for a visitor who already unlocked.
+
+A document with "Requires unlock" unticked always says "Download".
+
+**Testing the form.** On staging the Salesforce webhook is off and email is in test mode (see below). A Local database is only safe after the same two settings are checked: a Local copy made from production sends the lead to Salesforce for real.
 
 The cookie is per browser. Another device, a private window or cleared cookies ask for the form again.
 
@@ -251,10 +272,12 @@ All of them are dry runs unless called with `--execute`.
 | `wp velocity seed-home` | Fills the home page, if it is empty, and creates the Kadence query of its deal cards. `--force` rebuilds it and discards every change made in the editor |
 | `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. Never overwrites a filled field |
 | `wp velocity seed-toolkit` | Creates the Broker Toolkit documents from the old toolkit form and page. Skips the ones that exist (see "Broker Toolkit") |
+| `wp velocity seed-toolkit-page` | Fills the Broker Tools page, if it is empty, and creates its seven Kadence queries and their two cards. `--force` rebuilds them and discards every change made in the editor (see "Broker Toolkit", "The page") |
 | `wp velocity seed-forms` | Updates the contact form to the design and adds its consent checkbox, and creates the newsletter form. Leaves them alone once done (see [components.md](components.md), "Forms") |
 | `wp velocity seed-contact` | Fills the Contact page, if it is empty: heading, ways to reach Velocity, the contact form and the offices map. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "Offices map") |
 | `wp velocity seed-company` | Creates the About Us page if it is missing and fills it, if it is empty. Its people and careers sections are Kadence queries, which it creates with their cards (Kadence > Queries and Query Cards); they read Staff and Careers, so the people and the positions need no seeding. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The About Us page") |
 | `wp velocity seed-process` | Creates the Process page if it is missing and fills it, if it is empty. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "The Process page") |
+| `wp velocity seed-program-pages` | Creates the four program pages under Programs Overview, their Kadence queries and the card they share, and fills the pages that are empty. Needs the programs in Properties, Programs (`seed-programs`). `--force` rebuilds them and discards every change made in the editor (see [components.md](components.md), "The program pages") |
 | `wp velocity seed-programs-page` | Fills the Programs Overview page, if it is empty. Not the same as `seed-programs`, which fills in each program's details. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The Programs Overview page") |
 | `wp velocity rename-pages` | Moves the Contact, Loan Programs and Broker Tools pages to their addresses in the new site (`/contact/`, `/loan-programs/`, `/broker-tools/`), updates the links to them in pages, menus, header and footer, and adds a 301 redirect from each old address in Yoast SEO Premium. Safe to run again |
 
@@ -270,6 +293,8 @@ Whatever the plan, production needs these once the code is there:
 - `wp velocity rename-pages --execute`, before the menus are rebuilt. The list of pages is `PAGE_SLUG_CHANGES` in `inc/seed/class-velocity-cli.php`.
 - The Process page: copy its blocks from staging, or run `wp velocity seed-process --execute`, which also creates the page.
 - The Programs Overview page: copy its blocks from staging, or run `wp velocity seed-programs-page --execute` after `rename-pages`.
+- The Broker Tools page: run `wp velocity seed-toolkit-page --execute`, after `rename-pages` and `seed-toolkit`. Its queries are posts of their own, so copying the blocks alone is not enough.
+- The four program pages: run `wp velocity seed-program-pages --execute`, after `rename-pages` and `seed-programs`. It creates the pages and their Kadence queries, which are posts of their own, so copying the blocks alone is not enough. Then `wp velocity seed-chrome --menus --force --execute`, so the menus point to them. The "Explore ..." buttons of a home page and a Programs Overview page built before these pages existed still point to "#": set their links in the editor.
 - The About Us page: run `wp velocity seed-company --execute`, which also creates the page and its two Kadence queries. Copying the page's blocks alone is not enough: the queries are posts of their own, and their IDs differ between environments. Then `wp velocity seed-chrome --menus --force --execute`, so "About Us" and "Our Team" in the menus point to it.
 - The Contact page: copy its blocks from staging, or run `wp velocity seed-contact --execute` after `seed-forms`, which it needs for the form.
 - The loan amounts of existing deals saved as numbers, so Featured Deals sorts by amount. Saving each deal once does it, or a script can.

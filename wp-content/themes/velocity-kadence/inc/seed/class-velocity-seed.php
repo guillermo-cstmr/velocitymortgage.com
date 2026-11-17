@@ -47,9 +47,9 @@ class Velocity_Seed {
 				'',
 				array(
 					array( 'Programs Overview', '/loan-programs/' ),
-					array( '30-Year-Fixed', '#' ),
-					array( 'Flex I/O', '#' ),
-					array( 'Fast50', '#' ),
+					array( '30-Year-Fixed', Velocity_Program::path( '30-year-fixed' ) ),
+					array( 'Flex I/O', Velocity_Program::path( 'flex-io' ) ),
+					array( 'Fast50', Velocity_Program::path( 'fast50' ) ),
 					array( 'Process', '/process/', 'vm-menu-featured' ),
 				),
 			),
@@ -333,6 +333,16 @@ class Velocity_Seed {
 			}
 
 			$children = empty( $item[3] ) ? null : self::navigation_links( $post_id, $item[3], $key . '-' );
+
+			// A parent with no page of its own only opens its submenu: "Disable
+			// link" and "Open dropdown on click" in the link's settings. As a
+			// link to "#" it would reload the page's address, close the mobile
+			// menu and mark every such parent as the current page.
+			if ( $children && '#' === $target ) {
+				unset( $attrs['url'] );
+				$attrs['disableLink']   = true;
+				$attrs['dropdownClick'] = true;
+			}
 
 			$out[] = self::block( 'kadence/navigation-link', $attrs, $children );
 		}
@@ -653,8 +663,8 @@ class Velocity_Seed {
 				$attrs
 			),
 			// Kadence adds a class when the Section has an overlay, and one for a
-			// direction other than the default, vertical.
-			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['overlay'] ) && empty( $attrs['overlayGradient'] ) ? '' : ' kb-section-has-overlay' ) . ( empty( $attrs['direction'][0] ) ? '' : ' kb-section-dir-' . esc_attr( $attrs['direction'][0] ) ) . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
+			// direction other than the default, vertical, on each screen size.
+			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['overlay'] ) && empty( $attrs['overlayGradient'] ) ? '' : ' kb-section-has-overlay' ) . ( empty( $attrs['direction'][0] ) ? '' : ' kb-section-dir-' . esc_attr( $attrs['direction'][0] ) ) . ( empty( $attrs['direction'][1] ) ? '' : ' kb-section-md-dir-' . esc_attr( $attrs['direction'][1] ) ) . ( empty( $attrs['direction'][2] ) ? '' : ' kb-section-sm-dir-' . esc_attr( $attrs['direction'][2] ) ) . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
 		);
 	}
 
@@ -713,7 +723,10 @@ class Velocity_Seed {
 	 *
 	 * @param array $query   Title, post_type, order_by, order, per_page, columns
 	 *                       and gaps [desktop, tablet, mobile], and card, the
-	 *                       callable that builds the card.
+	 *                       callable that builds the card. Optional: term, as
+	 *                       [taxonomy, term slug], or term_name, as [taxonomy,
+	 *                       term name], to list only the posts filed under
+	 *                       that term.
 	 * @param int   $term_id For staff: ID of the staff type to list, or 0 for all.
 	 * @return array Post meta.
 	 */
@@ -726,6 +739,29 @@ class Velocity_Seed {
 				'value' => 'velocity-staff-type|' . (int) $term_id,
 				'label' => $term && ! is_wp_error( $term ) ? $term->name : '',
 			);
+		}
+
+		if ( ! empty( $query['term'] ) ) {
+			$term = get_term_by( 'slug', $query['term'][1], $query['term'][0] );
+
+			if ( $term ) {
+				$taxonomy[] = array(
+					'value' => $query['term'][0] . '|' . (int) $term->term_id,
+					'label' => $term->name,
+				);
+			}
+		}
+
+		// The same, by the term's name.
+		if ( ! empty( $query['term_name'] ) ) {
+			$term = get_term_by( 'name', $query['term_name'][1], $query['term_name'][0] );
+
+			if ( $term ) {
+				$taxonomy[] = array(
+					'value' => $query['term_name'][0] . '|' . (int) $term->term_id,
+					'label' => $term->name,
+				);
+			}
 		}
 
 		return array(

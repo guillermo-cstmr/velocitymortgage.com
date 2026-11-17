@@ -419,14 +419,25 @@ html.vm-js .is-style-vm-reveal-lines:not(.vm-reveal-ready) {
 	transition: transform 0.3s ease;
 }
 
+/*
+ * The side each one grows from and shrinks towards is set at rest too.
+ * Set only while stuck, it would jump back to the center the moment the
+ * header lets go, and the way back up would start from the middle.
+ */
+.wp-block-kadence-header .vm-logo img {
+	transform-origin: left center;
+}
+
+.wp-block-kadence-header .kb-buttons-wrap {
+	transform-origin: right center;
+}
+
 .wp-block-kadence-header .item-is-stuck .vm-logo img {
 	transform: scale(0.8);
-	transform-origin: left center;
 }
 
 .wp-block-kadence-header .item-is-stuck .kb-buttons-wrap {
 	transform: scale(0.85);
-	transform-origin: right center;
 }
 
 /*
@@ -1122,4 +1133,31 @@ body .vm-carousel-track > .kt-inside-inner-col {
 	.kb-table-container.vm-compare > table {
 		min-width: 880px;
 	}
+}
+
+/*
+ * A menu item that only opens its submenu ("Open dropdown on click"). Kadence
+ * prints it as a link with no address, which the browser treats as plain
+ * text: a text cursor over it, and a click that can select its letters.
+ */
+.wp-block-kadence-navigation .kb-nav-link-sub-click > .kb-link-wrap > .kb-nav-link-content {
+	cursor: pointer;
+	user-select: none;
+}
+
+/*
+ * vm-toggle: a Kadence Tabs block drawn as one control. The tabs touch,
+ * share the line between them, and only the two ends are rounded. The
+ * block has one radius setting for every tab, so the ends are set here.
+ */
+.wp-block-kadence-tabs.vm-toggle .kt-tabs-title-list .kt-title-item:first-child .kt-tab-title {
+	border-radius: 23px 0 0 23px;
+}
+
+.wp-block-kadence-tabs.vm-toggle .kt-tabs-title-list .kt-title-item:last-child .kt-tab-title {
+	border-radius: 0 23px 23px 0;
+}
+
+.wp-block-kadence-tabs.vm-toggle .kt-tabs-title-list .kt-title-item + .kt-title-item .kt-tab-title {
+	margin-left: -1px;
 }

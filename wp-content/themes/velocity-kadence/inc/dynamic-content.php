@@ -27,6 +27,8 @@ function vm_dynamic_fields() {
 		'vm_deal_title'    => array( __( 'Deal: property type and purpose', 'velocity-kadence' ), 'vm_dynamic_deal_title' ),
 		'vm_deal_program'  => array( __( 'Deal: loan program', 'velocity-kadence' ), 'vm_dynamic_deal_program' ),
 		'vm_deal_ae'       => array( __( 'Deal: account executive', 'velocity-kadence' ), 'vm_dynamic_deal_ae' ),
+		'vm_toolkit_new'       => array( __( 'Toolkit: "New" tag', 'velocity-kadence' ), 'vm_dynamic_toolkit_new' ),
+		'vm_toolkit_file_type' => array( __( 'Toolkit: file type', 'velocity-kadence' ), 'vm_dynamic_toolkit_file_type' ),
 	);
 }
 
@@ -152,6 +154,30 @@ function vm_dynamic_deal_ae( $post_id ) {
 }
 
 /**
+ * The "New" tag of a toolkit document: the word, or nothing when the
+ * document's "New" box is not ticked. The field itself holds "on".
+ *
+ * @param int $post_id Document ID.
+ * @return string
+ */
+function vm_dynamic_toolkit_new( $post_id ) {
+	return get_post_meta( $post_id, 'velocity_toolkit_new', true ) ? __( 'New', 'velocity-kadence' ) : '';
+}
+
+/**
+ * The type of a toolkit document's file, as its extension in capitals:
+ * PDF, XLSX.
+ *
+ * @param int $post_id Document ID.
+ * @return string
+ */
+function vm_dynamic_toolkit_file_type( $post_id ) {
+	$file = get_attached_file( (int) get_post_meta( $post_id, 'velocity_toolkit_file_id', true ) );
+
+	return $file ? strtoupper( (string) pathinfo( $file, PATHINFO_EXTENSION ) ) : '';
+}
+
+/**
  * Mark a label that came out empty.
  *
  * A Text (Adv) with the class vm-tag is a small filled label, such as a
@@ -174,3 +200,23 @@ function vm_mark_empty_tag( $html ) {
 	return preg_replace( '/\bvm-tag\b/', 'vm-tag vm-tag--empty', $html, 1 );
 }
 add_filter( 'render_block_kadence/advancedheading', 'vm_mark_empty_tag' );
+
+/**
+ * Leave out a text that came out empty.
+ *
+ * A Text (Adv) with the class vm-hide-empty is not printed when its dynamic
+ * content has no value: the "New" tag of a document that is not new, or the
+ * description of one that has none. Kadence would print it empty, with its
+ * background and its margins.
+ *
+ * @param string $html Rendered block.
+ * @return string
+ */
+function vm_hide_empty_text( $html ) {
+	if ( false === strpos( $html, 'vm-hide-empty' ) || '' !== trim( wp_strip_all_tags( $html ) ) ) {
+		return $html;
+	}
+
+	return '';
+}
+add_filter( 'render_block_kadence/advancedheading', 'vm_hide_empty_text' );

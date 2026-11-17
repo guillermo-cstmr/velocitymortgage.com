@@ -32,6 +32,8 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-contact.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-company.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-programs.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-program.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-toolkit-page.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-process.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-cli.php';
 }

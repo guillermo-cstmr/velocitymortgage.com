@@ -583,9 +583,10 @@ class Velocity_Home {
 	 * @param string $inner   Panel content.
 	 * @param string $name    Name shown in the editor's list view.
 	 * @param array  $surface Background settings for the inner Section.
+	 * @param array  $row     Settings of the outer row that differ, such as a space under the panel.
 	 * @return string
 	 */
-	public static function panel( $post_id, $key, $inner, $name, $surface ) {
+	public static function panel( $post_id, $key, $inner, $name, $surface, $row = array() ) {
 		return Velocity_Seed::row(
 			$post_id,
 			$key,
@@ -606,13 +607,16 @@ class Velocity_Home {
 					)
 				),
 			),
-			array(
-				'align'         => 'full',
-				// The panel and its two gutters.
-				'maxWidth'      => 1920,
-				'padding'       => array( '0', '32', '0', '32' ),
-				'mobilePadding' => array( '0', '0', '0', '0' ),
-				'metadata'      => array( 'name' => $name ),
+			array_merge(
+				array(
+					'align'         => 'full',
+					// The panel and its two gutters.
+					'maxWidth'      => 1920,
+					'padding'       => array( '0', '32', '0', '32' ),
+					'mobilePadding' => array( '0', '0', '0', '0' ),
+					'metadata'      => array( 'name' => $name ),
+				),
+				$row
 			)
 		);
 	}
@@ -692,9 +696,11 @@ class Velocity_Home {
 	 * @param int     $post_id Page ID.
 	 * @param array[] $stats   Each: the figure, then its label. The home
 	 *                         page's own when empty.
+	 * @param array   $row     Row settings that differ, such as a wider max width.
+	 * @param int     $size    Size of the figures in px.
 	 * @return string
 	 */
-	public static function stats( $post_id, $stats = array() ) {
+	public static function stats( $post_id, $stats = array(), $row = array(), $size = 24 ) {
 		if ( ! $stats ) {
 			$stats = array(
 				array( '$2B+', 'Annual lending volume' ),
@@ -719,7 +725,7 @@ class Velocity_Home {
 					$stat[0],
 					array(
 						'family' => 'heading',
-						'size'   => array( 24, '', '' ),
+						'size'   => array( $size, '', '' ),
 						'weight' => '700',
 						'lh'     => 1.1,
 						'margin' => array( '0', '', '4', '' ),
@@ -744,16 +750,19 @@ class Velocity_Home {
 			$post_id,
 			'stats',
 			$columns,
-			array(
-				'align'        => 'full',
-				'bgColor'      => Velocity_Seed::color( 'palette10' ),
-				'textColor'    => Velocity_Seed::color( 'palette3' ),
-				'maxWidth'     => 1022,
-				'tabletLayout' => 'three-grid',
-				'mobileLayout' => 'two-grid',
-				'padding'      => array( '32', '', '32', '' ),
-				'className'    => 'vm-stats',
-				'metadata'     => array( 'name' => 'Trust strip' ),
+			array_merge(
+				array(
+					'align'        => 'full',
+					'bgColor'      => Velocity_Seed::color( 'palette10' ),
+					'textColor'    => Velocity_Seed::color( 'palette3' ),
+					'maxWidth'     => 1022,
+					'tabletLayout' => 'three-grid',
+					'mobileLayout' => 'two-grid',
+					'padding'      => array( '32', '', '32', '' ),
+					'className'    => 'vm-stats',
+					'metadata'     => array( 'name' => 'Trust strip' ),
+				),
+				$row
 			)
 		);
 	}
@@ -894,7 +903,7 @@ class Velocity_Home {
 					)
 				) . "\n\n" .
 				self::subtitle( $post_id, $key, $program[2], array( 'margin' => array( '0', '', '40', '' ) ) ) . "\n\n" .
-				self::buttons( $post_id, $key, array( array( $program[3], '#', 'outline' ) ), 'left' ),
+				self::buttons( $post_id, $key, array( array( $program[3], Velocity_Program::url( $pages[ $index ] ), 'outline' ) ), 'left' ),
 				array(
 					'id'                => $image_first ? 2 : 1,
 					'verticalAlignment' => 'middle',
@@ -1072,7 +1081,7 @@ class Velocity_Home {
 					'metadata'     => array( 'name' => 'Steps' ),
 				)
 			) . "\n\n" .
-			self::buttons( $post_id, 'steps', array( array( 'See It Step-by-Step', '#', 'outline', self::on_dark() ) ) );
+			self::buttons( $post_id, 'steps', array( array( 'See It Step-by-Step', home_url( '/process/' ), 'outline', self::on_dark() ) ) );
 
 		return self::panel(
 			$post_id,
@@ -1388,42 +1397,69 @@ class Velocity_Home {
 	 * @param string  $title   Title.
 	 * @param array[] $buttons Buttons, as buttons() takes them.
 	 * @param int     $width   Max width of the band in px.
+	 * @param array   $section Settings of the section around the band that differ.
+	 * @param array   $copy    Optional. intro: the text under the title. note: false
+	 *                         leaves out the line about the approved partners.
 	 * @return string
 	 */
-	public static function cta_band( $post_id, $title, $buttons, $width = 1040 ) {
+	public static function cta_band( $post_id, $title, $buttons, $width = 1040, $section = array(), $copy = array() ) {
+		$copy = array_merge(
+			array(
+				'intro' => 'Register today and hear back within 48 hours. One signed package approves you for a year. Start closing the deals banks turn down.',
+				'note'  => true,
+			),
+			$copy
+		);
+
+		$inner =
+			self::title( $post_id, 'cta', $title ) . "\n\n" .
+			self::subtitle(
+				$post_id,
+				'cta',
+				$copy['intro'],
+				array(
+					'align'  => 'center',
+					'width'  => 800,
+					'margin' => array( '0', 'auto', '32', 'auto' ),
+				)
+			) . "\n\n" .
+			self::buttons( $post_id, 'cta', $buttons );
+
+		if ( $copy['note'] ) {
+			$inner .= "\n\n" .
+			// The faces and the line beside them, centered, in a row that wraps on phones.
+			Velocity_Seed::column(
+				$post_id,
+				'cta-proof',
+				self::image( $post_id, 'cta-avatars', 'cta-avatars.webp', 72 ) . "\n\n" .
+				self::t(
+					$post_id,
+					'cta-note',
+					'Join 3,000+ approved broker partners already placing deals with Velocity.',
+					array(
+						'align'  => 'center',
+						'size'   => array( 18, '', '' ),
+						'weight' => '600',
+						'lh'     => 1.31,
+						'margin' => array( '0', '', '0', '' ),
+					)
+				),
+				array(
+					'direction'         => array( 'horizontal', '', '' ),
+					'justifyContent'    => array( 'center', '', '' ),
+					'verticalAlignment' => 'middle',
+					'gutter'            => array( 8, '', '' ),
+					'gutterVariable'    => array( 'custom', 'custom', 'custom' ),
+					'margin'            => array( '48', '', '0', '' ),
+					'metadata'          => array( 'name' => 'Approved partners' ),
+				)
+			);
+		}
+
 		$band = Velocity_Seed::row(
 			$post_id,
 			'cta-band',
-			array(
-				Velocity_Seed::column(
-					$post_id,
-					'cta-band-col',
-					self::title( $post_id, 'cta', $title ) . "\n\n" .
-					self::subtitle(
-						$post_id,
-						'cta',
-						'Register today and hear back within 48 hours. One signed package approves you for a year. Start closing the deals banks turn down.',
-						array(
-							'align'  => 'center',
-							'width'  => 800,
-							'margin' => array( '0', 'auto', '32', 'auto' ),
-						)
-					) . "\n\n" .
-					self::buttons( $post_id, 'cta', $buttons ) . "\n\n" .
-					self::t(
-						$post_id,
-						'cta-note',
-						'Join 3,000+ approved broker partners already placing deals with Velocity.',
-						array(
-							'align'  => 'center',
-							'size'   => array( 18, '', '' ),
-							'weight' => '600',
-							'lh'     => 1.31,
-							'margin' => array( '48', '', '0', '' ),
-						)
-					)
-				),
-			),
+			array( Velocity_Seed::column( $post_id, 'cta-band-col', $inner ) ),
 			array(
 				'bgColor'       => Velocity_Seed::color( 'palette3' ),
 				'bgImg'         => get_stylesheet_directory_uri() . '/assets/images/home/cta-background.jpg',
@@ -1438,7 +1474,7 @@ class Velocity_Home {
 			)
 		);
 
-		return self::section( $post_id, 'cta', $band, 'Final call to action' );
+		return self::section( $post_id, 'cta', $band, 'Final call to action', $section );
 	}
 
 	/**

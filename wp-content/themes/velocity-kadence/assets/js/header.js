@@ -8,6 +8,9 @@
  * - Kadence's trigger only opens the menu. Since the hamburger stays visible
  *   above the panel, a click on it while the menu is open closes it, and the
  *   icon turns into an X (style.css).
+ * - The menu opens with the submenu of the page being viewed already open.
+ *   Kadence opens it when the page loads, then closes every submenu on the
+ *   next click anywhere else, and the click on the hamburger is one.
  */
 ( function () {
 	const triggers = document.querySelectorAll( '.wp-block-kadence-header .wp-block-kadence-off-canvas-trigger' );
@@ -28,6 +31,21 @@
 		root.style.setProperty( '--vm-header-bottom', bottom + 'px' );
 	};
 
+	const openCurrent = () => {
+		document.querySelectorAll( '.kb-off-canvas-inner .wp-block-kadence-navigation .menu-item-has-children' ).forEach( ( item ) => {
+			const submenu = item.querySelector( ':scope > ul.sub-menu' );
+			if ( ! submenu || ! item.querySelector( '.current-menu-item' ) ) {
+				return;
+			}
+			item.classList.add( 'menu-item--toggled-on' );
+			submenu.classList.add( 'toggle-show' );
+			const toggle = item.querySelector( ':scope > .kb-link-wrap > .kb-nav-dropdown-toggle-btn' );
+			if ( toggle ) {
+				toggle.setAttribute( 'aria-expanded', 'true' );
+			}
+		} );
+	};
+
 	triggers.forEach( ( trigger ) => {
 		// Capture phase: runs before Kadence's own click handler.
 		trigger.addEventListener(
@@ -43,6 +61,8 @@
 					return;
 				}
 				measure();
+				// After Kadence has closed the submenus for this same click.
+				window.setTimeout( openCurrent, 30 );
 			},
 			true
 		);

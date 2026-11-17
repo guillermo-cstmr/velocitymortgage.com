@@ -734,6 +734,198 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Creates the four program pages: 30-Year Fixed, Fast50, Flex I/O and
+	 * Super Jumbo.
+	 *
+	 * Each is a page under Programs Overview (/loan-programs/), built by
+	 * the same builder: hero, the program's figures, why brokers bring their
+	 * deals, the terms, the clients who fit, the program's case study, the
+	 * other programs, the call to action and the frequently asked questions.
+	 *
+	 * The case study is a Kadence query per program, with one card for the
+	 * four. It lists the latest case study filed under the program in
+	 * Properties, Programs, and shows nothing while there is none. So the
+	 * four programs must exist there first: `wp velocity seed-programs`.
+	 *
+	 * Without --execute it only reports what it would do. A page that already
+	 * has content is left alone, so editor work is never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Create the pages that are missing and write the content of the empty ones.
+	 *
+	 * [--force]
+	 * : Replace the content even if a page has some, and rebuild the queries
+	 * and their card. This DISCARDS what is there. WordPress keeps the old
+	 * version of a page as a revision.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-program-pages
+	 *     wp velocity seed-program-pages --execute
+	 *
+	 * @subcommand seed-program-pages
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_program_pages( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		$parent = $this->page( Velocity_Program::PARENT_SLUG );
+
+		if ( ! $parent ) {
+			WP_CLI::error( sprintf( 'There is no page with the slug "%s" to hang the program pages from.', Velocity_Program::PARENT_SLUG ) );
+		}
+
+		$programs = Velocity_Program::programs();
+
+		// Without its term a query would list the case studies of every program.
+		foreach ( $programs as $program ) {
+			if ( ! get_term_by( 'slug', $program['term'], Velocity_Program::TAXONOMY ) ) {
+				WP_CLI::error( sprintf( 'The program "%s" is missing in Properties, Programs. Run: wp velocity seed-programs --execute', $program['name'] ) );
+			}
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		$queries = $this->seed_queries( 'program', Velocity_Program::queries() );
+		$written = 0;
+
+		foreach ( $programs as $key => $program ) {
+			$path = $parent->post_name . '/' . $program['slug'];
+			$page = get_page_by_path( $path );
+
+			if ( $page && '' !== trim( $page->post_content ) && ! $this->force ) {
+				WP_CLI::log( sprintf( '  exists   #%d  /%s/ (left as it is)', $page->ID, $path ) );
+				continue;
+			}
+
+			WP_CLI::log( sprintf( '  %s  page  /%s/', $page ? 'fill   ' : 'create ', $path ) );
+
+			if ( ! $this->execute ) {
+				continue;
+			}
+
+			if ( $page ) {
+				$page_id = (int) $page->ID;
+			} else {
+				$page_id = wp_insert_post(
+					array(
+						'post_type'   => 'page',
+						'post_title'  => $program['name'],
+						'post_name'   => $program['slug'],
+						'post_parent' => $parent->ID,
+						'post_status' => 'publish',
+					),
+					true
+				);
+
+				if ( is_wp_error( $page_id ) ) {
+					WP_CLI::error( $page_id->get_error_message() );
+				}
+			}
+
+			wp_update_post(
+				array(
+					'ID'           => $page_id,
+					'post_content' => wp_slash( Velocity_Program::content( $page_id, $key, $queries[ $key ] ) ),
+				)
+			);
+
+			++$written;
+		}
+
+		if ( ! $this->execute ) {
+			WP_CLI::success( 'Dry run finished. Nothing was changed.' );
+			return;
+		}
+
+		WP_CLI::success( sprintf( '%d program page(s) written. Edit them in the block editor from now on.', $written ) );
+		WP_CLI::log( 'To point the menus at them: wp velocity seed-chrome --menus --force --execute' );
+	}
+
+	/**
+	 * Fills the Broker Tools page with its sections as block content.
+	 *
+	 * It writes to the page with the slug "broker-tools": hero, the two
+	 * forms libraries, the unlock form, the matrices, the flyers, the
+	 * important links and the call to action. Each list of files is a
+	 * Kadence query that reads one section of Broker Toolkit, and the
+	 * command creates the seven of them with the two cards they share.
+	 *
+	 * Not to be confused with `seed-toolkit`, which creates the documents.
+	 *
+	 * Without --execute it only reports what it would do. A page that already
+	 * has content is left alone, so editor work is never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Write the content if the page is empty.
+	 *
+	 * [--force]
+	 * : Replace the content even if the page has some, and rebuild the
+	 * queries and their cards. This DISCARDS what is there. WordPress keeps
+	 * the old version of the page as a revision.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-toolkit-page
+	 *     wp velocity seed-toolkit-page --execute
+	 *
+	 * @subcommand seed-toolkit-page
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_toolkit_page( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		$page = $this->page( Velocity_Toolkit_Page::SLUG );
+
+		if ( ! $page ) {
+			WP_CLI::error( sprintf( 'There is no page with the slug "%s".', Velocity_Toolkit_Page::SLUG ) );
+		}
+
+		$queries = Velocity_Toolkit_Page::queries();
+
+		// Without its section a query would list every document.
+		foreach ( $queries as $query ) {
+			if ( ! get_term_by( 'name', $query['term_name'][1], $query['term_name'][0] ) ) {
+				WP_CLI::error( sprintf( 'The section "%s" is missing in Broker Toolkit, Sections.', $query['term_name'][1] ) );
+			}
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+		WP_CLI::log( sprintf( 'Broker Tools page: #%d "%s", %d bytes of content.', $page->ID, $page->post_title, strlen( $page->post_content ) ) );
+
+		if ( '' !== trim( $page->post_content ) && ! $this->force ) {
+			WP_CLI::success( 'The page already has content. Left as it is.' );
+			return;
+		}
+
+		$ids = $this->seed_queries( 'toolkit', $queries );
+
+		if ( ! $this->execute ) {
+			WP_CLI::success( 'Dry run finished. The page would be filled.' );
+			return;
+		}
+
+		wp_update_post(
+			array(
+				'ID'           => $page->ID,
+				'post_content' => wp_slash( Velocity_Toolkit_Page::content( $page->ID, $ids ) ),
+			)
+		);
+
+		WP_CLI::success( 'Broker Tools page content written. Edit it in the block editor from now on.' );
+	}
+
+	/**
 	 * Moves pages to their addresses in the new site's URL list.
 	 *
 	 * For each page in PAGE_SLUG_CHANGES that still has its old slug, it
@@ -937,6 +1129,8 @@ class Velocity_CLI {
 	 * Creates the Kadence queries of a page, each with its card. An existing
 	 * one is left as it is unless --force is given.
 	 *
+	 * Queries that name the same card_key share one card, titled card_title.
+	 *
 	 * @param string  $prefix  Prefix of their seed keys, one per page.
 	 * @param array[] $queries Queries by key, as Velocity_Seed::query_meta() takes them.
 	 * @param int     $term_id For staff: ID of the staff type to list.
@@ -947,9 +1141,9 @@ class Velocity_CLI {
 
 		foreach ( $queries as $key => $query ) {
 			$card_id = $this->seed_post(
-				$prefix . '-card-' . $key,
+				$prefix . '-card-' . ( isset( $query['card_key'] ) ? $query['card_key'] : $key ),
 				'kadence_query_card',
-				$query['title'] . ' card',
+				isset( $query['card_title'] ) ? $query['card_title'] : $query['title'] . ' card',
 				static function ( $post_id ) use ( $query ) {
 					return Velocity_Seed::card_content( $post_id, $query['card'] );
 				},

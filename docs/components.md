@@ -163,6 +163,9 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
 | `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
 | `vm-compare` | Kadence Table | Keeps the table at a readable width on small screens, scrolling sideways. Kadence has no minimum width setting |
+| `vm-toggle` | Kadence Tabs | Joins the tabs into one control and rounds only its two ends. The block has one radius setting for every tab. See "The program pages" |
+| `vm-hide-empty` | Text (Adv) with dynamic content | The text is not printed when it has no value. Kadence would print it empty, with its background and margins |
+| `vm-toolkit-inline`, `vm-toolkit-form`, `vm-toolkit-doc`, `vm-toolkit-wl`, `vm-toolkit-branded` | Broker Tools page | Where the unlock form lands, and what hides by itself. Their rules are in the must-use plugin. See [database-and-content.md](database-and-content.md), "Broker Toolkit" |
 | `vm-story-media`, `vm-story-stat` | Section around a photo, and the figures laid over it | Places the figures over the photo. Sections have no setting for overlapping |
 | `vm-footer-main`, `vm-footer-legal` | The two rows of the footer | Line heights, the rule above the legal text, and the underline on legal links |
 
@@ -404,6 +407,50 @@ The four steps on the line are one SVG, `assets/images/process/hero-steps.svg`, 
 - **"How long does approval last?"** answers 30 days, as the copy document has it. The rest of the page, and the call to action on every page, say a year. One of the two is wrong.
 - **The design lets the call to action band overlap the section above it.** Here the band starts after that section.
 
+## The program pages
+
+30-Year Fixed, Fast50, Flex I/O and Super Jumbo are four pages under Programs Overview: `/loan-programs/30-year-fixed/`, `/loan-programs/fast50/`, `/loan-programs/flex-i-o/` and `/loan-programs/jumbo/`. `wp velocity seed-program-pages` creates their first version. One builder makes the four, so they share every section and differ in copy, photo and icons. After that each page is edited on its own in the editor.
+
+### The terms
+
+"... at a Glance" holds a Kadence Table of two columns, with the same settings as the comparison table. 30-Year Fixed and Fast50 have terms for 1-4 units and for commercial property, so they show two tables inside a Kadence Tabs block, "1-4 Units" and "Commercial". The tabs are drawn as one control with two halves: their colors at rest, on hover and selected, their border and padding are settings of the Tabs block, under Style. The class `vm-toggle` on the block joins the two tabs and rounds only the ends, which the block has no setting for. Flex I/O and Super Jumbo lend on 1-4 units only and show one table, with no tabs.
+
+A term that reads the same for both kinds of property is typed twice, once in each table.
+
+### The case study
+
+"A Deal That Fits" is a Kadence query per program, "Program case study: ..." (Kadence > Queries). It lists the latest case study filed under that program in Properties, Programs. The four queries share one card, "Program case study card" (Kadence > Query Cards), so a change to the card shows on the four pages.
+
+| On the card | Block | Dynamic content |
+|---|---|---|
+| Title | Text (Adv), H2 | Post title |
+| Photo | Image, with a fixed 3:4 shape | Post featured image |
+| Three boxes | Section with two Text (Adv) each | The case study fields "Loan Amount", "Days to Close" and "Location" |
+| Button | Button | Post URL |
+
+**A program with no case study shows nothing.** The section's space is part of the card, so the page closes up, with no empty band. To show the section, publish a case study and choose its program. To change which one shows when a program has several, edit the query: it takes the most recent.
+
+The design leaves the three boxes, and a "Result" label over the photo, to be defined. The boxes show what a case study already holds. The label is not built.
+
+### The other programs
+
+Three cards on the peach band, one for each of the other programs. Each is a Section with a set height on desktop and its content pushed apart: icon at the top, text and button at the bottom. Their buttons have less side padding than the rest, so the longest label fits on one line.
+
+The call to action band sits half over the peach. No CSS: the background of its section is a gradient with a hard stop, peach for the first 136px and white after.
+
+### The hero photo
+
+Each hero photo is one image exported from Figma, `assets/images/programs/hero-*.webp`, with the orange shape and the small label ("Property types ...") in it. The label's text is in the image's alternative text.
+
+### What is still open
+
+- **The copy documents (V1) differ from the text in Figma** in the titles, the figures on the orange band and some terms. The pages follow the copy documents.
+- **Fast50, "How fast does Fast50 close?"** says two to six weeks. The table and the orange band say two to four weeks for 1-4 units and 30 to 45 days for commercial.
+- **Super Jumbo, "How long does a Super Jumbo loan take to close?"** says two to four weeks. The table and the orange band say two weeks to 45 days.
+- **Super Jumbo, "How large can a Super Jumbo loan be?"** says combined financing can reach "90% (i.e., 95% CLTV)". One of the two figures is wrong.
+- **The Flex I/O hero photo is a stock preview with a watermark**, and a comment in Figma asks for another photo.
+- **The Kadence Table has no setting for top alignment**, so a row's label is centered beside a long list, where the design aligns it to the top.
+
 ## The loan calculator
 
 A block of the theme, "Loan Scenario Calculator", in `blocks/loan-calculator`. It has no settings in the editor: the editor shows it as it looks on the site, but it cannot be clicked there. To try it, use Preview or the published page.
@@ -463,6 +510,10 @@ Where each part lives:
 The mobile and tablet menu (Off Canvas) opens **under** the header, which stays visible on top. Its top edge follows the header's height at that moment: 72 px at the top of the page, 56 px once scrolled. The hamburger turns into an X while the menu is open and closes it. The panel's own close button is hidden, but still reached with the keyboard. `assets/js/header.js` measures the header and adds the closing; the rules are in `style.css`.
 
 `style.css` also fixes a Kadence detail: after the menu closes, the hamburger got the inherited navy color on focus and disappeared on the navy header.
+
+### Menu items that only open a submenu
+
+"Broker Programs", "Resources" and "Company" have no page of their own. In the menu (Kadence > Navigation) each has "Disable link" and "Open dropdown on click" on, in the link's settings: a click on the name opens its submenu, on desktop and in the mobile menu. Without them the item is a link to "#", and a click on it closes the mobile menu and marks the three items as the current page.
 
 ## Where block styles live in the sidebar
 
