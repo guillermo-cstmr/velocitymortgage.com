@@ -1439,3 +1439,90 @@ body .vm-story-media .vm-story-stat--offices {
 		transition: none;
 	}
 }
+
+/*
+ * vm-compare: a Table block that compares the loan programs.
+ * The Table block has no settings for striped rows without borders, cell
+ * padding or column widths. Type a cell's items on separate lines, each
+ * starting with a bullet (•): a table cell cannot hold a list.
+ * On small screens the table keeps its columns and scrolls sideways.
+ * Measures are from Figma, frame "Comparison Table".
+ */
+.wp-block-table.vm-compare {
+	margin: 0;
+	border-radius: 8px;
+	overflow-x: auto;
+}
+
+.wp-block-table.vm-compare table {
+	width: 100%;
+	min-width: 880px;
+	border: 0;
+	border-collapse: collapse;
+	table-layout: fixed;
+	color: var(--global-palette3);
+	font-size: 14px;
+	line-height: 1.3;
+}
+
+.wp-block-table.vm-compare :is(th, td) {
+	padding: 16px;
+	border: 0;
+	text-align: left;
+	vertical-align: top;
+	word-break: normal;
+}
+
+/* The first column names the row. In the design it is 280px of 1280. */
+.wp-block-table.vm-compare :is(th, td):first-child {
+	width: 21.875%;
+}
+
+.wp-block-table.vm-compare thead {
+	border: 0;
+}
+
+.wp-block-table.vm-compare thead th {
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.47;
+}
+
+.wp-block-table.vm-compare thead th:first-child {
+	font-weight: 400;
+}
+
+.wp-block-table.vm-compare thead tr,
+.wp-block-table.vm-compare tbody tr:nth-child(even) {
+	background: #f2f4fc;
+}
+
+.wp-block-table.vm-compare tbody tr:nth-child(odd) {
+	background: var(--global-palette9);
+}
+
+.wp-block-table.vm-compare thead a {
+	color: var(--global-palette3);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.wp-block-table.vm-compare thead a:hover,
+.wp-block-table.vm-compare thead a:focus {
+	color: var(--global-palette2);
+}
+
+.wp-block-table.vm-compare:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+	.wp-block-table.vm-compare :is(th, td) {
+		padding: 12px;
+	}
+
+	.wp-block-table.vm-compare :is(th, td):first-child {
+		width: 17%;
+	}
+}

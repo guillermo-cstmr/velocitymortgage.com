@@ -163,6 +163,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-people`, `vm-person` | Query Loop over Staff, and the Group around each person | Centered rows of people, each card one link. See "The About Us page" |
 | `vm-carousel` | Section around a Query Loop | Makes the list scroll sideways, with arrows when it does not fit |
 | `vm-careers`, `vm-career-card` | Query Loop over Careers, and the Group around each one | The position cards |
+| `vm-compare` | Table | The comparison of the loan programs: striped rows, padding and column widths, and sideways scrolling on small screens |
 | `vm-story-media`, `vm-story-stat` | Section around a photo, and the figures laid over it | Places the figures over the photo. Sections have no setting for overlapping |
 | `vm-footer-main`, `vm-footer-legal` | The two rows of the footer | Line heights, the rule above the legal text, and the underline on legal links |
 
@@ -319,6 +320,37 @@ Only published careers show. The label of the arrows is set in `inc/carousel.php
 
 - **"See Our Full Process"** and "Process" in the menu point to `#`. The Process page is not built yet.
 - **Order of the people**: the design shows Marco Castaneda first. The page follows each person's Order field.
+
+## The Programs Overview page
+
+The page at `/loan-programs/` reuses the home page's pieces: the trust strip, the cards, the panel, the call to action band and the frequently asked questions. `wp velocity seed-programs-page` creates its first version.
+
+### The four programs
+
+Each program is the same pair of rows, inside the panel:
+
+- **Image and text**: a two-column row, like the programs of the home page. The photo is a plain rectangle with the block style "Program: cut right" when it sits on the left and "Program: cut left" when it sits on the right (see "Program images"). The small label above the title has the class `vm-eyebrow`.
+- **Figures**: a three-column row with a top and a bottom border, set in the row's Border settings. Each column holds three texts: the label, the figure and a note.
+
+To add a program, duplicate a whole "Program" row and replace its photo and texts. Photos are 1084 by 762 pixels.
+
+### The comparison table
+
+A core Table block with the class `vm-compare`, which gives it the striped rows, the padding and the column widths. Two things to know when editing it:
+
+- **A cell cannot hold a list.** Type each item on its own line (Shift + Enter) and start it with a bullet, `•`.
+- **The program names in the header are links** to each program's page.
+
+On small screens the table keeps its five columns and scrolls sideways.
+
+### The hero illustration
+
+The photo with the Velocity mark and the four program labels is one image, `assets/images/programs/hero.webp`, exported from Figma. The labels are part of the picture, so a change to a program's name means a new export.
+
+### What is still open
+
+- **The links to each program's page** ("Explore ..." and the table header) and **"See How It Works"** point to `#`. Those pages are not built yet. The addresses of the program pages are in one place, `Velocity_Programs::links()`.
+- **Flex I/O's label** reads "Short-term loan". The design repeats "Long-term loan" there.
 
 ## The loan calculator
 

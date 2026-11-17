@@ -30,6 +30,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-home.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-contact.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-company.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-programs.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-cli.php';
 }
 

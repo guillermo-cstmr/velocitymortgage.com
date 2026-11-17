@@ -581,6 +581,71 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Fills the Programs Overview page with its sections as block content.
+	 *
+	 * It writes to the page with the slug "loan-programs": hero, trust strip,
+	 * the five uses, the four programs, the comparison table, the client
+	 * profiles, the call to action and the frequently asked questions.
+	 *
+	 * Not to be confused with `seed-programs`, which fills in the details of
+	 * each loan program in Properties, Programs.
+	 *
+	 * Without --execute it only reports what it would do. A page that already
+	 * has content is left alone, so editor work is never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Write the content if the page is empty.
+	 *
+	 * [--force]
+	 * : Replace the content even if the page has some. This DISCARDS what is
+	 * there. WordPress keeps the old version as a revision.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-programs-page
+	 *     wp velocity seed-programs-page --execute
+	 *
+	 * @subcommand seed-programs-page
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_programs_page( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		$page = $this->page( Velocity_Programs::SLUG );
+
+		if ( ! $page ) {
+			WP_CLI::error( sprintf( 'There is no page with the slug "%s".', Velocity_Programs::SLUG ) );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+		WP_CLI::log( sprintf( 'Programs Overview page: #%d "%s", %d bytes of content.', $page->ID, $page->post_title, strlen( $page->post_content ) ) );
+
+		if ( '' !== trim( $page->post_content ) && ! $this->force ) {
+			WP_CLI::success( 'The page already has content. Left as it is.' );
+			return;
+		}
+
+		if ( ! $this->execute ) {
+			WP_CLI::success( 'Dry run finished. The page would be filled.' );
+			return;
+		}
+
+		wp_update_post(
+			array(
+				'ID'           => $page->ID,
+				'post_content' => wp_slash( Velocity_Programs::content( $page->ID ) ),
+			)
+		);
+
+		WP_CLI::success( 'Programs Overview page content written. Edit it in the block editor from now on.' );
+	}
+
+	/**
 	 * Moves pages to their addresses in the new site's URL list.
 	 *
 	 * For each page in PAGE_SLUG_CHANGES that still has its old slug, it

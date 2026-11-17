@@ -612,17 +612,21 @@ class Velocity_Home {
 	}
 
 	/**
-	 * Trust strip: three numbers on the orange band.
+	 * Trust strip: three figures on the orange band.
 	 *
-	 * @param int $post_id Page ID.
+	 * @param int     $post_id Page ID.
+	 * @param array[] $stats   Each: the figure, then its label. The home
+	 *                         page's own when empty.
 	 * @return string
 	 */
-	public static function stats( $post_id ) {
-		$stats = array(
-			array( '$2B+', 'Annual lending volume' ),
-			array( '$13.8B+', 'Funded since 2004' ),
-			array( '3,000+', 'Approved broker partners' ),
-		);
+	public static function stats( $post_id, $stats = array() ) {
+		if ( ! $stats ) {
+			$stats = array(
+				array( '$2B+', 'Annual lending volume' ),
+				array( '$13.8B+', 'Funded since 2004' ),
+				array( '3,000+', 'Approved broker partners' ),
+			);
+		}
 
 		$columns = array();
 		foreach ( $stats as $index => $stat ) {
@@ -1298,6 +1302,18 @@ class Velocity_Home {
 			),
 		);
 
+		return self::faq_section( $post_id, $faqs );
+	}
+
+	/**
+	 * The frequently asked questions section of a page.
+	 *
+	 * @param int     $post_id Page ID.
+	 * @param array[] $faqs    Each: the question, then its answer as a list of
+	 *                         paragraphs. The first one starts open.
+	 * @return string
+	 */
+	public static function faq_section( $post_id, $faqs ) {
 		$items = array();
 		foreach ( $faqs as $index => $faq ) {
 			$answers = array();
