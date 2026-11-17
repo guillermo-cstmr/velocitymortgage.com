@@ -497,38 +497,137 @@ class Velocity_Programs {
 	}
 
 	/**
-	 * A core Table block.
+	 * A Kadence Table block.
 	 *
-	 * A table cell holds text, not a list, so the items of a cell are typed
-	 * on separate lines, each starting with a bullet.
+	 * The striped rows, the cell padding, the column widths and the text
+	 * sizes are all block settings. Each cell holds blocks of its own: a Text
+	 * (Adv), or a List for several items.
 	 *
-	 * @param string[] $head Header cells. May contain inline HTML.
-	 * @param array[]  $rows Rows of cells. A cell is a string, or a list of items.
+	 * @param int      $post_id Page ID.
+	 * @param string   $key     Key for the unique IDs.
+	 * @param string[] $head    Header cells. May contain inline HTML.
+	 * @param array[]  $rows    Rows of cells. A cell is a string, or a list of items.
 	 * @return string
 	 */
-	private static function table( $head, $rows ) {
-		$html = '<thead><tr>';
-		foreach ( $head as $cell ) {
-			$html .= '<th>' . $cell . '</th>';
-		}
-		$html .= '</tr></thead><tbody>';
+	private static function table( $post_id, $key, $head, $rows ) {
+		$plain = array(
+			'size'   => array( 14, '', '' ),
+			'weight' => '400',
+			'lh'     => 1.3,
+			'margin' => array( '0', '', '0', '' ),
+		);
 
+		$lines = array( $head );
 		foreach ( $rows as $row ) {
-			$html .= '<tr>';
-			foreach ( $row as $cell ) {
-				if ( is_array( $cell ) ) {
-					$cell = '• ' . implode( '<br>• ', $cell );
-				}
-				$html .= '<td>' . $cell . '</td>';
-			}
-			$html .= '</tr>';
+			$lines[] = $row;
 		}
 
-		// vm-compare styles the table and lets it scroll sideways on small screens.
+		$table_rows = array();
+		foreach ( $lines as $r => $line ) {
+			$cells = array();
+			foreach ( $line as $c => $cell ) {
+				$cell_key = $key . '-' . $r . '-' . $c;
+
+				if ( is_array( $cell ) ) {
+					// Several items: a List block, with no space around it.
+					$items = '';
+					foreach ( $cell as $item ) {
+						$items .= Velocity_Seed::block( 'list-item', array(), '<li>' . $item . '</li>' );
+					}
+					$inner = Velocity_Seed::block(
+						'list',
+						array(
+							'style' => array(
+								'spacing' => array(
+									'margin'  => array(
+										'top'    => '0',
+										'bottom' => '0',
+									),
+									'padding' => array( 'left' => '18px' ),
+								),
+							),
+						),
+						'<ul style="margin-top:0;margin-bottom:0;padding-left:18px" class="wp-block-list">' . $items . '</ul>'
+					);
+				} elseif ( 0 === $r && $c ) {
+					// A program's name, in the header's own size and weight.
+					$inner = Velocity_Home::t(
+						$post_id,
+						$cell_key,
+						$cell,
+						array(
+							'margin'     => array( '0', '', '0', '' ),
+							'link'       => Velocity_Seed::color( 'palette3' ),
+							'link_hover' => Velocity_Seed::color( 'palette2' ),
+						)
+					);
+				} else {
+					$inner = Velocity_Home::t( $post_id, $cell_key, $cell, 0 === $r ? array_merge( $plain, array( 'size' => array( 16, '', '' ) ) ) : $plain );
+				}
+
+				$cells[] = Velocity_Seed::block(
+					'kadence/table-data',
+					array(
+						'uniqueID' => Velocity_Seed::uid( $post_id, $cell_key . '-cell' ),
+						'column'   => $c,
+					),
+					$inner
+				);
+			}
+
+			$table_rows[] = Velocity_Seed::block(
+				'kadence/table-row',
+				array(
+					'uniqueID' => Velocity_Seed::uid( $post_id, $key . '-row-' . $r ),
+					'row'      => $r,
+				),
+				implode( "\n\n", $cells )
+			);
+		}
+
+		// The first column names the row: 280px of 1280 in the design. The
+		// other columns share the rest.
+		$columns = array();
+		foreach ( $head as $c => $cell ) {
+			$columns[] = array(
+				'useAuto' => 0 !== $c,
+				'width'   => 0 === $c ? 22 : '',
+				'unit'    => '%',
+			);
+		}
+
+		$none = array( '', '', '' );
+
 		return Velocity_Seed::block(
-			'table',
-			array( 'className' => 'vm-compare' ),
-			'<figure class="wp-block-table vm-compare"><table class="has-fixed-layout">' . $html . '</tbody></table></figure>'
+			'kadence/table',
+			array(
+				'uniqueID'            => Velocity_Seed::uid( $post_id, $key ),
+				'columns'             => count( $head ),
+				'isFirstRowHeader'    => true,
+				'isFirstColumnHeader' => true,
+				'evenOddBackground'   => true,
+				'backgroundColorOdd'  => '#f2f4fc',
+				'backgroundColorEven' => Velocity_Seed::color( 'palette9' ),
+				'cellPadding'         => array( '16', '16', '16', '16' ),
+				'mobileCellPadding'   => array( '12', '12', '12', '12' ),
+				'headerAlign'         => 'left',
+				'headerTypography'    => Velocity_Seed::typography( 16, '600', 1.47 ),
+				'dataTypography'      => Velocity_Seed::typography( 14, '', 1.3 ),
+				'columnSettings'      => $columns,
+				// Keeps a readable width on small screens and scrolls sideways. See style.css.
+				'className'           => 'vm-compare',
+				'borderStyle'         => array(
+					array(
+						'top'    => $none,
+						'right'  => $none,
+						'bottom' => $none,
+						'left'   => $none,
+						'unit'   => 'px',
+					),
+				),
+				'metadata'            => array( 'name' => 'Comparison table' ),
+			),
+			implode( "\n\n", $table_rows )
 		);
 	}
 
@@ -637,7 +736,7 @@ class Velocity_Programs {
 				'We put all the numbers you want to know in one place. Compare each program here before getting the full picture on each program page.',
 				array( 'margin' => array( '0', '', '48', '' ) )
 			) . "\n\n" .
-			self::table( $head, $rows ) . "\n\n" .
+			self::table( $post_id, 'compare-table', $head, $rows ) . "\n\n" .
 			Velocity_Home::t(
 				$post_id,
 				'compare-closing',

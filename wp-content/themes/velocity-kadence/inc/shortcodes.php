@@ -105,96 +105,7 @@ function vm_deal_info_shortcode() {
 add_shortcode( 'vm_deal_info', 'vm_deal_info_shortcode' );
 
 /**
- * [vm_staff_info]: the text of a person card, for a staff member.
- *
- * It goes inside a Query Loop over the staff post type, in a Shortcode block,
- * under the Featured Image block that shows the photo. It prints:
- * - the name, linked to the person's page,
- * - the "Staff Title (short)" field, which for sales directors is their office,
- * - a LinkedIn link, when the person has a LinkedIn address.
- *
- * The name link is stretched over the whole card in style.css. The LinkedIn
- * link sits above it, so both can be clicked.
- *
- * @return string
- */
-function vm_staff_info_shortcode() {
-	$post_id = get_the_ID();
-
-	if ( ! $post_id || 'velocity-staff' !== get_post_type( $post_id ) ) {
-		return '';
-	}
-
-	$name     = get_the_title( $post_id );
-	$role     = trim( (string) get_post_meta( $post_id, 'velocity_staff_title_short', true ) );
-	$linkedin = trim( (string) get_post_meta( $post_id, 'velocity_staff_linkedin_url', true ) );
-
-	$out = sprintf(
-		'<div class="vm-person-info"><h3 class="vm-person-name"><a href="%1$s">%2$s</a></h3>',
-		esc_url( get_permalink( $post_id ) ),
-		esc_html( $name )
-	);
-
-	if ( '' !== $role ) {
-		$out .= '<p class="vm-person-role">' . esc_html( $role ) . '</p>';
-	}
-
-	// An address with no profile in it, such as "https://linkedin.com/", is a placeholder.
-	if ( '' !== $linkedin && '' !== trim( (string) wp_parse_url( $linkedin, PHP_URL_PATH ), '/' ) ) {
-		$out .= sprintf(
-			'<a class="vm-person-linkedin" href="%1$s" target="_blank" rel="noopener noreferrer"><img src="%2$s" alt="" width="24" height="24"><span class="screen-reader-text">%3$s</span></a>',
-			esc_url( $linkedin ),
-			esc_url( VELOCITY_KADENCE_URI . '/assets/images/company/icon-linkedin.svg' ),
-			/* translators: %s: person's name. */
-			esc_html( sprintf( __( '%s on LinkedIn (opens in a new tab)', 'velocity-kadence' ), $name ) )
-		);
-	}
-
-	return $out . '</div>';
-}
-add_shortcode( 'vm_staff_info', 'vm_staff_info_shortcode' );
-
-/**
- * [vm_career_info]: the text of a position card, for a career.
- *
- * It goes inside a Query Loop over the careers post type, in a Shortcode
- * block. It prints the position, linked to its page, the "City/Cities" field
- * on one line and the "Short Description" field.
- *
- * @return string
- */
-function vm_career_info_shortcode() {
-	$post_id = get_the_ID();
-
-	if ( ! $post_id || 'velocity-career' !== get_post_type( $post_id ) ) {
-		return '';
-	}
-
-	// The cities are typed one per line. On the card they share a line.
-	$cities = preg_split( '#<br\s*/?>|[\r\n]+#i', (string) get_post_meta( $post_id, 'career-city', true ) );
-	$cities = array_filter( array_map( 'trim', array_map( 'wp_strip_all_tags', (array) $cities ) ) );
-	$text   = trim( wp_strip_all_tags( (string) get_post_meta( $post_id, 'career-short-description', true ) ) );
-
-	$out = sprintf(
-		'<div class="vm-career-info"><h3 class="vm-career-title"><a href="%1$s">%2$s</a></h3>',
-		esc_url( get_permalink( $post_id ) ),
-		esc_html( get_the_title( $post_id ) )
-	);
-
-	if ( $cities ) {
-		$out .= '<p class="vm-career-city">' . esc_html( implode( ' · ', $cities ) ) . '</p>';
-	}
-
-	if ( '' !== $text ) {
-		$out .= '<p class="vm-career-text">' . esc_html( $text ) . '</p>';
-	}
-
-	return $out . '</div>';
-}
-add_shortcode( 'vm_career_info', 'vm_career_info_shortcode' );
-
-/**
- * Run the card shortcodes while their block renders.
+ * Run [vm_deal_info] while its block renders.
  *
  * WordPress normally expands shortcodes after all blocks have rendered. By
  * then a Query Loop has finished and the current post is the page again, so
@@ -204,15 +115,15 @@ add_shortcode( 'vm_career_info', 'vm_career_info_shortcode' );
  * @param string $content Rendered block content.
  * @return string
  */
-function vm_render_card_shortcode_in_loop( $content ) {
-	if ( ! preg_match( '#\[vm_(?:deal|staff|career)_info#', $content ) ) {
+function vm_render_deal_shortcode_in_loop( $content ) {
+	if ( false === strpos( $content, '[vm_deal_info' ) ) {
 		return $content;
 	}
 
 	// The Shortcode block wraps its text in a paragraph. The card text is a
 	// div with its own paragraphs, so that wrapper has to go.
-	$content = preg_replace( '#^\s*<p>\s*(\[vm_(?:deal|staff|career)_info[^\]]*\])\s*</p>\s*$#', '$1', $content );
+	$content = preg_replace( '#^\s*<p>\s*(\[vm_deal_info[^\]]*\])\s*</p>\s*$#', '$1', $content );
 
 	return do_shortcode( $content );
 }
-add_filter( 'render_block_core/shortcode', 'vm_render_card_shortcode_in_loop' );
+add_filter( 'render_block_core/shortcode', 'vm_render_deal_shortcode_in_loop' );

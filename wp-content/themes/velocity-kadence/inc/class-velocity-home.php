@@ -143,8 +143,14 @@ class Velocity_Home {
 	 * Options: tag (h1 to h6, or p), align, size [desktop, tablet, mobile],
 	 * weight, lh (unitless line height), color and background (palette slug or
 	 * any CSS color), margin and padding [top, right, bottom, left], transform,
-	 * family ("heading" for the heading font), width (max width in px), class,
+	 * family ("heading" or "body", to set a text in the other font), width
+	 * (max width in px), class,
 	 * link and link_hover (colors of the links inside the text).
+	 *
+	 * Inside a Kadence query card, two more options read the post being
+	 * listed: dynamic, a Kadence dynamic content field such as "post|post_title",
+	 * or array( "post|post_custom_field", "the-field-name" ) for a custom field,
+	 * which replaces the text; and to_post, which links the text to the post.
 	 *
 	 * @param int    $post_id Page ID.
 	 * @param string $key     Key for the unique ID.
@@ -198,6 +204,11 @@ class Velocity_Home {
 			$attrs['typography'] = 'var( --global-heading-font-family, inherit )';
 		}
 
+		// A heading set in the text font.
+		if ( ! empty( $o['family'] ) && 'body' === $o['family'] ) {
+			$attrs['typography'] = 'var( --global-body-font-family, inherit )';
+		}
+
 		if ( ! empty( $o['transform'] ) ) {
 			$attrs['textTransform'] = $o['transform'];
 		}
@@ -229,17 +240,63 @@ class Velocity_Home {
 			$text                      = '<mark class="kt-highlight">' . $text . '</mark>';
 		}
 
-		return Velocity_Seed::block(
-			'kadence/advancedheading',
-			$attrs,
-			sprintf(
-				'<%1$s class="%2$s" data-kb-block="kb-adv-heading%3$s">%4$s</%1$s>',
-				$tag,
-				esc_attr( implode( ' ', $classes ) ),
-				$uid,
-				$text
-			)
+		$dynamic = array();
+
+		// The text comes from the post being listed. Kadence swaps the placeholder.
+		if ( ! empty( $o['dynamic'] ) ) {
+			$field  = (array) $o['dynamic'];
+			$custom = isset( $field[1] ) ? $field[1] : '';
+			$text   = sprintf(
+				'<span data-field="%1$s"%2$s class="kb-inline-dynamic">dynamic text placeholder</span>',
+				esc_attr( $field[0] ),
+				$custom ? ' data-para="kb_custom_input" data-custom="' . esc_attr( $custom ) . '"' : ''
+			);
+
+			$dynamic['content'] = array(
+				'enable'        => true,
+				'source'        => '',
+				'field'         => $field[0],
+				'custom'        => $custom,
+				'para'          => $custom ? 'kb_custom_input' : '',
+				'before'        => '',
+				'after'         => '',
+				'fallback'      => '',
+				'relate'        => '',
+				'relcustom'     => '',
+				'shouldReplace' => 1,
+			);
+		}
+
+		$html = sprintf(
+			'<%1$s class="%2$s" data-kb-block="kb-adv-heading%3$s">%4$s</%1$s>',
+			$tag,
+			esc_attr( implode( ' ', $classes ) ),
+			$uid,
+			$text
 		);
+
+		// The whole text links to the post being listed.
+		if ( ! empty( $o['to_post'] ) ) {
+			$attrs['link']   = "[kb-dynamic field='post|post_url' type='url']";
+			$dynamic['link'] = array(
+				'enable'   => true,
+				'source'   => '',
+				'field'    => 'post|post_url',
+				'custom'   => '',
+				'para'     => '',
+				'before'   => '',
+				'after'    => '',
+				'fallback' => '',
+			);
+			$html            = '<a href="' . $attrs['link'] . '" class="kb-advanced-heading-link kt-adv-heading-link' . $uid . '">' . $html . '</a>';
+		}
+
+		if ( $dynamic ) {
+			$attrs['inQueryBlock']   = true;
+			$attrs['kadenceDynamic'] = $dynamic;
+		}
+
+		return Velocity_Seed::block( 'kadence/advancedheading', $attrs, $html );
 	}
 
 	/**

@@ -7,7 +7,8 @@
  * It follows the same rule: what a block setting can express is set on the
  * block. The classes used here are listed in docs/components.md.
  *
- * Two sections read existing content instead of holding their own:
+ * Two sections read existing content instead of holding their own, each
+ * through a Kadence query and its card, like the careers listing page:
  * - "The People Moving Deals Forward" lists the staff of one type, from
  *   Staff in the admin.
  * - "Careers at Velocity" lists the published careers.
@@ -663,61 +664,368 @@ class Velocity_Company {
 	}
 
 	/**
-	 * The people: the staff of one type, each linking to their page.
+	 * The two lists of this page that read existing content. Each is a Kadence
+	 * query (Kadence, Queries) with its own card (Kadence, Query Cards).
 	 *
-	 * The cards come from Staff in the admin: photo, name, short title and
-	 * LinkedIn address. The order is each person's Order field.
+	 * Seed key => title, post type, order, cards per row and gaps
+	 * [desktop, tablet, mobile], and the method that builds the card.
 	 *
-	 * @param int $post_id Page ID.
-	 * @param int $term_id ID of the staff type to list, or 0 for all staff.
-	 * @return string
+	 * @return array[]
 	 */
-	public static function people( $post_id, $term_id ) {
-		$card = Velocity_Seed::block(
-			'group',
-			array( 'className' => 'vm-person' ),
-			'<div class="wp-block-group vm-person">' .
-			Velocity_Seed::block(
-				'post-featured-image',
-				array(
-					'width'  => '80px',
-					'height' => '80px',
-					'scale'  => 'cover',
-				)
-			) . "\n\n" .
-			// Name, title and LinkedIn. See vm_staff_info_shortcode() in inc/shortcodes.php.
-			Velocity_Seed::block( 'shortcode', array(), '[vm_staff_info]' ) .
-			'</div>'
+	public static function queries() {
+		return array(
+			'people'  => array(
+				'title'      => 'About Us: people',
+				'post_type'  => 'velocity-staff',
+				'order_by'   => 'menu_order',
+				'order'      => 'asc',
+				'per_page'   => '12',
+				'columns'    => array( '4', '3', '2' ),
+				'column_gap' => array( '48', '24', '16' ),
+				'row_gap'    => array( '32', '24', '16' ),
+				'card'       => 'person_card',
+			),
+			'careers' => array(
+				'title'      => 'About Us: open positions',
+				'post_type'  => 'velocity-career',
+				'order_by'   => 'date',
+				'order'      => 'desc',
+				'per_page'   => '12',
+				'columns'    => array( '3', '2', '1' ),
+				'column_gap' => array( '24', '24', '16' ),
+				'row_gap'    => array( '24', '24', '16' ),
+				'card'       => 'career_card',
+			),
 		);
+	}
 
-		$query = array(
-			'perPage'  => 12,
-			'pages'    => 0,
-			'offset'   => 0,
-			'postType' => 'velocity-staff',
-			'order'    => 'asc',
-			'orderBy'  => 'menu_order',
-			'author'   => '',
-			'search'   => '',
-			'exclude'  => array(),
-			'sticky'   => '',
-			'inherit'  => false,
-		);
+	/**
+	 * Settings of a Kadence query post: what it lists.
+	 *
+	 * @param array $query   One entry of queries().
+	 * @param int   $term_id For the people: ID of the staff type to list, or 0 for all staff.
+	 * @return array Post meta.
+	 */
+	public static function query_meta( $query, $term_id = 0 ) {
+		$taxonomy = array();
 
-		if ( $term_id ) {
-			$query['taxQuery'] = array( 'velocity-staff-type' => array( (int) $term_id ) );
+		if ( $term_id && 'velocity-staff' === $query['post_type'] ) {
+			$term       = get_term( $term_id, 'velocity-staff-type' );
+			$taxonomy[] = array(
+				'value' => 'velocity-staff-type|' . (int) $term_id,
+				'label' => $term && ! is_wp_error( $term ) ? $term->name : '',
+			);
 		}
 
-		$list = Velocity_Seed::block(
-			'query',
-			array(
-				'queryId'   => 2,
-				'query'     => $query,
-				'className' => 'vm-people',
+		return array(
+			'_kad_query_query' => array(
+				'perPage'          => $query['per_page'],
+				'pages'            => 0,
+				'offset'           => 0,
+				'postType'         => array( $query['post_type'] ),
+				'taxonomy'         => $taxonomy,
+				'order'            => $query['order'],
+				'orderBy'          => $query['order_by'],
+				'orderMetaKey'     => '',
+				'orderMetaKeyType' => '',
+				'author'           => '',
+				'search'           => '',
+				'exclude'          => array(),
+				'sticky'           => '',
+				'inherit'          => false,
+				'taxQuery'         => '',
+				'parents'          => array(),
+				'limit'            => 0,
+				'comparisonLogic'  => 'AND',
+				'infiniteScroll'   => false,
 			),
-			'<div class="wp-block-query vm-people">' .
-			Velocity_Seed::block( 'post-template', array(), $card ) .
-			'</div>'
+		);
+	}
+
+	/**
+	 * Settings of a Kadence query card post: how many cards per row, and the gaps.
+	 *
+	 * @param array $query One entry of queries().
+	 * @return array Post meta.
+	 */
+	public static function card_meta( $query ) {
+		return array(
+			'_kad_query_card_columns'           => $query['columns'],
+			'_kad_query_card_columnGap'         => $query['column_gap'],
+			'_kad_query_card_columnGapUnit'     => 'px',
+			'_kad_query_card_rowGap'            => $query['row_gap'],
+			'_kad_query_card_rowGapUnit'        => 'px',
+			'_kad_query_card_preview_post_type' => $query['post_type'],
+		);
+	}
+
+	/**
+	 * Content of a Kadence query post: the query block around its card.
+	 *
+	 * @param int $query_id Query post ID.
+	 * @param int $card_id  Query card post ID.
+	 * @return string
+	 */
+	public static function query_content( $query_id, $card_id ) {
+		return Velocity_Seed::block(
+			'kadence/query',
+			array( 'uniqueID' => Velocity_Seed::uid( $query_id, 'query' ) ),
+			Velocity_Seed::block(
+				'kadence/query-card',
+				array(
+					'uniqueID' => Velocity_Seed::uid( $query_id, 'card' ),
+					'id'       => (int) $card_id,
+				)
+			)
+		);
+	}
+
+	/**
+	 * Content of a Kadence query card post.
+	 *
+	 * @param int    $card_id Query card post ID.
+	 * @param string $method  person_card or career_card.
+	 * @return string
+	 */
+	public static function card_content( $card_id, $method ) {
+		return Velocity_Seed::block(
+			'kadence/query-card',
+			array( 'uniqueID' => Velocity_Seed::uid( $card_id, 'card' ) ),
+			call_user_func( array( __CLASS__, $method ), $card_id )
+		);
+	}
+
+	/**
+	 * The card of a person: photo, name, short title and LinkedIn.
+	 *
+	 * Every part reads the person being listed, with Kadence's dynamic
+	 * content: the featured image, the title, the field "Staff Title (short)"
+	 * and the field "Staff LinkedIn URL". The name links to the person's page.
+	 * vm-card-link stretches that link over the whole card. See style.css.
+	 *
+	 * @param int $card_id Query card post ID.
+	 * @return string
+	 */
+	public static function person_card( $card_id ) {
+		$photo_uid = Velocity_Seed::uid( $card_id, 'photo' );
+		$icons_uid = Velocity_Seed::uid( $card_id, 'icons' );
+		$icon_uid  = Velocity_Seed::uid( $card_id, 'icon' );
+		$linkedin  = "[kb-dynamic field='post|post_custom_field' custom='velocity_staff_linkedin_url' para='kb_custom_input' type='url']";
+
+		$photo = Velocity_Seed::block(
+			'kadence/image',
+			array(
+				'imgMaxWidth'      => 80,
+				'linkDestination'  => 'none',
+				'uniqueID'         => $photo_uid,
+				'marginDesktop'    => array( '0', '', '24', '' ),
+				'borderRadius'     => array( 50, 50, 50, 50 ),
+				'borderRadiusUnit' => '%',
+				'inQueryBlock'     => true,
+				'kadenceDynamic'   => array(
+					'url' => array(
+						'enable'   => true,
+						'source'   => '',
+						'field'    => 'post|post_featured_image',
+						'custom'   => '',
+						'para'     => '',
+						// The image size: a square crop.
+						'before'   => 'thumbnail',
+						'after'    => '',
+						'fallback' => '',
+					),
+				),
+			),
+			sprintf(
+				'<figure class="wp-block-kadence-image kb-image%1$s"><img src="%2$s" alt="" class="kb-img"/></figure>',
+				$photo_uid,
+				esc_url( includes_url( 'images/blank.gif' ) )
+			)
+		);
+
+		$icon = Velocity_Seed::block(
+			'kadence/icon',
+			array(
+				'uniqueID'      => $icons_uid,
+				'textAlignment' => 'center',
+				'inQueryBlock'  => true,
+			),
+			'<div class="wp-block-kadence-icon kt-svg-icons kt-svg-icons' . $icons_uid . ' alignnone">' .
+			Velocity_Seed::block(
+				'kadence/single-icon',
+				array(
+					'uniqueID'       => $icon_uid,
+					'icon'           => 'fa_linkedin',
+					'link'           => $linkedin,
+					'target'         => '_blank',
+					'size'           => 24,
+					'title'          => 'LinkedIn',
+					'color'          => Velocity_Seed::color( 'palette3' ),
+					'hColor'         => Velocity_Seed::color( 'palette2' ),
+					'padding'        => array( 10, 10, 10, 10 ),
+					'inQueryBlock'   => true,
+					'kadenceDynamic' => array(
+						'link' => array(
+							'enable'   => true,
+							'source'   => '',
+							'field'    => 'post|post_custom_field',
+							'custom'   => 'velocity_staff_linkedin_url',
+							'para'     => 'kb_custom_input',
+							'before'   => '',
+							'after'    => '',
+							'fallback' => '',
+						),
+					),
+				),
+				'<div class="wp-block-kadence-single-icon kt-svg-style-default kt-svg-icon-wrap kt-svg-item-' . $icon_uid . '"><a href="' . $linkedin . '" class="kt-svg-icon-link" target="_blank" rel="noopener noreferrer"><span data-name="fa_linkedin" data-title="LinkedIn" class="kadence-dynamic-icon"></span></a></div>'
+			) . '</div>'
+		);
+
+		return Velocity_Seed::column(
+			$card_id,
+			'person',
+			$photo . "\n\n" .
+			Velocity_Home::t(
+				$card_id,
+				'person-name',
+				'',
+				array(
+					'tag'     => 'h3',
+					'align'   => 'center',
+					'family'  => 'body',
+					'size'    => array( 16, '', '' ),
+					'weight'  => '700',
+					'lh'      => 1.47,
+					'color'   => Velocity_Seed::color( 'palette3' ),
+					'margin'  => array( '0', '', '0', '' ),
+					'dynamic' => 'post|post_title',
+					'to_post' => true,
+				)
+			) . "\n\n" .
+			Velocity_Home::t(
+				$card_id,
+				'person-role',
+				'',
+				array(
+					'align'   => 'center',
+					'margin'  => array( '0', '', '14', '' ),
+					'dynamic' => array( 'post|post_custom_field', 'velocity_staff_title_short' ),
+				)
+			) . "\n\n" . $icon,
+			array(
+				'inQueryBlock'    => true,
+				'padding'         => array( '16', '12', '16', '12' ),
+				'borderRadius'    => array( 14, 14, 14, 14 ),
+				'backgroundHover' => Velocity_Seed::color( 'palette7' ),
+				'textAlign'       => array( 'center', '', '' ),
+				// Centers the photo, which is narrower than the card.
+				'justifyContent'  => array( 'center', '', '' ),
+				'className'       => 'vm-card-link',
+				'metadata'        => array( 'name' => 'Person' ),
+			)
+		);
+	}
+
+	/**
+	 * The card of an open position: title, offices and summary.
+	 *
+	 * Reads the career being listed: its title, linked to its page, the
+	 * field "City/Cities" on one line (see inc/dynamic-content.php) and the
+	 * field "Short Description".
+	 *
+	 * @param int $card_id Query card post ID.
+	 * @return string
+	 */
+	public static function career_card( $card_id ) {
+		$gray = Velocity_Seed::color( 'palette6' );
+
+		return Velocity_Seed::column(
+			$card_id,
+			'career',
+			Velocity_Home::card_title(
+				$card_id,
+				'career',
+				'',
+				array(
+					'color'   => Velocity_Seed::color( 'palette3' ),
+					'margin'  => array( '0', '', '24', '' ),
+					'dynamic' => 'post|post_title',
+					'to_post' => true,
+				)
+			) . "\n\n" .
+			Velocity_Home::t(
+				$card_id,
+				'career-city',
+				'',
+				array(
+					'color'   => $gray,
+					'margin'  => array( '0', '', '0', '' ),
+					'dynamic' => 'post|vm_career_cities',
+				)
+			) . "\n\n" .
+			Velocity_Home::t(
+				$card_id,
+				'career-text',
+				'',
+				array(
+					'color'   => $gray,
+					'margin'  => array( '0', '', '0', '' ),
+					'dynamic' => array( 'post|post_custom_field', 'career-short-description' ),
+				)
+			),
+			array(
+				'inQueryBlock'       => true,
+				'background'         => Velocity_Seed::color( 'palette8' ),
+				'borderRadius'       => array( 8, 8, 8, 8 ),
+				'padding'            => array( '24', '24', '24', '24' ),
+				'height'             => array( 200, '', '' ),
+				'displayShadow'      => true,
+				'shadow'             => array(
+					array(
+						'color'   => '#000000',
+						'opacity' => 0.08,
+						'spread'  => -4,
+						'blur'    => 16,
+						'hOffset' => 0,
+						'vOffset' => 12,
+						'inset'   => false,
+					),
+				),
+				'displayHoverShadow' => true,
+				'shadowHover'        => array(
+					array(
+						'color'   => '#010739',
+						'opacity' => 0.18,
+						'spread'  => -8,
+						'blur'    => 24,
+						'hOffset' => 0,
+						'vOffset' => 16,
+						'inset'   => false,
+					),
+				),
+				'className'          => 'vm-card-link',
+				'metadata'           => array( 'name' => 'Open position' ),
+			)
+		);
+	}
+
+	/**
+	 * The people: the staff of one type, each linking to their page.
+	 *
+	 * The list is the Kadence query "About Us: people". Who is listed and in
+	 * what order is set on that query; the look of a person is its card.
+	 *
+	 * @param int $post_id  Page ID.
+	 * @param int $query_id ID of the people query.
+	 * @return string
+	 */
+	public static function people( $post_id, $query_id ) {
+		$list = Velocity_Seed::block(
+			'kadence/query',
+			array(
+				'uniqueID'  => Velocity_Seed::uid( $post_id, 'people-query' ),
+				'id'       => (int) $query_id,
+			)
 		);
 
 		return Velocity_Home::section(
@@ -734,8 +1042,10 @@ class Velocity_Company {
 			) . "\n\n" . $list,
 			'The people',
 			array(
-				'bgColor' => '#f2f4fc',
-				'anchor'  => self::TEAM_ANCHOR,
+				'bgColor'   => '#f2f4fc',
+				'anchor'    => self::TEAM_ANCHOR,
+				// Centers a last line of people that is not full. See style.css.
+				'className' => 'vm-people',
 			)
 		);
 	}
@@ -743,44 +1053,21 @@ class Velocity_Company {
 	/**
 	 * Careers: the open positions in a row that scrolls sideways.
 	 *
-	 * vm-carousel adds the two arrows when the positions do not fit. See
+	 * The list is the Kadence query "About Us: open positions". vm-carousel
+	 * adds the two arrows when the positions do not fit. See
 	 * assets/js/carousel.js.
 	 *
-	 * @param int $post_id Page ID.
+	 * @param int $post_id  Page ID.
+	 * @param int $query_id ID of the open positions query.
 	 * @return string
 	 */
-	public static function careers( $post_id ) {
-		$card = Velocity_Seed::block(
-			'group',
-			array( 'className' => 'vm-career-card' ),
-			'<div class="wp-block-group vm-career-card">' .
-			// Position, offices and summary. See vm_career_info_shortcode() in inc/shortcodes.php.
-			Velocity_Seed::block( 'shortcode', array(), '[vm_career_info]' ) .
-			'</div>'
-		);
-
+	public static function careers( $post_id, $query_id ) {
 		$list = Velocity_Seed::block(
-			'query',
+			'kadence/query',
 			array(
-				'queryId'   => 3,
-				'query'     => array(
-					'perPage'  => 12,
-					'pages'    => 0,
-					'offset'   => 0,
-					'postType' => 'velocity-career',
-					'order'    => 'desc',
-					'orderBy'  => 'date',
-					'author'   => '',
-					'search'   => '',
-					'exclude'  => array(),
-					'sticky'   => '',
-					'inherit'  => false,
-				),
-				'className' => 'vm-careers',
-			),
-			'<div class="wp-block-query vm-careers">' .
-			Velocity_Seed::block( 'post-template', array(), $card ) .
-			'</div>'
+				'uniqueID' => Velocity_Seed::uid( $post_id, 'careers-query' ),
+				'id'       => (int) $query_id,
+			)
 		);
 
 		$inner =
@@ -844,11 +1131,11 @@ class Velocity_Company {
 	/**
 	 * Every section, in page order.
 	 *
-	 * @param int $post_id Page ID.
-	 * @param int $term_id ID of the staff type listed in the people section.
+	 * @param int   $post_id Page ID.
+	 * @param int[] $queries IDs of the Kadence queries, by their key in queries().
 	 * @return string
 	 */
-	public static function content( $post_id, $term_id ) {
+	public static function content( $post_id, $queries ) {
 		return implode(
 			"\n\n",
 			array(
@@ -857,8 +1144,8 @@ class Velocity_Company {
 				self::values( $post_id ),
 				self::story( $post_id ),
 				self::brokerages( $post_id ),
-				self::people( $post_id, $term_id ),
-				self::careers( $post_id ),
+				self::people( $post_id, $queries['people'] ),
+				self::careers( $post_id, $queries['careers'] ),
 				self::cta( $post_id ),
 			)
 		);

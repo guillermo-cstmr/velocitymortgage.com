@@ -1124,176 +1124,109 @@ body .vm-story-media .vm-story-stat--offices {
 }
 
 /*
- * vm-people: a Query Loop over staff, shown as centered rows of people.
- * Each card is a Group with the class vm-person holding the Featured Image
- * block and the [vm_staff_info] shortcode. The whole card links to the
- * person's page and turns light blue on hover.
- * Measures are from Figma, frame "The people behind the deals".
+ * vm-card-link: a Section whose title link covers the whole card.
+ * Put it on a card that holds a Text (Adv) linked to a page. The card gets one
+ * link, named by its title, instead of an empty link laid over it. Icons
+ * inside the card, such as a LinkedIn link, stay clickable.
  */
-.vm-people .wp-block-post-template.wp-block-post-template {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 32px 48px;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.vm-people .wp-block-post-template > li {
-	flex: 0 0 calc((100% - 144px) / 4);
-	min-width: 0;
-	margin: 0;
-}
-
-.vm-people .vm-person {
-	position: relative;
-	height: 100%;
-	padding: 16px 12px;
-	border-radius: 14px;
-	text-align: center;
-	transition: background-color 0.2s ease;
-}
-
-.vm-people .vm-person:hover,
-.vm-people .vm-person:focus-within {
-	background: var(--global-palette7);
-}
-
-.vm-people .vm-person .wp-block-post-featured-image {
-	width: 80px;
-	height: 80px;
-	margin: 0 auto 24px;
-	border-radius: 50%;
-	overflow: hidden;
-	line-height: 0;
-}
-
-.vm-people .vm-person .wp-block-post-featured-image img {
-	width: 80px;
-	height: 80px;
-	object-fit: cover;
-}
-
-.vm-person-info {
-	font-size: 16px;
-	line-height: 1.47;
-}
-
-/* Two classes, to outrank the theme's heading and paragraph rules. */
-.vm-person .vm-person-info > * {
-	margin: 0;
-}
-
-.vm-person-info :is(h2, h3).vm-person-name {
-	font-family: inherit;
-	font-size: 16px;
-	font-weight: 700;
-	line-height: 1.47;
-	letter-spacing: 0;
-}
-
-.vm-person-info .vm-person-name a {
-	color: var(--global-palette3);
+.vm-card-link .kb-advanced-heading-link {
 	text-decoration: none;
 }
 
-/* The name link is stretched over the card: one link for the whole card. */
-.vm-person-info .vm-person-name a::after {
+.vm-card-link .kb-advanced-heading-link::after {
 	content: "";
 	position: absolute;
 	inset: 0;
 	z-index: 1;
-	border-radius: 14px;
+	border-radius: inherit;
 }
 
-.vm-person-info .vm-person-name a:focus-visible {
+.vm-card-link .wp-block-kadence-icon {
+	position: relative;
+	z-index: 2;
+}
+
+.vm-card-link .kb-advanced-heading-link:focus-visible {
 	outline: none;
 }
 
-.vm-person-info .vm-person-name a:focus-visible::after {
+.vm-card-link .kb-advanced-heading-link:focus-visible::after {
 	outline: 2px solid var(--global-palette5);
 	outline-offset: 2px;
 }
 
-/* The LinkedIn link sits above the stretched link, with a 44px target. */
-.vm-person .vm-person-info .vm-person-linkedin {
-	position: relative;
-	z-index: 2;
-	display: inline-flex;
-	padding: 10px;
-	margin-top: 14px;
-	border-radius: 8px;
-	line-height: 0;
-	transition: opacity 0.2s ease;
+/*
+ * vm-people: a row whose Kadence query centers a last line that is not full.
+ * The query's grid would leave those cards on the left. The cards per line and
+ * the gaps repeat the query card's settings: 4, 3 and 2, with 48, 24 and 16px.
+ * The card's own class is in the selectors to outrank Kadence's grid.
+ */
+.vm-people .wp-block-kadence-query-card .kb-query-grid-wrap {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 }
 
-.vm-person-info .vm-person-linkedin:hover {
-	opacity: 0.7;
-}
-
-.vm-person-info .vm-person-linkedin:focus-visible {
-	outline: 2px solid var(--global-palette5);
-	outline-offset: 0;
+.vm-people .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
+	flex: 0 0 calc((100% - 144px) / 4);
+	min-width: 0;
 }
 
 @media (max-width: 1024px) {
-	.vm-people .wp-block-post-template.wp-block-post-template {
-		gap: 24px;
-	}
-
-	.vm-people .wp-block-post-template > li {
+	.vm-people .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
 		flex-basis: calc((100% - 48px) / 3);
 	}
 }
 
 @media (max-width: 767px) {
-	.vm-people .wp-block-post-template > li {
-		flex-basis: calc((100% - 24px) / 2);
-	}
-
-	.vm-people .vm-person {
-		padding: 12px 4px;
+	.vm-people .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
+		flex-basis: calc((100% - 16px) / 2);
 	}
 }
 
 /*
- * vm-carousel: a Section whose Query Loop scrolls sideways.
+ * vm-carousel: a Section whose Kadence query scrolls sideways.
  * The list scrolls by touch, trackpad or keyboard on its own. When the
  * items do not fit, assets/js/carousel.js adds the two arrows, at the right
  * of the Section's last block. With few items there are no arrows.
- * vm-careers and vm-career-card style the positions it lists here.
- * Measures are from Figma, frame "Careers".
+ * How many cards show at once repeats the query card's columns: 3, 2 and 1.
  */
 .vm-carousel > .kt-inside-inner-col {
 	position: relative;
 }
 
-.vm-carousel .wp-block-post-template.wp-block-post-template {
+.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap {
 	display: flex;
-	gap: 24px;
 	/* Room for the cards' shadow, which the scrolling would cut off. */
 	margin: -8px -12px -12px;
 	padding: 8px 12px 28px;
 	overflow-x: auto;
-	list-style: none;
 	scroll-snap-type: x mandatory;
 	scroll-padding-inline: 12px;
 	scrollbar-width: none;
 }
 
-.vm-carousel .wp-block-post-template::-webkit-scrollbar {
+.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap::-webkit-scrollbar {
 	display: none;
 }
 
-.vm-carousel .wp-block-post-template > li {
+.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
 	flex: 0 0 calc((100% - 48px) / 3);
 	min-width: 0;
-	margin: 0;
 	scroll-snap-align: start;
 }
 
-.vm-carousel .wp-block-post-template:focus-visible {
+/* Cards in a line are as tall as the tallest. */
+.vm-carousel .kb-query-item {
+	display: flex;
+}
+
+.vm-carousel .kb-query-item > .wp-block-kadence-column,
+.vm-carousel .kb-query-item > .wp-block-kadence-column > .kt-inside-inner-col {
+	flex: 1;
+}
+
+.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap:focus-visible {
 	outline: 2px solid var(--global-palette5);
 	outline-offset: 2px;
 }
@@ -1318,7 +1251,6 @@ body .vm-story-media .vm-story-stat--offices {
 	background: var(--global-palette9);
 	box-shadow: none;
 	cursor: pointer;
-	transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
 .vm-carousel__arrow:hover:not(:disabled),
@@ -1338,91 +1270,18 @@ body .vm-story-media .vm-story-stat--offices {
 	cursor: default;
 }
 
-.vm-carousel__arrow img {
-	display: block;
-}
-
 .vm-carousel__arrow--next img {
 	transform: rotate(180deg);
 }
 
-.vm-careers .vm-career-card {
-	position: relative;
-	height: 100%;
-	min-height: 200px;
-	padding: 24px;
-	border-radius: 8px;
-	background: var(--global-palette8);
-	box-shadow: var(--vm-shadow-medium);
-	transition: box-shadow 0.25s ease;
-}
-
-.vm-careers .vm-career-card:hover,
-.vm-careers .vm-career-card:focus-within {
-	box-shadow: 0 16px 24px -8px rgba(1, 7, 57, 0.18);
-}
-
-.vm-career-info {
-	color: var(--global-palette6);
-	font-size: 16px;
-	line-height: 1.47;
-}
-
-.vm-career-card .vm-career-info > * {
-	margin: 0;
-}
-
-.vm-career-info :is(h2, h3).vm-career-title {
-	margin-bottom: 24px;
-	font-size: 22px;
-	font-weight: 700;
-	line-height: 1.1;
-	letter-spacing: 0;
-}
-
-.vm-career-info .vm-career-title a {
-	color: var(--global-palette3);
-	text-decoration: none;
-}
-
-.vm-career-info .vm-career-title a::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	z-index: 1;
-	border-radius: 8px;
-}
-
-.vm-career-info .vm-career-title a:focus-visible {
-	outline: none;
-}
-
-.vm-career-info .vm-career-title a:focus-visible::after {
-	outline: 2px solid var(--global-palette5);
-	outline-offset: 2px;
-}
-
-.vm-careers .vm-career-card:hover .vm-career-title a {
-	color: var(--global-palette2);
-}
-
-/* The summary is written for the position's own page: three lines of it here. */
-.vm-career-info .vm-career-text {
-	display: -webkit-box;
-	overflow: hidden;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 3;
-	line-clamp: 3;
-}
-
 @media (max-width: 1024px) {
-	.vm-carousel .wp-block-post-template > li {
+	.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
 		flex-basis: calc((100% - 24px) / 2);
 	}
 }
 
 @media (max-width: 767px) {
-	.vm-carousel .wp-block-post-template > li {
+	.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
 		flex-basis: 86%;
 	}
 
@@ -1432,97 +1291,19 @@ body .vm-story-media .vm-story-stat--offices {
 	}
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.vm-people .vm-person,
-	.vm-careers .vm-career-card,
-	.vm-carousel__arrow {
-		transition: none;
-	}
-}
-
 /*
- * vm-compare: a Table block that compares the loan programs.
- * The Table block has no settings for striped rows without borders, cell
- * padding or column widths. Type a cell's items on separate lines, each
- * starting with a bullet (•): a table cell cannot hold a list.
- * On small screens the table keeps its columns and scrolls sideways.
- * Measures are from Figma, frame "Comparison Table".
+ * vm-compare: a Kadence Table that keeps its columns on small screens.
+ * Everything about the table's look is a block setting. Kadence has no
+ * setting for a minimum width, so without this the five columns would be
+ * squeezed into a phone's width. Here the table keeps a readable width and
+ * scrolls sideways inside its container.
  */
-.wp-block-table.vm-compare {
-	margin: 0;
-	border-radius: 8px;
-	overflow-x: auto;
-}
-
-.wp-block-table.vm-compare table {
-	width: 100%;
-	min-width: 880px;
-	border: 0;
-	border-collapse: collapse;
-	table-layout: fixed;
-	color: var(--global-palette3);
-	font-size: 14px;
-	line-height: 1.3;
-}
-
-.wp-block-table.vm-compare :is(th, td) {
-	padding: 16px;
-	border: 0;
-	text-align: left;
-	vertical-align: top;
-	word-break: normal;
-}
-
-/* The first column names the row. In the design it is 280px of 1280. */
-.wp-block-table.vm-compare :is(th, td):first-child {
-	width: 21.875%;
-}
-
-.wp-block-table.vm-compare thead {
-	border: 0;
-}
-
-.wp-block-table.vm-compare thead th {
-	font-size: 16px;
-	font-weight: 600;
-	line-height: 1.47;
-}
-
-.wp-block-table.vm-compare thead th:first-child {
-	font-weight: 400;
-}
-
-.wp-block-table.vm-compare thead tr,
-.wp-block-table.vm-compare tbody tr:nth-child(even) {
-	background: #f2f4fc;
-}
-
-.wp-block-table.vm-compare tbody tr:nth-child(odd) {
-	background: var(--global-palette9);
-}
-
-.wp-block-table.vm-compare thead a {
-	color: var(--global-palette3);
-	text-decoration: underline;
-	text-underline-offset: 2px;
-}
-
-.wp-block-table.vm-compare thead a:hover,
-.wp-block-table.vm-compare thead a:focus {
-	color: var(--global-palette2);
-}
-
-.wp-block-table.vm-compare:focus-visible {
-	outline: 2px solid var(--global-palette5);
-	outline-offset: 2px;
-}
-
-@media (max-width: 767px) {
-	.wp-block-table.vm-compare :is(th, td) {
-		padding: 12px;
+@media (max-width: 1024px) {
+	.kb-table-container.vm-compare {
+		overflow-x: auto;
 	}
 
-	.wp-block-table.vm-compare :is(th, td):first-child {
-		width: 17%;
+	.kb-table-container.vm-compare > table {
+		min-width: 880px;
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Carousel: a Section with the class vm-carousel whose Query Loop scrolls
+ * Carousel: a Section with the class vm-carousel whose Kadence query scrolls
  * sideways.
  *
  * The list already scrolls on its own, by touch, trackpad or keyboard. This
@@ -16,7 +16,7 @@
 	var settings = window.vmCarousel || {};
 
 	function setUp( carousel ) {
-		var track = carousel.querySelector( '.wp-block-post-template' );
+		var track = carousel.querySelector( '.kb-query-grid-wrap' );
 		var inner = carousel.querySelector( ':scope > .kt-inside-inner-col' ) || carousel;
 
 		if ( ! track ) {

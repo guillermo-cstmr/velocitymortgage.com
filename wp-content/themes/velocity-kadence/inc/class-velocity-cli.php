@@ -493,7 +493,8 @@ class Velocity_CLI {
 	 * It writes to the page with the slug "about", and creates that page
 	 * if it does not exist. The people section lists the staff of the type
 	 * "Sales Directors", and the careers section the published careers: both
-	 * read what is in the admin, so they stay up to date on their own.
+	 * read what is in the admin, so they stay up to date on their own. Each is
+	 * a Kadence query with its card, created here too (Kadence, Queries).
 	 *
 	 * Without --execute it only reports what it would do. A page that already
 	 * has content is left alone, so editor work is never overwritten.
@@ -569,10 +570,37 @@ class Velocity_CLI {
 			WP_CLI::log( sprintf( '  create   page  About Us (#%d)', $page_id ) );
 		}
 
+		// The two lists: a Kadence query and its card each. An existing one is
+		// left as it is unless --force is given.
+		$term_id = $term ? (int) $term->term_id : 0;
+		$queries = array();
+
+		foreach ( Velocity_Company::queries() as $key => $query ) {
+			$card_id = $this->seed_post(
+				'about-card-' . $key,
+				'kadence_query_card',
+				$query['title'] . ' card',
+				static function ( $post_id ) use ( $query ) {
+					return Velocity_Company::card_content( $post_id, $query['card'] );
+				},
+				Velocity_Company::card_meta( $query )
+			);
+
+			$queries[ $key ] = $this->seed_post(
+				'about-query-' . $key,
+				'kadence_query',
+				$query['title'],
+				static function ( $post_id ) use ( $card_id ) {
+					return Velocity_Company::query_content( $post_id, $card_id );
+				},
+				Velocity_Company::query_meta( $query, $term_id )
+			);
+		}
+
 		wp_update_post(
 			array(
 				'ID'           => $page_id,
-				'post_content' => wp_slash( Velocity_Company::content( $page_id, $term ? (int) $term->term_id : 0 ) ),
+				'post_content' => wp_slash( Velocity_Company::content( $page_id, $queries ) ),
 			)
 		);
 

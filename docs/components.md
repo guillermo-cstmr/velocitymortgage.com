@@ -160,10 +160,10 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-deal-card` | The Group around each post in that Query Loop | The card itself. Inside it go a Featured Image block and a Shortcode block with `[vm_deal_info]` |
 | `vm-faq` | Details | Styles a frequently asked question. Details has no styling settings. Questions placed one after another act as a group: opening one closes the others, and one always stays open. Tick "Open by default" on the first |
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule, bold text and an arrow. Navigation has no per-item styling |
-| `vm-people`, `vm-person` | Query Loop over Staff, and the Group around each person | Centered rows of people, each card one link. See "The About Us page" |
-| `vm-carousel` | Section around a Query Loop | Makes the list scroll sideways, with arrows when it does not fit |
-| `vm-careers`, `vm-career-card` | Query Loop over Careers, and the Group around each one | The position cards |
-| `vm-compare` | Table | The comparison of the loan programs: striped rows, padding and column widths, and sideways scrolling on small screens |
+| `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
+| `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
+| `vm-carousel` | Section around a Kadence query | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
+| `vm-compare` | Kadence Table | Keeps the table at a readable width on small screens, scrolling sideways. Kadence has no minimum width setting |
 | `vm-story-media`, `vm-story-stat` | Section around a photo, and the figures laid over it | Places the figures over the photo. Sections have no setting for overlapping |
 | `vm-footer-main`, `vm-footer-legal` | The two rows of the footer | Line heights, the rule above the legal text, and the underline on legal links |
 
@@ -182,7 +182,7 @@ A line is left out when the property has no value for it, so an incomplete card 
 
 It is a shortcode because core blocks cannot print a custom field, or a taxonomy term without turning it into a link. In the editor the block shows the shortcode text, not the result.
 
-The people and the careers on the About Us page work the same way, with `[vm_staff_info]` and `[vm_career_info]`. See "The About Us page".
+New lists use a Kadence query and its card instead, with Kadence's dynamic content, so their look is set in the sidebar. See "The About Us page", "People".
 
 ## Forms
 
@@ -254,7 +254,7 @@ If the drawing is replaced with a different one, the numbers have to be measured
 
 ## The About Us page
 
-The page at `/about/` is built from the recipes above plus four pieces of its own: a timeline, a photo with figures over it, a list of people and a carousel. `wp velocity seed-company` creates its first version.
+The page at `/about/` is built from the recipes above plus four pieces of its own: a timeline, a photo with figures over it, a list of people and a carousel. The two lists are Kadence queries. `wp velocity seed-company` creates its first version.
 
 ### Timeline
 
@@ -284,32 +284,44 @@ The labels under the figures are 14px. The design draws them at 9.5px and 8px, w
 
 ### People
 
-"The People Moving Deals Forward" is a Query Loop over Staff with the class `vm-people`. Each person is a Group with the class `vm-person` that holds a Featured Image block and a Shortcode block with `[vm_staff_info]`.
+"The People Moving Deals Forward" is a Kadence query, the same kind of block as the careers listing page. It has two parts, both edited in the block editor:
 
-| On the card | Where it comes from |
-|---|---|
-| Photo | The person's featured image |
-| Name | The person's title. It links to the person's page, and the link covers the whole card |
-| Line under the name | The field "Staff Title (short)". For sales directors that is their office |
-| LinkedIn icon | The field "Staff LinkedIn URL". Left out when it is empty |
+| Part | Where | What it holds |
+|---|---|---|
+| The query | Kadence > Queries, "About Us: people" | What is listed: Staff, of the type "Sales Directors", by their Order field, lowest first |
+| The card | Kadence > Query Cards, "About Us: people card" | The look of one person, and how many show per line: 4, 3 on tablet, 2 on phones |
 
-Who is listed is set on the Query Loop: Staff, filtered by Type. The seed sets it to "Sales Directors". To add someone, create the person in Staff with that type. The order is each person's Order field, under Page Attributes, lowest first.
+The card is made of normal blocks with Kadence's dynamic content, so each part is styled in the sidebar:
+
+| On the card | Block | Dynamic content |
+|---|---|---|
+| Photo | Image | Post featured image, size Thumbnail |
+| Name | Text (Adv), linked to the post | Post title |
+| Line under the name | Text (Adv) | Custom field `velocity_staff_title_short`. For sales directors that is their office |
+| LinkedIn icon | Icon, with a link | Custom field `velocity_staff_linkedin_url` |
+
+To add someone, create the person in Staff with that type. Nothing changes on the page.
+
+Two classes do what the blocks cannot:
+
+- `vm-card-link`, on the card's Section, stretches the name's link over the whole card. Kadence's own "link the Section" option lays an empty link over the card, with no name for screen readers.
+- `vm-people`, on the section's row, centers a last line of people that is not full. If the cards per line or the gaps change on the query card, the numbers in `style.css` under "vm-people" have to follow.
 
 The section has the HTML anchor `team`, so `/about/#team` lands on it. "Our Team" in the menu uses that address.
 
 ### Carousel
 
-A Section with the class `vm-carousel` turns the Query Loop inside it into a row that scrolls sideways: three items in view on desktop, two on tablet, one and a bit of the next on phones. It scrolls by touch, trackpad or keyboard. When the items do not fit, `assets/js/carousel.js` adds a previous and a next arrow at the bottom right of the Section, beside its last block. With few items there are no arrows.
+A Section with the class `vm-carousel` turns the Kadence query inside it into a row that scrolls sideways: three cards in view on desktop, two on tablet, one and a bit of the next on phones. It scrolls by touch, trackpad or keyboard. When the cards do not fit, `assets/js/carousel.js` adds a previous and a next arrow at the bottom right of the Section, beside its last block. With few cards there are no arrows. Kadence's query has no carousel of its own.
 
-"Careers at Velocity" uses it with a Query Loop over Careers that has the class `vm-careers`. Each position is a Group with the class `vm-career-card` holding a Shortcode block with `[vm_career_info]`:
+"Careers at Velocity" uses it with the query "About Us: open positions" and its card, "About Us: open positions card":
 
-| On the card | Where it comes from |
-|---|---|
-| Title | The career's title. It links to the career, and the link covers the whole card |
-| Offices | The field "City/Cities", on one line |
-| Summary | The field "Short Description", cut at three lines |
+| On the card | Block | Dynamic content |
+|---|---|---|
+| Title | Text (Adv), linked to the post | Post title |
+| Offices | Text (Adv) | "Career: cities on one line", under Velocity in the list. It prints the "City/Cities" field with a dot between cities. Defined in `inc/dynamic-content.php` |
+| Summary | Text (Adv) | Custom field `career-short-description` |
 
-Only published careers show. The label of the arrows is set in `inc/carousel.php`.
+Only published careers show. The card's Section has `vm-card-link` too. The label of the arrows is set in `inc/carousel.php`.
 
 ### Colors that differ from the design
 
@@ -336,12 +348,9 @@ To add a program, duplicate a whole "Program" row and replace its photo and text
 
 ### The comparison table
 
-A core Table block with the class `vm-compare`, which gives it the striped rows, the padding and the column widths. Two things to know when editing it:
+A Kadence Table block. Its look is all block settings: the striped rows (Even and Odd row backgrounds), the cell padding, the text sizes, the first column's width, and the first row and first column as headers. Each cell holds blocks of its own: a Text (Adv), or a List when it has several items. The program names in the header are links to each program's page.
 
-- **A cell cannot hold a list.** Type each item on its own line (Shift + Enter) and start it with a bullet, `•`.
-- **The program names in the header are links** to each program's page.
-
-On small screens the table keeps its five columns and scrolls sideways.
+The table has the class `vm-compare`. Kadence has no setting for a minimum width, so on small screens that class keeps the table at a readable width and lets it scroll sideways.
 
 ### The hero illustration
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Carousel: a Section with the class vm-carousel whose Query Loop scrolls
+ * Carousel: a Section with the class vm-carousel whose Kadence query scrolls
  * sideways, with a previous and a next arrow when its items do not fit.
  *
  * The rules are in style.css, "vm-carousel". The arrows are added by
