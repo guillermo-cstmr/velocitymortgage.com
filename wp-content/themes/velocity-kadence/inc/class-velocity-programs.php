@@ -881,8 +881,7 @@ class Velocity_Programs {
 			'Found Your Client’s Perfect Fit?',
 			array(
 				array( 'Become a Partner', home_url( '/become-a-partner/' ) ),
-				// The Process page does not exist yet: the link is a placeholder.
-				array( 'See How It Works', '#', 'outline', Velocity_Home::on_dark() ),
+				array( 'See How It Works', home_url( '/process/' ), 'outline', Velocity_Home::on_dark() ),
 			),
 			1280
 		);

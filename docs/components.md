@@ -156,33 +156,39 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 |---|---|---|
 | `vm-eyebrow` | Text (Adv) | Adds the orange dot before a small label. Text has no setting for that |
 | `vm-stats` | Row Layout | On tablet and mobile the items wrap centered, so an odd one out sits in the middle. A row's grid leaves it on the left |
-| `vm-deals` | Query Loop over the properties | Shows them as deal cards in three columns. Query Loop is made of core blocks, which have no card settings in this theme |
-| `vm-deal-card` | The Group around each post in that Query Loop | The card itself. Inside it go a Featured Image block and a Shortcode block with `[vm_deal_info]` |
-| `vm-faq` | Details | Styles a frequently asked question. Details has no styling settings. Questions placed one after another act as a group: opening one closes the others, and one always stays open. Tick "Open by default" on the first |
+| `vm-tag` | Text (Adv) used as a small filled label | Makes it as wide as its text, and hides it, keeping its space, when its dynamic content is empty |
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule, bold text and an arrow. Navigation has no per-item styling |
 | `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
-| `vm-carousel` | Section around a Kadence query | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
+| `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
+| `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
 | `vm-compare` | Kadence Table | Keeps the table at a readable width on small screens, scrolling sideways. Kadence has no minimum width setting |
 | `vm-story-media`, `vm-story-stat` | Section around a photo, and the figures laid over it | Places the figures over the photo. Sections have no setting for overlapping |
 | `vm-footer-main`, `vm-footer-legal` | The two rows of the footer | Line heights, the rule above the legal text, and the underline on legal links |
 
 ## The deal card
 
-The text of a deal card comes from the shortcode `[vm_deal_info]`, defined in `inc/shortcodes.php`. It prints, for the property being shown:
+"Deals Other Brokers Already Placed" on the home page is a Kadence query, "Home: closed deals" (Kadence > Queries), with its card, "Home: closed deals card" (Kadence > Query Cards). The card is made of normal blocks with Kadence's dynamic content, so its look is set in the sidebar:
 
-| Line | Where it comes from |
-|---|---|
-| Closing time tag, with the bolt | The property field "Processed Details Text" |
-| Title | Property type and purpose. Falls back to the property name when both are empty |
-| Program | Loan program |
-| Name | Account executive |
+| On the card | Block | Dynamic content |
+|---|---|---|
+| Photo | Image, with a fixed 2:1 shape | Post featured image |
+| Closing time, with the bolt | Text (Adv) with an icon, a background and the class `vm-tag` | "Deal: closing time". The property field "Processed Details Text" |
+| Title | Text (Adv), linked to the post | "Deal: property type and purpose". Falls back to the property name when both are empty |
+| Program | Text (Adv) | "Deal: loan program" |
+| Name | Text (Adv) | "Deal: account executive" |
 
-A line is left out when the property has no value for it, so an incomplete card means incomplete data on that property. The one exception is the closing time tag: without a value it still keeps its space, invisibly, so the titles line up across the cards. The title links to the property, and that link covers the whole card.
+The four "Deal: ..." fields are in the dynamic content list under "Velocity". They exist because Kadence has no field for a taxonomy term as plain text. They are defined in `inc/dynamic-content.php`, where a new one takes a line and a small function.
 
-It is a shortcode because core blocks cannot print a custom field, or a taxonomy term without turning it into a link. In the editor the block shows the shortcode text, not the result.
+A text is left out when the property has no value for it, so an incomplete card means incomplete data on that property. The one exception is the closing time: without a value it keeps its space, invisibly, so the titles line up across the cards. The title links to the property, and `vm-card-link` on the card stretches that link over the whole card.
 
-New lists use a Kadence query and its card instead, with Kadence's dynamic content, so their look is set in the sidebar. See "The About Us page", "People".
+`wp velocity seed-home` creates the query and its card.
+
+## Frequently asked questions
+
+A Kadence Accordion block. The look of a question at rest, on hover and open, the gap between questions, the plus and minus icon and the answer's padding are settings of the Accordion, under Style. Each question is a pane; its answer is made of Paragraph blocks.
+
+Opening a question closes the others, and "Enable FAQ Schema" is on, so search engines can read the questions and answers. To add a question, select the Accordion and add a pane.
 
 ## Forms
 
@@ -330,7 +336,6 @@ Only published careers show. The card's Section has `vm-card-link` too. The labe
 
 ### What is still open
 
-- **"See Our Full Process"** and "Process" in the menu point to `#`. The Process page is not built yet.
 - **Order of the people**: the design shows Marco Castaneda first. The page follows each person's Order field.
 
 ## The Programs Overview page
@@ -358,8 +363,46 @@ The photo with the Velocity mark and the four program labels is one image, `asse
 
 ### What is still open
 
-- **The links to each program's page** ("Explore ..." and the table header) and **"See How It Works"** point to `#`. Those pages are not built yet. The addresses of the program pages are in one place, `Velocity_Programs::links()`.
+- **The links to each program's page** ("Explore ..." and the table header) point to `#`. Those pages are not built yet. The addresses of the program pages are in one place, `Velocity_Programs::links()`.
 - **Flex I/O's label** reads "Short-term loan". The design repeats "Long-term loan" there.
+
+## The Process page
+
+The page at `/process/` reuses the cards, the panel, the call to action band and the frequently asked questions. `wp velocity seed-process` creates its first version. Three things are its own.
+
+### Numbered steps
+
+Each step is a horizontal Section with a rule above it, set as its top border. Inside it sit two Sections:
+
+- **The number**: 48 by 48, with its background, border and radius in the block settings, and the number as a Text (Adv).
+- **Title and text**: set to grow, with a 12px gap between its two texts.
+
+To add a step, duplicate one and change its number and texts. The rules are Deep Rust in "Partner With Us in Five Steps" and gray in "How Your First Deal Moves Forward"; that is the border color of each step.
+
+### Document lists
+
+The two lists of the approval package are Kadence Icon List blocks: the bullet is the icon (a small filled circle), and the gap between items, the text size and the colors are block settings.
+
+### Cards that scroll sideways
+
+"What You’ll Need From Your Client" uses the carousel with cards typed into the page, instead of a query:
+
+| Class | Put it on | What it does |
+|---|---|---|
+| `vm-carousel` | The Section around the cards | Adds the arrows when the cards do not fit |
+| `vm-carousel--below` | The same Section | Puts the arrows under the cards. Without it they sit at the bottom right, beside the Section's last block |
+| `vm-carousel-track` | A horizontal Section inside it, holding the cards | Makes the cards scroll sideways and keep the width set in their block settings (410px here; never more than 86% of the list, so the next card shows) |
+
+To add a card, duplicate one inside the track.
+
+### The hero drawing
+
+The four steps on the line are one SVG, `assets/images/process/hero-steps.svg`, exported from Figma. The animation lives inside the file, in its `<style>`: the line draws from the first step to the last and each step appears as the line reaches it, once, when the image loads. Visitors who ask for reduced motion see the finished drawing. A new export from Figma loses the animation: copy the `<style>`, the mask and the `step` classes over from the current file.
+
+### What is still open
+
+- **"How long does approval last?"** answers 30 days, as the copy document has it. The rest of the page, and the call to action on every page, say a year. One of the two is wrong.
+- **The design lets the call to action band overlap the section above it.** Here the band starts after that section.
 
 ## The loan calculator
 

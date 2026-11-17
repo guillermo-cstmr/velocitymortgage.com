@@ -1,7 +1,9 @@
 <?php
 /**
- * Carousel: a Section with the class vm-carousel whose Kadence query scrolls
- * sideways, with a previous and a next arrow when its items do not fit.
+ * Carousel: a Section with the class vm-carousel whose list scrolls
+ * sideways, with a previous and a next arrow when its items do not fit. The
+ * list is a Kadence query, or a Section with the class vm-carousel-track
+ * that holds the cards.
  *
  * The rules are in style.css, "vm-carousel". The arrows are added by
  * assets/js/carousel.js. See docs/components.md, "Carousel".
@@ -38,8 +40,8 @@ function vm_enqueue_carousel( $html ) {
 		'vmCarousel',
 		array(
 			'arrow'    => VELOCITY_KADENCE_URI . '/assets/images/icon-arrow-back.svg',
-			'previous' => __( 'Previous positions', 'velocity-kadence' ),
-			'next'     => __( 'Next positions', 'velocity-kadence' ),
+			'previous' => __( 'Previous', 'velocity-kadence' ),
+			'next'     => __( 'Next', 'velocity-kadence' ),
 		)
 	);
 

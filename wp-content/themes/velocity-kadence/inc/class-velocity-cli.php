@@ -401,7 +401,7 @@ class Velocity_CLI {
 		wp_update_post(
 			array(
 				'ID'           => $page_id,
-				'post_content' => wp_slash( Velocity_Home::content( $page_id ) ),
+				'post_content' => wp_slash( Velocity_Home::content( $page_id, $this->seed_queries( 'home', Velocity_Home::queries() ) ) ),
 			)
 		);
 
@@ -570,32 +570,7 @@ class Velocity_CLI {
 			WP_CLI::log( sprintf( '  create   page  About Us (#%d)', $page_id ) );
 		}
 
-		// The two lists: a Kadence query and its card each. An existing one is
-		// left as it is unless --force is given.
-		$term_id = $term ? (int) $term->term_id : 0;
-		$queries = array();
-
-		foreach ( Velocity_Company::queries() as $key => $query ) {
-			$card_id = $this->seed_post(
-				'about-card-' . $key,
-				'kadence_query_card',
-				$query['title'] . ' card',
-				static function ( $post_id ) use ( $query ) {
-					return Velocity_Company::card_content( $post_id, $query['card'] );
-				},
-				Velocity_Company::card_meta( $query )
-			);
-
-			$queries[ $key ] = $this->seed_post(
-				'about-query-' . $key,
-				'kadence_query',
-				$query['title'],
-				static function ( $post_id ) use ( $card_id ) {
-					return Velocity_Company::query_content( $post_id, $card_id );
-				},
-				Velocity_Company::query_meta( $query, $term_id )
-			);
-		}
+		$queries = $this->seed_queries( 'about', Velocity_Company::queries(), $term ? (int) $term->term_id : 0 );
 
 		wp_update_post(
 			array(
@@ -671,6 +646,91 @@ class Velocity_CLI {
 		);
 
 		WP_CLI::success( 'Programs Overview page content written. Edit it in the block editor from now on.' );
+	}
+
+	/**
+	 * Fills the Process page with its sections as block content.
+	 *
+	 * It writes to the page with the slug "process", and creates that page if
+	 * it does not exist: hero, the people, the five steps to become a
+	 * partner, the approval package, the steps of a first deal, the borrower
+	 * documents, the call to action and the frequently asked questions.
+	 *
+	 * Without --execute it only reports what it would do. A page that already
+	 * has content is left alone, so editor work is never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Create the page if it is missing and write the content if it is empty.
+	 *
+	 * [--force]
+	 * : Replace the content even if the page has some. This DISCARDS what is
+	 * there. WordPress keeps the old version as a revision.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-process
+	 *     wp velocity seed-process --execute
+	 *
+	 * @subcommand seed-process
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_process( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		$page = get_page_by_path( Velocity_Process::SLUG );
+
+		if ( $page ) {
+			WP_CLI::log( sprintf( 'Process page: #%d "%s", %d bytes of content.', $page->ID, $page->post_title, strlen( $page->post_content ) ) );
+		} else {
+			WP_CLI::log( sprintf( 'There is no page with the slug "%s". It would be created.', Velocity_Process::SLUG ) );
+		}
+
+		if ( $page && '' !== trim( $page->post_content ) && ! $this->force ) {
+			WP_CLI::success( 'The page already has content. Left as it is.' );
+			return;
+		}
+
+		if ( ! $this->execute ) {
+			WP_CLI::success( 'Dry run finished. The page would be filled.' );
+			return;
+		}
+
+		if ( $page ) {
+			$page_id = (int) $page->ID;
+		} else {
+			$page_id = wp_insert_post(
+				array(
+					'post_type'   => 'page',
+					'post_title'  => 'Process',
+					'post_name'   => Velocity_Process::SLUG,
+					'post_status' => 'publish',
+				),
+				true
+			);
+
+			if ( is_wp_error( $page_id ) ) {
+				WP_CLI::error( $page_id->get_error_message() );
+			}
+
+			WP_CLI::log( sprintf( '  create   page  Process (#%d)', $page_id ) );
+		}
+
+		wp_update_post(
+			array(
+				'ID'           => $page_id,
+				'post_content' => wp_slash( Velocity_Process::content( $page_id ) ),
+			)
+		);
+
+		WP_CLI::success( 'Process page content written. Edit it in the block editor from now on.' );
+		WP_CLI::log( 'To point the menus at it: wp velocity seed-chrome --menus --force --execute' );
 	}
 
 	/**
@@ -871,6 +931,43 @@ class Velocity_CLI {
 		}
 
 		return (bool) $todo;
+	}
+
+	/**
+	 * Creates the Kadence queries of a page, each with its card. An existing
+	 * one is left as it is unless --force is given.
+	 *
+	 * @param string  $prefix  Prefix of their seed keys, one per page.
+	 * @param array[] $queries Queries by key, as Velocity_Seed::query_meta() takes them.
+	 * @param int     $term_id For staff: ID of the staff type to list.
+	 * @return int[] Query post IDs by key.
+	 */
+	private function seed_queries( $prefix, $queries, $term_id = 0 ) {
+		$ids = array();
+
+		foreach ( $queries as $key => $query ) {
+			$card_id = $this->seed_post(
+				$prefix . '-card-' . $key,
+				'kadence_query_card',
+				$query['title'] . ' card',
+				static function ( $post_id ) use ( $query ) {
+					return Velocity_Seed::card_content( $post_id, $query['card'] );
+				},
+				Velocity_Seed::card_meta( $query )
+			);
+
+			$ids[ $key ] = $this->seed_post(
+				$prefix . '-query-' . $key,
+				'kadence_query',
+				$query['title'],
+				static function ( $post_id ) use ( $card_id ) {
+					return Velocity_Seed::query_content( $post_id, $card_id );
+				},
+				Velocity_Seed::query_meta( $query, $term_id )
+			);
+		}
+
+		return $ids;
 	}
 
 	/**

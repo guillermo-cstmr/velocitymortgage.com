@@ -657,8 +657,7 @@ class Velocity_Company {
 				'A one-person brokerage runs differently than a national one. But after 20+ years of doing business with every kind, we know how to deliver success.',
 				852
 			) . "\n\n" . $grid . "\n\n" .
-			// The Process page does not exist yet: the link is a placeholder.
-			Velocity_Home::buttons( $post_id, 'brokerages', array( array( 'See Our Full Process', '#' ) ) ),
+			Velocity_Home::buttons( $post_id, 'brokerages', array( array( 'See Our Full Process', home_url( '/process/' ) ) ) ),
 			'Who we serve'
 		);
 	}
@@ -667,10 +666,7 @@ class Velocity_Company {
 	 * The two lists of this page that read existing content. Each is a Kadence
 	 * query (Kadence, Queries) with its own card (Kadence, Query Cards).
 	 *
-	 * Seed key => title, post type, order, cards per row and gaps
-	 * [desktop, tablet, mobile], and the method that builds the card.
-	 *
-	 * @return array[]
+	 * @return array[] As Velocity_Seed::query_meta() takes them.
 	 */
 	public static function queries() {
 		return array(
@@ -683,7 +679,7 @@ class Velocity_Company {
 				'columns'    => array( '4', '3', '2' ),
 				'column_gap' => array( '48', '24', '16' ),
 				'row_gap'    => array( '32', '24', '16' ),
-				'card'       => 'person_card',
+				'card'       => array( __CLASS__, 'person_card' ),
 			),
 			'careers' => array(
 				'title'      => 'About Us: open positions',
@@ -694,104 +690,8 @@ class Velocity_Company {
 				'columns'    => array( '3', '2', '1' ),
 				'column_gap' => array( '24', '24', '16' ),
 				'row_gap'    => array( '24', '24', '16' ),
-				'card'       => 'career_card',
+				'card'       => array( __CLASS__, 'career_card' ),
 			),
-		);
-	}
-
-	/**
-	 * Settings of a Kadence query post: what it lists.
-	 *
-	 * @param array $query   One entry of queries().
-	 * @param int   $term_id For the people: ID of the staff type to list, or 0 for all staff.
-	 * @return array Post meta.
-	 */
-	public static function query_meta( $query, $term_id = 0 ) {
-		$taxonomy = array();
-
-		if ( $term_id && 'velocity-staff' === $query['post_type'] ) {
-			$term       = get_term( $term_id, 'velocity-staff-type' );
-			$taxonomy[] = array(
-				'value' => 'velocity-staff-type|' . (int) $term_id,
-				'label' => $term && ! is_wp_error( $term ) ? $term->name : '',
-			);
-		}
-
-		return array(
-			'_kad_query_query' => array(
-				'perPage'          => $query['per_page'],
-				'pages'            => 0,
-				'offset'           => 0,
-				'postType'         => array( $query['post_type'] ),
-				'taxonomy'         => $taxonomy,
-				'order'            => $query['order'],
-				'orderBy'          => $query['order_by'],
-				'orderMetaKey'     => '',
-				'orderMetaKeyType' => '',
-				'author'           => '',
-				'search'           => '',
-				'exclude'          => array(),
-				'sticky'           => '',
-				'inherit'          => false,
-				'taxQuery'         => '',
-				'parents'          => array(),
-				'limit'            => 0,
-				'comparisonLogic'  => 'AND',
-				'infiniteScroll'   => false,
-			),
-		);
-	}
-
-	/**
-	 * Settings of a Kadence query card post: how many cards per row, and the gaps.
-	 *
-	 * @param array $query One entry of queries().
-	 * @return array Post meta.
-	 */
-	public static function card_meta( $query ) {
-		return array(
-			'_kad_query_card_columns'           => $query['columns'],
-			'_kad_query_card_columnGap'         => $query['column_gap'],
-			'_kad_query_card_columnGapUnit'     => 'px',
-			'_kad_query_card_rowGap'            => $query['row_gap'],
-			'_kad_query_card_rowGapUnit'        => 'px',
-			'_kad_query_card_preview_post_type' => $query['post_type'],
-		);
-	}
-
-	/**
-	 * Content of a Kadence query post: the query block around its card.
-	 *
-	 * @param int $query_id Query post ID.
-	 * @param int $card_id  Query card post ID.
-	 * @return string
-	 */
-	public static function query_content( $query_id, $card_id ) {
-		return Velocity_Seed::block(
-			'kadence/query',
-			array( 'uniqueID' => Velocity_Seed::uid( $query_id, 'query' ) ),
-			Velocity_Seed::block(
-				'kadence/query-card',
-				array(
-					'uniqueID' => Velocity_Seed::uid( $query_id, 'card' ),
-					'id'       => (int) $card_id,
-				)
-			)
-		);
-	}
-
-	/**
-	 * Content of a Kadence query card post.
-	 *
-	 * @param int    $card_id Query card post ID.
-	 * @param string $method  person_card or career_card.
-	 * @return string
-	 */
-	public static function card_content( $card_id, $method ) {
-		return Velocity_Seed::block(
-			'kadence/query-card',
-			array( 'uniqueID' => Velocity_Seed::uid( $card_id, 'card' ) ),
-			call_user_func( array( __CLASS__, $method ), $card_id )
 		);
 	}
 

@@ -32,6 +32,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-contact.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-company.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-programs.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-process.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/class-velocity-cli.php';
 }
 
@@ -58,25 +59,6 @@ function vm_enqueue_styles() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'vm_enqueue_styles', 20 );
-
-/**
- * Load the small script behind the frequently asked questions.
- */
-function vm_enqueue_scripts() {
-	$file = VELOCITY_KADENCE_DIR . '/assets/js/faq.js';
-
-	wp_enqueue_script(
-		'velocity-kadence-faq',
-		VELOCITY_KADENCE_URI . '/assets/js/faq.js',
-		array(),
-		file_exists( $file ) ? (string) filemtime( $file ) : null,
-		array(
-			'strategy'  => 'defer',
-			'in_footer' => true,
-		)
-	);
-}
-add_action( 'wp_enqueue_scripts', 'vm_enqueue_scripts', 20 );
 
 /**
  * Load the script that places the mobile menu under the sticky header.

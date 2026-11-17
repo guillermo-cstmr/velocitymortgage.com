@@ -2,14 +2,33 @@
 /**
  * Fields added to Kadence's dynamic content.
  *
- * Kadence prints a custom field as it is stored. A field that needs another
- * shape on the page gets an entry here: it shows up in the dynamic content
- * list of a Text (Adv), under Post, and Kadence asks this file for its value.
+ * Kadence prints a custom field as it is stored, and has no field for a
+ * taxonomy term as plain text. A value that needs another shape on the page
+ * gets an entry here: it shows up in the dynamic content list of a Text
+ * (Adv), in the group "Velocity", and Kadence asks this file for its value.
+ *
+ * To add one, add it to vm_dynamic_fields() with the function that prints it.
  *
  * @package Velocity_Kadence
  */
 
 defined( 'ABSPATH' ) || exit;
+
+/**
+ * The theme's dynamic fields. Key => label and the function that returns
+ * the value for a post ID.
+ *
+ * @return array[]
+ */
+function vm_dynamic_fields() {
+	return array(
+		'vm_career_cities' => array( __( 'Career: cities on one line', 'velocity-kadence' ), 'vm_dynamic_career_cities' ),
+		'vm_deal_closed'   => array( __( 'Deal: closing time', 'velocity-kadence' ), 'vm_dynamic_deal_closed' ),
+		'vm_deal_title'    => array( __( 'Deal: property type and purpose', 'velocity-kadence' ), 'vm_dynamic_deal_title' ),
+		'vm_deal_program'  => array( __( 'Deal: loan program', 'velocity-kadence' ), 'vm_dynamic_deal_program' ),
+		'vm_deal_ae'       => array( __( 'Deal: account executive', 'velocity-kadence' ), 'vm_dynamic_deal_ae' ),
+	);
+}
 
 /**
  * Add the theme's fields to the list of dynamic text fields.
@@ -18,14 +37,18 @@ defined( 'ABSPATH' ) || exit;
  * @return array
  */
 function vm_dynamic_text_fields( $options ) {
+	$fields = array();
+
+	foreach ( vm_dynamic_fields() as $key => $field ) {
+		$fields[] = array(
+			'value' => 'post|' . $key,
+			'label' => $field[0],
+		);
+	}
+
 	$options[] = array(
 		'label'   => __( 'Velocity', 'velocity-kadence' ),
-		'options' => array(
-			array(
-				'value' => 'post|vm_career_cities',
-				'label' => __( 'Career: cities on one line', 'velocity-kadence' ),
-			),
-		),
+		'options' => $fields,
 	);
 
 	return $options;
@@ -33,17 +56,121 @@ function vm_dynamic_text_fields( $options ) {
 add_filter( 'kadence_block_pro_dynamic_text_fields_options', 'vm_dynamic_text_fields' );
 
 /**
- * "Career: cities on one line": the "City/Cities" field of a career, which
- * is typed one city per line, as a single line with a dot between cities.
+ * Answer Kadence when it asks for one of the theme's fields.
+ */
+function vm_register_dynamic_fields() {
+	foreach ( vm_dynamic_fields() as $key => $field ) {
+		add_filter(
+			'kadence_dynamic_content_core_post_' . $key . '_render',
+			static function ( $output, $item_id ) use ( $field ) {
+				return esc_html( (string) call_user_func( $field[1], (int) $item_id ) );
+			},
+			10,
+			2
+		);
+	}
+}
+add_action( 'init', 'vm_register_dynamic_fields' );
+
+/**
+ * The first term of a taxonomy for a post, as plain text.
  *
- * @param string $output  Value so far.
- * @param int    $item_id ID of the post being shown.
+ * @param int    $post_id  Post ID.
+ * @param string $taxonomy Taxonomy name.
+ * @return string Term name, or an empty string.
+ */
+function vm_first_term_name( $post_id, $taxonomy ) {
+	$terms = get_the_terms( $post_id, $taxonomy );
+
+	if ( empty( $terms ) || is_wp_error( $terms ) ) {
+		return '';
+	}
+
+	return $terms[0]->name;
+}
+
+/**
+ * The "City/Cities" field of a career, which is typed one city per line, as
+ * a single line with a dot between cities.
+ *
+ * @param int $post_id Career ID.
  * @return string
  */
-function vm_dynamic_career_cities( $output, $item_id ) {
-	$cities = preg_split( '#<br\s*/?>|[\r\n]+#i', (string) get_post_meta( (int) $item_id, 'career-city', true ) );
+function vm_dynamic_career_cities( $post_id ) {
+	$cities = preg_split( '#<br\s*/?>|[\r\n]+#i', (string) get_post_meta( $post_id, 'career-city', true ) );
 	$cities = array_filter( array_map( 'trim', array_map( 'wp_strip_all_tags', (array) $cities ) ) );
 
-	return esc_html( implode( ' · ', $cities ) );
+	return implode( ' · ', $cities );
 }
-add_filter( 'kadence_dynamic_content_core_post_vm_career_cities_render', 'vm_dynamic_career_cities', 10, 2 );
+
+/**
+ * How fast a deal closed: the property's "Processed Details Text" field.
+ *
+ * @param int $post_id Property ID.
+ * @return string
+ */
+function vm_dynamic_deal_closed( $post_id ) {
+	return trim( (string) get_post_meta( $post_id, 'velocity_property_processed_details_text', true ) );
+}
+
+/**
+ * The title of a deal card: the property's type and purpose. A property
+ * with neither falls back to its name.
+ *
+ * @param int $post_id Property ID.
+ * @return string
+ */
+function vm_dynamic_deal_title( $post_id ) {
+	$parts = array_filter(
+		array(
+			vm_first_term_name( $post_id, 'velocity-property-type' ),
+			vm_first_term_name( $post_id, 'velocity-property-purpose' ),
+		)
+	);
+
+	return $parts ? implode( ' · ', $parts ) : get_the_title( $post_id );
+}
+
+/**
+ * The loan program of a deal.
+ *
+ * @param int $post_id Property ID.
+ * @return string
+ */
+function vm_dynamic_deal_program( $post_id ) {
+	return vm_first_term_name( $post_id, 'velocity-property-program' );
+}
+
+/**
+ * The account executive of a deal.
+ *
+ * @param int $post_id Property ID.
+ * @return string
+ */
+function vm_dynamic_deal_ae( $post_id ) {
+	return vm_first_term_name( $post_id, 'velocity-property-ae' );
+}
+
+/**
+ * Mark a label that came out empty.
+ *
+ * A Text (Adv) with the class vm-tag is a small filled label, such as a
+ * deal's closing time. When its dynamic content has no value, Kadence still
+ * prints the label, as an empty colored box. This adds vm-tag--empty, which
+ * style.css hides while keeping its space, so the titles of a row of cards
+ * stay level.
+ *
+ * @param string $html Rendered block.
+ * @return string
+ */
+function vm_mark_empty_tag( $html ) {
+	if ( false === strpos( $html, 'vm-tag' ) || '' !== trim( wp_strip_all_tags( $html ) ) ) {
+		return $html;
+	}
+
+	// A space gives the hidden label the height of a line of text.
+	$html = preg_replace( '#</p>\s*$#', '&nbsp;</p>', $html, 1 );
+
+	return preg_replace( '/\bvm-tag\b/', 'vm-tag vm-tag--empty', $html, 1 );
+}
+add_filter( 'render_block_kadence/advancedheading', 'vm_mark_empty_tag' );

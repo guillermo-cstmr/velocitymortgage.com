@@ -50,7 +50,7 @@ class Velocity_Seed {
 					array( '30-Year-Fixed', '#' ),
 					array( 'Flex I/O', '#' ),
 					array( 'Fast50', '#' ),
-					array( 'Process', '#', 'vm-menu-featured' ),
+					array( 'Process', '/process/', 'vm-menu-featured' ),
 				),
 			),
 			array(
@@ -705,6 +705,104 @@ class Velocity_Seed {
 				$attrs
 			),
 			implode( "\n\n", $columns )
+		);
+	}
+
+	/**
+	 * Settings of a Kadence query post: what it lists.
+	 *
+	 * @param array $query   Title, post_type, order_by, order, per_page, columns
+	 *                       and gaps [desktop, tablet, mobile], and card, the
+	 *                       callable that builds the card.
+	 * @param int   $term_id For staff: ID of the staff type to list, or 0 for all.
+	 * @return array Post meta.
+	 */
+	public static function query_meta( $query, $term_id = 0 ) {
+		$taxonomy = array();
+
+		if ( $term_id && 'velocity-staff' === $query['post_type'] ) {
+			$term       = get_term( $term_id, 'velocity-staff-type' );
+			$taxonomy[] = array(
+				'value' => 'velocity-staff-type|' . (int) $term_id,
+				'label' => $term && ! is_wp_error( $term ) ? $term->name : '',
+			);
+		}
+
+		return array(
+			'_kad_query_query' => array(
+				'perPage'          => $query['per_page'],
+				'pages'            => 0,
+				'offset'           => 0,
+				'postType'         => array( $query['post_type'] ),
+				'taxonomy'         => $taxonomy,
+				'order'            => $query['order'],
+				'orderBy'          => $query['order_by'],
+				'orderMetaKey'     => '',
+				'orderMetaKeyType' => '',
+				'author'           => '',
+				'search'           => '',
+				'exclude'          => array(),
+				'sticky'           => '',
+				'inherit'          => false,
+				'taxQuery'         => '',
+				'parents'          => array(),
+				'limit'            => 0,
+				'comparisonLogic'  => 'AND',
+				'infiniteScroll'   => false,
+			),
+		);
+	}
+
+	/**
+	 * Settings of a Kadence query card post: how many cards per row, and the gaps.
+	 *
+	 * @param array $query As query_meta() takes it.
+	 * @return array Post meta.
+	 */
+	public static function card_meta( $query ) {
+		return array(
+			'_kad_query_card_columns'           => $query['columns'],
+			'_kad_query_card_columnGap'         => $query['column_gap'],
+			'_kad_query_card_columnGapUnit'     => 'px',
+			'_kad_query_card_rowGap'            => $query['row_gap'],
+			'_kad_query_card_rowGapUnit'        => 'px',
+			'_kad_query_card_preview_post_type' => $query['post_type'],
+		);
+	}
+
+	/**
+	 * Content of a Kadence query post: the query block around its card.
+	 *
+	 * @param int $query_id Query post ID.
+	 * @param int $card_id  Query card post ID.
+	 * @return string
+	 */
+	public static function query_content( $query_id, $card_id ) {
+		return self::block(
+			'kadence/query',
+			array( 'uniqueID' => self::uid( $query_id, 'query' ) ),
+			self::block(
+				'kadence/query-card',
+				array(
+					'uniqueID' => self::uid( $query_id, 'card' ),
+					'id'       => (int) $card_id,
+				)
+			)
+		);
+	}
+
+	/**
+	 * Content of a Kadence query card post.
+	 *
+	 * @param int      $card_id Query card post ID.
+	 * @param callable $builder Builds the card's blocks from the card's post ID.
+	 * @return string
+	 */
+	public static function card_content( $card_id, $builder ) {
+		return self::block(
+			'kadence/query-card',
+			array( 'uniqueID' => self::uid( $card_id, 'card' ) ),
+			call_user_func( $builder, $card_id )
 		);
 	}
 

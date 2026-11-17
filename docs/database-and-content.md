@@ -248,12 +248,13 @@ All of them are dry runs unless called with `--execute`.
 |---|---|
 | `wp velocity cleanup` | Removes the old Kadence and Beaver Builder front end. Keeps all content, the header, menus and footer made by `seed-chrome`, and the careers pages (see "Careers") |
 | `wp velocity seed-chrome` | Creates the header, the menus and the footer. `--menus` limits it to the menus |
-| `wp velocity seed-home` | Fills the home page, if it is empty. `--force` rebuilds it and discards every change made in the editor |
+| `wp velocity seed-home` | Fills the home page, if it is empty, and creates the Kadence query of its deal cards. `--force` rebuilds it and discards every change made in the editor |
 | `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. Never overwrites a filled field |
 | `wp velocity seed-toolkit` | Creates the Broker Toolkit documents from the old toolkit form and page. Skips the ones that exist (see "Broker Toolkit") |
 | `wp velocity seed-forms` | Updates the contact form to the design and adds its consent checkbox, and creates the newsletter form. Leaves them alone once done (see [components.md](components.md), "Forms") |
 | `wp velocity seed-contact` | Fills the Contact page, if it is empty: heading, ways to reach Velocity, the contact form and the offices map. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "Offices map") |
 | `wp velocity seed-company` | Creates the About Us page if it is missing and fills it, if it is empty. Its people and careers sections are Kadence queries, which it creates with their cards (Kadence > Queries and Query Cards); they read Staff and Careers, so the people and the positions need no seeding. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The About Us page") |
+| `wp velocity seed-process` | Creates the Process page if it is missing and fills it, if it is empty. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "The Process page") |
 | `wp velocity seed-programs-page` | Fills the Programs Overview page, if it is empty. Not the same as `seed-programs`, which fills in each program's details. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The Programs Overview page") |
 | `wp velocity rename-pages` | Moves the Contact, Loan Programs and Broker Tools pages to their addresses in the new site (`/contact/`, `/loan-programs/`, `/broker-tools/`), updates the links to them in pages, menus, header and footer, and adds a 301 redirect from each old address in Yoast SEO Premium. Safe to run again |
 
@@ -267,6 +268,7 @@ Whatever the plan, production needs these once the code is there:
 
 - `wp velocity seed-programs --execute`, `wp velocity seed-toolkit --execute` and `wp velocity seed-forms --execute`. They read production's own data, so they do not depend on the staging database.
 - `wp velocity rename-pages --execute`, before the menus are rebuilt. The list of pages is `PAGE_SLUG_CHANGES` in `inc/class-velocity-cli.php`.
+- The Process page: copy its blocks from staging, or run `wp velocity seed-process --execute`, which also creates the page.
 - The Programs Overview page: copy its blocks from staging, or run `wp velocity seed-programs-page --execute` after `rename-pages`.
 - The About Us page: run `wp velocity seed-company --execute`, which also creates the page and its two Kadence queries. Copying the page's blocks alone is not enough: the queries are posts of their own, and their IDs differ between environments. Then `wp velocity seed-chrome --menus --force --execute`, so "About Us" and "Our Team" in the menus point to it.
 - The Contact page: copy its blocks from staging, or run `wp velocity seed-contact --execute` after `seed-forms`, which it needs for the form.

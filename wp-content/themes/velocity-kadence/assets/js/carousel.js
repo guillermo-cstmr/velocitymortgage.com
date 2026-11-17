@@ -1,6 +1,7 @@
 /**
- * Carousel: a Section with the class vm-carousel whose Kadence query scrolls
- * sideways.
+ * Carousel: a Section with the class vm-carousel whose list scrolls
+ * sideways. The list is a Kadence query, or a Section with the class
+ * vm-carousel-track that holds the cards.
  *
  * The list already scrolls on its own, by touch, trackpad or keyboard. This
  * script adds a previous and a next button when the items do not fit, and
@@ -16,7 +17,8 @@
 	var settings = window.vmCarousel || {};
 
 	function setUp( carousel ) {
-		var track = carousel.querySelector( '.kb-query-grid-wrap' );
+		// The list: a Kadence query's, or a Section that holds the cards.
+		var track = carousel.querySelector( '.kb-query-grid-wrap, .vm-carousel-track > .kt-inside-inner-col' );
 		var inner = carousel.querySelector( ':scope > .kt-inside-inner-col' ) || carousel;
 
 		if ( ! track ) {
@@ -45,13 +47,23 @@
 			el.addEventListener( 'click', function () {
 				var reduce = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 				track.scrollBy( {
-					left: ( 'next' === direction ? 1 : -1 ) * track.clientWidth,
+					left: ( 'next' === direction ? 1 : -1 ) * step(),
 					behavior: reduce ? 'auto' : 'smooth',
 				} );
 			} );
 
 			arrows.appendChild( el );
 			return el;
+		}
+
+		// One card and its gap when cards are wider than half the list, or a
+		// full view of cards otherwise.
+		function step() {
+			var first = track.firstElementChild;
+			var second = first && first.nextElementSibling;
+			var card = first && second ? second.getBoundingClientRect().left - first.getBoundingClientRect().left : 0;
+
+			return card > track.clientWidth / 2 ? card : track.clientWidth;
 		}
 
 		var previous = button( 'previous', settings.previous || 'Previous' );
