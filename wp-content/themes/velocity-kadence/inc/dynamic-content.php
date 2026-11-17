@@ -27,6 +27,11 @@ function vm_dynamic_fields() {
 		'vm_deal_title'    => array( __( 'Deal: property type and purpose', 'velocity-kadence' ), 'vm_dynamic_deal_title' ),
 		'vm_deal_program'  => array( __( 'Deal: loan program', 'velocity-kadence' ), 'vm_dynamic_deal_program' ),
 		'vm_deal_ae'       => array( __( 'Deal: account executive', 'velocity-kadence' ), 'vm_dynamic_deal_ae' ),
+		'vm_deal_headline'     => array( __( 'Deal: amount and place', 'velocity-kadence' ), 'vm_dynamic_deal_headline' ),
+		'vm_deal_terms'        => array( __( 'Deal: program and purpose', 'velocity-kadence' ), 'vm_dynamic_deal_terms' ),
+		'vm_case_terms'        => array( __( 'Case study: program and purpose', 'velocity-kadence' ), 'vm_dynamic_case_terms' ),
+		'vm_case_amount'       => array( __( 'Case study: loan amount', 'velocity-kadence' ), 'vm_dynamic_case_amount' ),
+		'vm_case_date'         => array( __( 'Case study: date', 'velocity-kadence' ), 'vm_dynamic_case_date' ),
 		'vm_toolkit_new'       => array( __( 'Toolkit: "New" tag', 'velocity-kadence' ), 'vm_dynamic_toolkit_new' ),
 		'vm_toolkit_file_type' => array( __( 'Toolkit: file type', 'velocity-kadence' ), 'vm_dynamic_toolkit_file_type' ),
 	);
@@ -154,6 +159,98 @@ function vm_dynamic_deal_ae( $post_id ) {
 }
 
 /**
+ * A loan amount as it is typed, "1,120,000", with its dollar sign.
+ *
+ * @param string $amount Amount as stored.
+ * @return string
+ */
+function vm_format_amount( $amount ) {
+	$amount = trim( (string) $amount );
+
+	if ( '' === $amount ) {
+		return '';
+	}
+
+	return '$' === $amount[0] ? $amount : '$' . $amount;
+}
+
+/**
+ * The title of a deal in the gallery: its amount and its place. A deal
+ * with neither falls back to its name.
+ *
+ * @param int $post_id Property ID.
+ * @return string
+ */
+function vm_dynamic_deal_headline( $post_id ) {
+	$parts = array_filter(
+		array(
+			vm_format_amount( get_post_meta( $post_id, 'velocity_property_loan_amount', true ) ),
+			trim( (string) get_post_meta( $post_id, 'velocity_property_location', true ) ),
+		)
+	);
+
+	return $parts ? implode( ' · ', $parts ) : get_the_title( $post_id );
+}
+
+/**
+ * The program and the purpose of a deal, on one line.
+ *
+ * @param int $post_id Property ID.
+ * @return string
+ */
+function vm_dynamic_deal_terms( $post_id ) {
+	return implode(
+		' · ',
+		array_filter(
+			array(
+				vm_first_term_name( $post_id, 'velocity-property-program' ),
+				vm_first_term_name( $post_id, 'velocity-property-purpose' ),
+			)
+		)
+	);
+}
+
+/**
+ * The program and the purpose of a case study, on one line.
+ *
+ * @param int $post_id Case study ID.
+ * @return string
+ */
+function vm_dynamic_case_terms( $post_id ) {
+	return implode(
+		' · ',
+		array_filter(
+			array(
+				trim( (string) get_post_meta( $post_id, 'velocity_case_study_program', true ) ),
+				trim( (string) get_post_meta( $post_id, 'velocity_case_study_purpose', true ) ),
+			)
+		)
+	);
+}
+
+/**
+ * The loan amount of a case study, with its dollar sign.
+ *
+ * @param int $post_id Case study ID.
+ * @return string
+ */
+function vm_dynamic_case_amount( $post_id ) {
+	return vm_format_amount( get_post_meta( $post_id, 'velocity_case_study_loan_amount', true ) );
+}
+
+/**
+ * The date of a case study, as "Oct 14, 2026".
+ *
+ * @param int $post_id Case study ID.
+ * @return string
+ */
+function vm_dynamic_case_date( $post_id ) {
+	$time = strtotime( (string) get_post_meta( $post_id, 'velocity_case_study_date', true ) );
+
+	return $time ? date_i18n( 'M j, Y', $time ) : '';
+}
+
+/**
  * The "New" tag of a toolkit document: the word, or nothing when the
  * document's "New" box is not ticked. The field itself holds "on".
  *
@@ -219,4 +316,5 @@ function vm_hide_empty_text( $html ) {
 
 	return '';
 }
-add_filter( 'render_block_kadence/advancedheading', 'vm_hide_empty_text' );
+// Before vm_mark_empty_tag, which would fill the empty text with a space.
+add_filter( 'render_block_kadence/advancedheading', 'vm_hide_empty_text', 9 );

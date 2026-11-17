@@ -103,9 +103,19 @@ class Velocity_Toolkit_Page {
 	 * @param string $key     Key for the unique IDs.
 	 * @param string $label   Button label.
 	 * @param string $field   Custom field with the address.
+	 * @param int    $width   Width in px, or 0 for the width of its label.
 	 * @return string
 	 */
-	private static function download_button( $card_id, $key, $label, $field ) {
+	private static function download_button( $card_id, $key, $label, $field, $width = 210 ) {
+		$size = array( 'sizePreset' => 'small' );
+
+		// A set width, so the button's column is as wide as the button and the
+		// label never breaks.
+		if ( $width ) {
+			$size['widthType'] = 'fixed';
+			$size['width']     = array( $width, '', '' );
+		}
+
 		return Velocity_Home::buttons(
 			$card_id,
 			$key,
@@ -114,12 +124,7 @@ class Velocity_Toolkit_Page {
 					$label,
 					"[kb-dynamic field='post|post_custom_field' custom='" . $field . "' para='kb_custom_input' type='url']",
 					'fill',
-					array(
-						'sizePreset'     => 'small',
-						// A set width, so the button's column is as wide as the button
-						// and the label never breaks.
-						'widthType'      => 'fixed',
-						'width'          => array( 210, '', '' ),
+					$size + array(
 						'inQueryBlock'   => true,
 						'kadenceDynamic' => array(
 							'link' => array(
@@ -239,7 +244,7 @@ class Velocity_Toolkit_Page {
 					'class'   => 'vm-hide-empty',
 				)
 			) . "\n\n" .
-			self::download_button( $card_id, 'form', 'Download', 'velocity_toolkit_link' ),
+			self::download_button( $card_id, 'form', 'Download', 'velocity_toolkit_link', 0 ),
 			array(
 				'direction'         => array( 'horizontal', '', '' ),
 				'wrapContent'       => array( 'nowrap', '', '' ),

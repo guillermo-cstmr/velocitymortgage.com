@@ -926,6 +926,100 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Fills the Featured Deals page with its sections as block content.
+	 *
+	 * It writes to the page with the slug "featured-investment-property-loans",
+	 * and creates that page if it does not exist: hero, the figures, the
+	 * gallery of deals with its filters, sort and pages, the three latest
+	 * case studies, and the call to action. The gallery and the case studies
+	 * are Kadence queries, which it creates with their cards.
+	 *
+	 * The address used to be the automatic list of deals. The must-use plugin
+	 * no longer makes that list, so the page can take the address.
+	 *
+	 * Without --execute it only reports what it would do. A page that already
+	 * has content is left alone, so editor work is never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Create the page if it is missing and write the content if it is empty.
+	 *
+	 * [--force]
+	 * : Replace the content even if the page has some, and rebuild the
+	 * queries and their cards. This DISCARDS what is there. WordPress keeps
+	 * the old version of the page as a revision.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-deals-page
+	 *     wp velocity seed-deals-page --execute
+	 *
+	 * @subcommand seed-deals-page
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_deals_page( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		$page = get_page_by_path( Velocity_Deals_Page::SLUG );
+
+		if ( $page ) {
+			WP_CLI::log( sprintf( 'Featured Deals page: #%d "%s", %d bytes of content.', $page->ID, $page->post_title, strlen( $page->post_content ) ) );
+		} else {
+			WP_CLI::log( sprintf( 'There is no page with the slug "%s". It would be created.', Velocity_Deals_Page::SLUG ) );
+		}
+
+		if ( $page && '' !== trim( $page->post_content ) && ! $this->force ) {
+			WP_CLI::success( 'The page already has content. Left as it is.' );
+			return;
+		}
+
+		$queries = $this->seed_queries( 'deals', Velocity_Deals_Page::queries() );
+
+		if ( ! $this->execute ) {
+			WP_CLI::success( 'Dry run finished. The page would be filled.' );
+			return;
+		}
+
+		if ( $page ) {
+			$page_id = (int) $page->ID;
+		} else {
+			$page_id = wp_insert_post(
+				array(
+					'post_type'   => 'page',
+					'post_title'  => 'Featured Deals',
+					'post_name'   => Velocity_Deals_Page::SLUG,
+					'post_status' => 'publish',
+				),
+				true
+			);
+
+			if ( is_wp_error( $page_id ) ) {
+				WP_CLI::error( $page_id->get_error_message() );
+			}
+
+			WP_CLI::log( sprintf( '  create   page  Featured Deals (#%d)', $page_id ) );
+		}
+
+		wp_update_post(
+			array(
+				'ID'           => $page_id,
+				'post_content' => wp_slash( Velocity_Deals_Page::content( $page_id, $queries ) ),
+			)
+		);
+
+		// The address stops being a list WordPress makes and becomes a page.
+		flush_rewrite_rules();
+
+		WP_CLI::success( 'Featured Deals page content written. Edit it in the block editor from now on.' );
+	}
+
+	/**
 	 * Moves pages to their addresses in the new site's URL list.
 	 *
 	 * For each page in PAGE_SLUG_CHANGES that still has its old slug, it
@@ -1130,6 +1224,10 @@ class Velocity_CLI {
 	 * one is left as it is unless --force is given.
 	 *
 	 * Queries that name the same card_key share one card, titled card_title.
+	 * A query may bring its own content, a callable given the IDs of the query
+	 * and of the card that returns what goes inside the query block, and
+	 * facets, a callable given the ID of the query that returns what Kadence
+	 * keeps about its filters.
 	 *
 	 * @param string  $prefix  Prefix of their seed keys, one per page.
 	 * @param array[] $queries Queries by key, as Velocity_Seed::query_meta() takes them.
@@ -1154,11 +1252,29 @@ class Velocity_CLI {
 				$prefix . '-query-' . $key,
 				'kadence_query',
 				$query['title'],
-				static function ( $post_id ) use ( $card_id ) {
+				static function ( $post_id ) use ( $card_id, $query ) {
+					if ( isset( $query['content'] ) ) {
+						return Velocity_Seed::block(
+							'kadence/query',
+							array( 'uniqueID' => Velocity_Seed::uid( $post_id, 'query' ) ),
+							call_user_func( $query['content'], $post_id, $card_id )
+						);
+					}
+
 					return Velocity_Seed::query_content( $post_id, $card_id );
 				},
 				Velocity_Seed::query_meta( $query, $term_id )
 			);
+
+			if ( isset( $query['meta'] ) && $ids[ $key ] && $this->execute ) {
+				foreach ( $query['meta'] as $name => $value ) {
+					update_post_meta( $ids[ $key ], $name, $value );
+				}
+			}
+
+			if ( isset( $query['facets'] ) && $ids[ $key ] && $this->execute ) {
+				update_post_meta( $ids[ $key ], '_kad_query_facets', call_user_func( $query['facets'], $ids[ $key ] ) );
+			}
 		}
 
 		return $ids;
@@ -1346,6 +1462,9 @@ class Velocity_CLI {
 		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
 
 		// Design order. Section => list of title, request ID, White Label request ID, New tag, status.
+		// A form of the forms libraries has a sixth value, the name of its file in
+		// the media library: its file is not in the toolkit form, and anyone can
+		// download it.
 		$plan = array(
 			'Matrices'                  => array(
 				array( 'Commercial Matrix', 'matricesrs', '', false, 'publish' ),
@@ -1383,8 +1502,37 @@ class Velocity_CLI {
 			'How to Customize a Flyer'  => array(
 				array( 'General Instructions', 'mpfgi', '', false, 'publish' ),
 			),
-			'Residential Forms Library' => array(),
-			'Commercial Forms Library'  => array(),
+			'Residential Forms Library' => array(
+				array( 'Loan Submission Form', 'form-res-loan-submission', '', false, 'publish', 'Velocity-Application_2024.pdf' ),
+				array( 'SOI Sheet', 'form-res-soi-sheet', '', false, 'publish', 'Rehab-Budget-SOI.xlsx' ),
+				array( 'Title Commitment Request Form', 'form-res-title-commitment', '', false, 'publish', 'Velocity-Title-Commitment-Request-Form_2024.pdf' ),
+				array( 'Insurance Checklist', 'form-res-insurance', '', false, 'publish', 'Velocity-Insurance-Request-Form_Residential.pdf' ),
+				array( 'Entity Checklist', 'form-res-entity', '', false, 'publish', 'Entity-Checklist.pdf' ),
+			),
+			'Commercial Forms Library'  => array(
+				array( 'Loan Submission Form', 'form-com-loan-submission', '', false, 'publish', 'Velocity-Application_2024.pdf' ),
+				array( 'Title Commitment Request Form', 'form-com-title-commitment', '', false, 'publish', 'Velocity-Title-Commitment-Request-Form_2024.pdf' ),
+				array( 'Insurance Checklist', 'form-com-insurance', '', false, 'publish', 'Velocity-Insurance-Request-Form_Commercial.pdf' ),
+				array( 'Entity Checklist', 'form-com-entity', '', false, 'publish', 'Entity-Checklist.pdf' ),
+			),
+		);
+
+		// Descriptions from the page's copy document (V1), by request ID. Used for
+		// a document with no description, and in place of the two old ones below.
+		$copy = array(
+			'mpfftf'    => 'Single-page flyer for the 30-Year Fixed, our long-term program for investors looking for predictable payments that take the loan down to zero.',
+			'clf'       => 'Single-page flyer describing commercial loans for properties such as retail, office, warehouse, self storage, and automotive.',
+			'mup'       => 'Single-page flyer describing how our Mixed-Use program is made for investors with both commercial and residential needs.',
+			'cltv'      => 'The details of our 90% combined loan-to-value option for owners who don’t live on the property.',
+			'assisted'  => 'Single-page flyer explaining our financing for assisted living homes in 1-4 unit residential property.',
+			'mpffi'     => 'Attract interest from investors residing outside the U.S. looking for financing for their U.S. asset with this single-page flyer. It provides the details across our loan programs.',
+			'whychoose' => 'A single-page describing how Velocity will help your client grow—use it to start your conversation with them.',
+		);
+
+		// Old descriptions the copy document replaces: how each one starts.
+		$outdated = array(
+			'mpfftf' => 'Single-page flyer that provides details of our FlexTerm',
+			'mpffi'  => 'Attract interest from investors residing outside the U.S. looking for financing for their U.S. asset with this single-page flyer. It provides highlights',
 		);
 
 		// Request ID => PDF.
@@ -1412,7 +1560,8 @@ class Velocity_CLI {
 
 			foreach ( $docs as $doc ) {
 				list( $title, $request_id, $wl_request_id, $is_new, $status ) = $doc;
-				$order += 10;
+				$file_name = isset( $doc[5] ) ? $doc[5] : '';
+				$order    += 10;
 
 				$exists = get_posts(
 					array(
@@ -1425,8 +1574,32 @@ class Velocity_CLI {
 					)
 				);
 				if ( $exists ) {
-					WP_CLI::log( sprintf( '  keep     %s', $title ) );
+					$excerpt  = trim( (string) get_post_field( 'post_excerpt', $exists[0] ) );
+					$is_old   = isset( $outdated[ $request_id ] ) && 0 === strpos( $excerpt, $outdated[ $request_id ] );
+					$describe = isset( $copy[ $request_id ] ) && ( '' === $excerpt || $is_old );
+
+					WP_CLI::log( sprintf( '  keep     %s%s', $title, $describe ? ( $is_old ? ', new description' : ', add description' ) : '' ) );
+
+					if ( $describe && $this->execute ) {
+						wp_update_post(
+							array(
+								'ID'           => $exists[0],
+								'post_excerpt' => wp_slash( $copy[ $request_id ] ),
+							)
+						);
+					}
 					continue;
+				}
+
+				// A form: its file is looked up by name in the media library.
+				if ( $file_name ) {
+					global $wpdb;
+					$files[ $request_id ] = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+						$wpdb->prepare(
+							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND meta_value LIKE %s ORDER BY post_id DESC LIMIT 1",
+							'%/' . $wpdb->esc_like( $file_name )
+						)
+					);
 				}
 
 				$file    = isset( $files[ $request_id ] ) ? $files[ $request_id ] : 0;
@@ -1436,8 +1609,12 @@ class Velocity_CLI {
 					'text'  => '',
 				);
 
+				if ( isset( $copy[ $request_id ] ) && ( '' === trim( $extra['text'] ) || ( isset( $outdated[ $request_id ] ) && 0 === strpos( trim( $extra['text'] ), $outdated[ $request_id ] ) ) ) ) {
+					$extra['text'] = $copy[ $request_id ];
+				}
+
 				if ( ! $file ) {
-					WP_CLI::warning( sprintf( '%s (%s): no PDF found in the form, skipped.', $title, $request_id ) );
+					WP_CLI::warning( sprintf( '%s (%s): %s, skipped.', $title, $request_id, $file_name ? 'the file ' . $file_name . ' is not in the media library' : 'no PDF found in the form' ) );
 					continue;
 				}
 
@@ -1473,7 +1650,10 @@ class Velocity_CLI {
 					update_post_meta( $post_id, 'velocity_toolkit_file_wl', wp_get_attachment_url( $file_wl ) );
 					update_post_meta( $post_id, 'velocity_toolkit_file_wl_id', $file_wl );
 				}
-				update_post_meta( $post_id, 'velocity_toolkit_locked', 'on' );
+				// The forms libraries are open to anyone. Everything else asks for the form once.
+				if ( ! $file_name ) {
+					update_post_meta( $post_id, 'velocity_toolkit_locked', 'on' );
+				}
 				if ( $is_new ) {
 					update_post_meta( $post_id, 'velocity_toolkit_new', 'on' );
 				}

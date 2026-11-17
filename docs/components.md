@@ -165,6 +165,8 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-compare` | Kadence Table | Keeps the table at a readable width on small screens, scrolling sideways. Kadence has no minimum width setting |
 | `vm-toggle` | Kadence Tabs | Joins the tabs into one control and rounds only its two ends. The block has one radius setting for every tab. See "The program pages" |
 | `vm-hide-empty` | Text (Adv) with dynamic content | The text is not printed when it has no value. Kadence would print it empty, with its background and margins |
+| `vm-filters` | Section holding the Filter, Sort and Filter Reset blocks of a query | Size of the filters, the sort as a pill with its menu, the underline of the reset, and the fold into one button on phones. See "The Featured Deals page" |
+| `vm-needs-items`, `vm-after-items` | A section built around a Kadence query, and the section after it | The first hides while the query lists nothing. The second then loses the colored top it shares with it. See "The Featured Deals page" |
 | `vm-toolkit-inline`, `vm-toolkit-form`, `vm-toolkit-doc`, `vm-toolkit-wl`, `vm-toolkit-branded` | Broker Tools page | Where the unlock form lands, and what hides by itself. Their rules are in the must-use plugin. See [database-and-content.md](database-and-content.md), "Broker Toolkit" |
 | `vm-story-media`, `vm-story-stat` | Section around a photo, and the figures laid over it | Places the figures over the photo. Sections have no setting for overlapping |
 | `vm-footer-main`, `vm-footer-legal` | The two rows of the footer | Line heights, the rule above the legal text, and the underline on legal links |
@@ -450,6 +452,61 @@ Each hero photo is one image exported from Figma, `assets/images/programs/hero-*
 - **Super Jumbo, "How large can a Super Jumbo loan be?"** says combined financing can reach "90% (i.e., 95% CLTV)". One of the two figures is wrong.
 - **The Flex I/O hero photo is a stock preview with a watermark**, and a comment in Figma asks for another photo.
 - **The Kadence Table has no setting for top alignment**, so a row's label is centered beside a long list, where the design aligns it to the top.
+
+## The Featured Deals page
+
+`/featured-investment-property-loans/` is a page, built by `wp velocity seed-deals-page` and edited in the block editor after that. The address used to be the list of deals WordPress makes by itself, which cannot be edited with blocks: the must-use plugin no longer makes that list, so the page takes the address. Each deal keeps its own page, under `/property/`.
+
+### The gallery
+
+One Kadence query, "Featured Deals: gallery" (Kadence > Queries), with its card, "Featured Deals: gallery card" (Kadence > Query Cards). Inside the query, above and below the cards, are Kadence's own blocks:
+
+| Block | What it does here |
+|---|---|
+| Filter, three of them | A dropdown each for Property Type, Loan Purpose and Loan Program. They list the terms in use |
+| Sort | Date, newest and oldest; amount, high to low and low to high. Drawn as the "Sort By" pill |
+| Filter Reset | "Clear" |
+| Pagination | Nine deals a page, with numbers and arrows |
+| No Results | The message when no deal matches |
+
+Choosing a filter, a sort or a page updates the list without reloading the page, and the address keeps the choice (`?purpose=...`), so a filtered list can be shared as a link.
+
+The look of the dropdowns (border, radius, label and text size) is set on the query itself, under Style. The peach panel around them is a Section with the class `vm-filters`. That class does what the blocks have no setting for: the size and inner space of each filter and its arrow, the sort as a pill, and the underline of "Clear". The circles around the two arrows of the pagination are in `style.css` too: the Pagination block has no setting for them.
+
+**Every dropdown of the panel has a menu drawn by the theme** (`vm-select`), white under a filter and peach under the sort, in place of the browser's own list. The filters keep the look of a field and read their choice.
+
+**"Sort By" is a pill with its own menu.** The Filter and Sort blocks print plain dropdowns, whose open list cannot be styled. `assets/js/filters.js` leaves each dropdown in the page, hidden, and adds the field or the pill and the menu over it: choosing in the menu sets the dropdown, and Kadence does the rest. Kadence redraws the filters after each choice, and the script gives the new ones their menu. The choices and their texts are still the Sort block's, edited in the query. The menu works with the keyboard (arrows, Enter, Escape). Kadence lists each pair high to low first, so the menu reads "Amount (High - Low)" before "Amount (Low - High)": the design has them the other way round.
+
+**On phones the panel folds into one button, "Filter and sort".** A tap opens it, and it closes by itself once a filter or a sort is chosen, so the results are back in view. The button shows how many filters are in use: "Filter and sort (1)". The button is added by `assets/js/filters.js` (see `inc/filters.php`). Any Section with the class `vm-filters` gets it.
+
+The card reads the deal with dynamic content:
+
+| On the card | Dynamic content |
+|---|---|
+| Photo | Post featured image, in a fixed 2:1 shape |
+| Closing time, with the bolt | "Deal: closing time". Left out when the deal has none |
+| Title, linked to the deal | "Deal: amount and place" |
+| Under the title | "Deal: program and purpose" |
+| Name | "Deal: account executive" |
+
+**The Region filter is not there yet.** Region has no terms until Velocity sends the list. A filter with nothing to choose prints its label alone, so the command leaves it out while the taxonomy is empty. Once deals have regions, run `wp velocity seed-deals-page --force --execute`, or add a Filter block to the query in the editor and choose Region.
+
+**Sorting by date uses the date the deal was published**, not its "Date Funded" field. Kadence's Sort block takes one custom field, and that one is the loan amount.
+
+Kadence keeps an index of the deals for its filters. It builds it by itself the first time the page is opened after the query is created, and updates it when a deal is saved. If a filter ever shows no choices, Kadence > Queries has "Force Reindex" at the top of the list.
+
+### The stories
+
+"The Stories Behind the Deals" is a second query, "Featured Deals: case studies": the three latest case studies. Its card shows photo, program and purpose, title, summary, amount and date.
+
+The section has the class `vm-needs-items`: while no case study is published, the whole section hides, title and button included, and the call to action after it (`vm-after-items`) loses the peach top it shares with it.
+
+### What is still open
+
+- **Copy and design differ on three points.** The gallery's title: the copy document says "Browse the Deals That We’ve Funded", Figma says "Browse Past Deals We’ve Funded". The page uses the copy document. The copy mentions a filter by date; Figma has Region in its place. The call to action: the copy says "within 24 hours", Figma and every other page say 48. The page says 48.
+- **The programs on the deals are the old ones.** Fifteen deals are filed under FlexTerm and two under Fast50, so those are the choices of the Loan Program filter. None is filed under 30-Year Fixed, Flex I/O or Super Jumbo.
+- **A deal with no photo shows an empty frame.**
+- **The new address, `/featured-deals/`,** in Velocity's list of addresses, is not applied. It is now a matter of renaming the page and adding the redirect.
 
 ## The loan calculator
 

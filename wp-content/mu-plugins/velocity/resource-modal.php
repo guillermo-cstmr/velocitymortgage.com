@@ -542,7 +542,7 @@ body .vm-toolkit-inline .gform_wrapper.gravity-theme .gform_footer .gform_button
 					<p><?php esc_html_e( 'Fill this out once. Every file on this page becomes a one-click download, now and on your next visit.', 'velocitymu' ); ?></p>
 					<div class="vm-toolkit-fields">
 					<?php gravity_form( self::FORM_ID, false, false, false, array(), true, 1 ); ?>
-					<p class="vm-toolkit-partner"><a href="<?php echo esc_url( home_url( '/become-a-partner/' ) ); ?>"><?php esc_html_e( 'Not a partner yet? Become a Partner', 'velocitymu' ); ?></a></p>
+					<p class="vm-toolkit-partner"><a href="<?php echo esc_url( home_url( '/become-a-partner/' ) ); ?>"><?php esc_html_e( 'Not a Partner Yet? Become a Partner', 'velocitymu' ); ?></a></p>
 					</div>
 				</div>
 			</div>

@@ -485,6 +485,16 @@ body .wp-block-kadence-header .wp-block-kadence-off-canvas .kb-off-canvas-inner-
 	color: var(--global-palette9);
 }
 
+/*
+ * On a touch screen the hover stays on the last thing tapped, so the closed
+ * hamburger kept its orange hover color after the menu was closed.
+ */
+@media (hover: none) {
+	.wp-block-kadence-header .wp-block-kadence-off-canvas-trigger[aria-expanded="false"]:hover {
+		color: var(--global-palette9);
+	}
+}
+
 .wp-block-kadence-header .wp-block-kadence-off-canvas-trigger:focus-visible {
 	outline: 2px solid var(--global-palette9);
 	outline-offset: 2px;
@@ -1160,4 +1170,271 @@ body .vm-carousel-track > .kt-inside-inner-col {
 
 .wp-block-kadence-tabs.vm-toggle .kt-tabs-title-list .kt-title-item + .kt-title-item .kt-tab-title {
 	margin-left: -1px;
+}
+
+/*
+ * vm-needs-items: a section built around a Kadence query hides while the
+ * query lists nothing, title and button included. vm-after-items is the
+ * section after it, which then loses the colored top it shares with it.
+ */
+.vm-needs-items:has(.kb-query-grid-wrap:empty) {
+	display: none;
+}
+
+.vm-needs-items:has(.kb-query-grid-wrap:empty) + .vm-after-items {
+	background-image: none;
+}
+
+/*
+ * Pages of a Kadence query: plain numbers, and the previous and next arrows
+ * in a circle. The size and colors of the numbers are settings of the
+ * Pagination block, which has none for a shape around the arrows alone, and
+ * the theme frames every page number by default.
+ */
+body .wp-block-kadence-query-pagination .navigation .nav-links {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 40px;
+	height: 48px;
+	margin: 0;
+	border: 0;
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers.prev,
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers.next {
+	width: 48px;
+	padding: 0;
+	border: 1px solid var(--global-palette2);
+	border-radius: 50%;
+	color: var(--global-palette2);
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers.prev {
+	margin-right: 12px;
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers.next {
+	margin-left: 12px;
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers svg {
+	width: 20px;
+	height: 20px;
+	fill: none;
+	stroke-width: 2;
+}
+
+/*
+ * vm-filters: the panel with the Filter, Sort and Filter Reset blocks of a
+ * Kadence query. The label of the fields is a setting of the query. These
+ * rules cover what those blocks have no setting for: every dropdown gets a
+ * menu drawn by the theme (vm-select) in place of the browser's own list,
+ * the sort is a pill, and the reset is underlined.
+ *
+ * The menus are added by assets/js/filters.js, over Kadence's dropdowns,
+ * which stay in the page, hidden. On phones the panel folds into one
+ * button, added by the same script. See inc/filters.php.
+ */
+.vm-filters .wp-block-kadence-query-filter {
+	flex: 0 1 192px;
+}
+
+body .vm-filters .kb-query-label {
+	margin-bottom: 8px;
+	line-height: 1.1;
+}
+
+.vm-select {
+	position: relative;
+}
+
+.vm-select > select {
+	display: none;
+}
+
+/* A filter: the look of a field, with its arrow. */
+.vm-select__button,
+.vm-select__button:hover,
+.vm-select__button:focus {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	width: 100%;
+	height: 44px;
+	padding: 0 12px;
+	border: 1px solid rgba(211, 112, 49, 0.38);
+	border-radius: 10px;
+	background: var(--global-palette9);
+	box-shadow: none;
+	color: var(--global-palette3);
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.1;
+	text-align: left;
+	cursor: pointer;
+}
+
+.vm-select__button[aria-expanded="true"] {
+	border-color: var(--global-palette1);
+}
+
+.vm-select__button::after {
+	content: "";
+	flex: none;
+	width: 12px;
+	height: 6px;
+	background: currentColor;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 6' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M.6.6 6 5.4 11.4.6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* The sort: a pill, with two arrows in the color of its text. */
+.vm-select--sort .vm-select__button {
+	justify-content: center;
+	width: auto;
+	min-width: 123px;
+	padding: 0 20px;
+	border-color: var(--global-palette1);
+	border-radius: 9999px;
+	background: transparent;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.vm-select--sort .vm-select__button::after {
+	width: 16px;
+	height: 16px;
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4'/%3E%3C/svg%3E");
+}
+
+.vm-select--sort .vm-select__button:hover,
+.vm-select--sort .vm-select__button:focus,
+.vm-select--sort .vm-select__button[aria-expanded="true"] {
+	background: var(--global-palette1);
+	color: var(--global-palette9);
+}
+
+/* The menu: white under a filter, peach under the sort. */
+.vm-select .vm-select__menu {
+	position: absolute;
+	z-index: 20;
+	top: calc(100% + 8px);
+	left: 0;
+	box-sizing: border-box;
+	min-width: 100%;
+	margin: 0;
+	padding: 8px 16px 16px;
+	border: 1px solid var(--global-palette1);
+	border-radius: 12px;
+	background: var(--global-palette9);
+	list-style: none;
+}
+
+.vm-select--sort .vm-select__menu {
+	left: -28px;
+	width: 184px;
+	background: #f7e7dd;
+}
+
+.vm-select .vm-select__menu[hidden] {
+	display: none;
+}
+
+.vm-select__option {
+	padding: 10px 8px;
+	border-bottom: 1px solid rgba(211, 112, 49, 0.5);
+	color: var(--global-palette3);
+	font-size: 14px;
+	line-height: 1.1;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.vm-select__option:hover,
+.vm-select__option:focus {
+	outline: none;
+	color: var(--global-palette2);
+}
+
+.vm-select__option[aria-selected="true"] {
+	font-weight: 600;
+}
+
+/* The reset, in the panel and in the message for no results. */
+body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
+	padding: 8px 20px;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.1;
+	text-decoration: underline;
+}
+
+.vm-filters__toggle {
+	display: none;
+}
+
+@media (max-width: 767px) {
+	.vm-filters .wp-block-kadence-query-filter {
+		flex-basis: auto;
+	}
+
+	.vm-select--sort .vm-select__button {
+		width: 100%;
+	}
+
+	.vm-select .vm-select__menu {
+		position: static;
+		width: auto;
+		margin-top: 8px;
+	}
+
+	.vm-filters--folds > .vm-filters__toggle {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: 14px 20px;
+		border: 1px solid var(--global-palette1);
+		border-radius: 16px;
+		background: #f8e8de;
+		box-shadow: none;
+		color: var(--global-palette3);
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 1.3;
+		cursor: pointer;
+	}
+
+	/* The arrow at the end of the button, pointing up while the panel is open. */
+	.vm-filters--folds > .vm-filters__toggle::after {
+		content: "";
+		width: 10px;
+		height: 10px;
+		margin-top: -4px;
+		border-right: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		transform: rotate(45deg);
+		transition: transform 0.2s ease;
+	}
+
+	.vm-filters--folds.is-open > .vm-filters__toggle::after {
+		margin-top: 4px;
+		transform: rotate(-135deg);
+	}
+
+	.vm-filters--folds:not(.is-open) > .kt-inside-inner-col {
+		display: none;
+	}
+
+	.vm-filters--folds.is-open > .kt-inside-inner-col {
+		margin-top: 8px;
+	}
 }

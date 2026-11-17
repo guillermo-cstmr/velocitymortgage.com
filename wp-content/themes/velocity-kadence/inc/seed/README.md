@@ -15,6 +15,7 @@ footer and menus as block content. They only load for WP-CLI, behind the
 | `class-velocity-program.php` | The four program pages: 30-Year Fixed, Fast50, Flex I/O, Super Jumbo |
 | `class-velocity-process.php` | Process |
 | `class-velocity-toolkit-page.php` | Broker Tools |
+| `class-velocity-deals-page.php` | Featured Deals |
 
 They exist so the same page can be created on Local, staging and production
 with one command. Once a page is created it is edited in the block editor, and

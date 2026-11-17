@@ -123,7 +123,7 @@ Both are defined in the must-use plugin: deals in `cpt-properties.php`, case stu
 
 ### Deals
 
-Deals are the posts under Properties. Featured Deals lists them.
+Deals are the posts under Properties. The Featured Deals page lists them, with filters and sorting (see [components.md](components.md), "The Featured Deals page"). That page has the address the automatic list of deals used to have: the plugin no longer makes that list.
 
 Their taxonomies are Program, Purpose, Type, AE and Region.
 
@@ -138,7 +138,7 @@ Loan amounts are typed as text, for example `1,120,000`, which does not sort as 
 | Sort | Field | Type |
 |---|---|---|
 | Amount, deals | `velocity_property_loan_amount_number` | Numeric |
-| Date, deals | `velocity_property_date_funded` | Text. Dates are saved as `2026-04-13`, which sorts correctly as text |
+| Date, deals | The date the deal was published | Kadence's Sort block takes one custom field, and the amount uses it. `velocity_property_date_funded` is saved as `2026-04-13`, which would sort correctly as text |
 | Amount, case studies | `velocity_case_study_loan_amount_number` | Numeric |
 | Date, case studies | `velocity_case_study_date` | Text |
 
@@ -279,7 +279,8 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 | Careers, and each job | `/careers/` | None: posts of the database | Copied from staging | The production version on the new theme. Not part of the redesign |
 | Become a Partner, Broker Login | Velocity's portal | None | Not ours to build: Figma marks them "client will develop, CSTMR to QA" | |
 | News and Insights, and an article | `/insights/` | None yet | Not built: default template | |
-| Featured Deals, and a deal | `/featured-investment-property-loans/` | None yet | Not built: default template | |
+| Featured Deals | `/featured-investment-property-loans/` | `seed-deals-page` | Built | The automatic list, on the default template |
+| A deal | `/property/...` | None yet | Not built: default template | |
 | Case Studies, and a case study | `/case-studies/` | None yet | Not built: default template | |
 | Contact thank-you | `/contact/thank-you/` | None yet | Does not exist | |
 | Licenses, Forms Library (footer) | | None yet | Do not exist. Their links point to "#" | |
@@ -308,6 +309,7 @@ All of them are dry runs unless called with `--execute`.
 | `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. Never overwrites a filled field |
 | `wp velocity seed-toolkit` | Creates the Broker Toolkit documents from the old toolkit form and page. Skips the ones that exist (see "Broker Toolkit") |
 | `wp velocity seed-toolkit-page` | Fills the Broker Tools page, if it is empty, and creates its seven Kadence queries and their two cards. `--force` rebuilds them and discards every change made in the editor (see "Broker Toolkit", "The page") |
+| `wp velocity seed-deals-page` | Creates the Featured Deals page if it is missing and fills it, if it is empty, with its two Kadence queries and their cards. `--force` rebuilds them and discards every change made in the editor (see [components.md](components.md), "The Featured Deals page") |
 | `wp velocity seed-forms` | Updates the contact form to the design and adds its consent checkbox, and creates the newsletter form. Leaves them alone once done (see [components.md](components.md), "Forms") |
 | `wp velocity seed-contact` | Fills the Contact page, if it is empty: heading, ways to reach Velocity, the contact form and the offices map. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "Offices map") |
 | `wp velocity seed-company` | Creates the About Us page if it is missing and fills it, if it is empty. Its people and careers sections are Kadence queries, which it creates with their cards (Kadence > Queries and Query Cards); they read Staff and Careers, so the people and the positions need no seeding. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The About Us page") |
@@ -329,6 +331,7 @@ Whatever the plan, production needs these once the code is there:
 - The Process page: copy its blocks from staging, or run `wp velocity seed-process --execute`, which also creates the page.
 - The Programs Overview page: copy its blocks from staging, or run `wp velocity seed-programs-page --execute` after `rename-pages`.
 - The Broker Tools page: run `wp velocity seed-toolkit-page --execute`, after `rename-pages` and `seed-toolkit`. Its queries are posts of their own, so copying the blocks alone is not enough.
+- The Featured Deals page: run `wp velocity seed-deals-page --execute`. It creates the page at the address the list of deals had, and its two Kadence queries. Open the page once afterwards, so Kadence builds the index its filters read, and check that the filters list their choices.
 - The four program pages: run `wp velocity seed-program-pages --execute`, after `rename-pages` and `seed-programs`. It creates the pages and their Kadence queries, which are posts of their own, so copying the blocks alone is not enough. Then `wp velocity seed-chrome --menus --force --execute`, so the menus point to them. The "Explore ..." buttons of a home page and a Programs Overview page built before these pages existed still point to "#": set their links in the editor.
 - The About Us page: run `wp velocity seed-company --execute`, which also creates the page and its two Kadence queries. Copying the page's blocks alone is not enough: the queries are posts of their own, and their IDs differ between environments. Then `wp velocity seed-chrome --menus --force --execute`, so "About Us" and "Our Team" in the menus point to it.
 - The Contact page: copy its blocks from staging, or run `wp velocity seed-contact --execute` after `seed-forms`, which it needs for the form.
