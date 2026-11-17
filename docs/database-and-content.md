@@ -259,7 +259,42 @@ Staging started as a copy of production, so its forms pointed at real inboxes an
 
 To check what a form would have sent, open the Email Log.
 
+A Local database has its own state of the two: see "Launch", "The toolkit form: what to switch on, and what to check", before sending a form on Local.
+
 Both are database settings. They travel with any copy of the staging database, including a LocalWP pull. If staging content is ever moved to production, these two must be on again in production, or production stops sending email and leads.
+
+## State of the pages
+
+As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its code committed on a branch that is not pushed yet. Nothing in this table is on production.
+
+| Page | Address | Command that creates it | Local | Staging |
+|---|---|---|---|---|
+| Home | `/` | `seed-home` | Built | An earlier version. Its deals, FAQ and panel changes, and the links to the program pages, are not there |
+| Programs Overview | `/loan-programs/` | `seed-programs-page` | Built | Not yet |
+| 30-Year Fixed, Fast50, Flex I/O, Super Jumbo | `/loan-programs/30-year-fixed/`, `/fast50/`, `/flex-i-o/`, `/jumbo/` | `seed-program-pages` | Built | Not yet |
+| Process | `/process/` | `seed-process` | Built | Not yet |
+| About Us | `/about/` | `seed-company` | Built | Not yet |
+| Contact | `/contact/` | `seed-contact` | Built | Not yet |
+| Broker Tools | `/broker-tools/` | `seed-toolkit-page` | Built | Empty page |
+| Careers, and each job | `/careers/` | None: posts of the database | Copied from staging | The production version on the new theme. Not part of the redesign |
+| Become a Partner, Broker Login | Velocity's portal | None | Not ours to build: Figma marks them "client will develop, CSTMR to QA" | |
+| News and Insights, and an article | `/insights/` | None yet | Not built: default template | |
+| Featured Deals, and a deal | `/featured-investment-property-loans/` | None yet | Not built: default template | |
+| Case Studies, and a case study | `/case-studies/` | None yet | Not built: default template | |
+| Contact thank-you | `/contact/thank-you/` | None yet | Does not exist | |
+| Licenses, Forms Library (footer) | | None yet | Do not exist. Their links point to "#" | |
+
+Branches, each on top of the one before, none pushed: `feature/contact-page`, `feature/company-page`, `feature/process-page`, `feature/program-pages`.
+
+To bring a page to staging: deploy the code, then run its command with `--execute`, then `wp velocity seed-chrome --menus --force --execute` if the menus should point to it. The commands are listed under "Theme commands", and the order for a new environment under "Launch".
+
+Waiting on someone else:
+
+- The address of "Become a Partner" in Velocity's portal.
+- The files of the two forms libraries of Broker Tools.
+- Case studies: none is published, so "A Deal That Fits" shows on no program page. The three boxes of that section are not defined in the design.
+- The new addresses for News and Insights (`/news-insights/`) and Featured Deals (`/featured-deals/`), which need a change in the plugins.
+- Copy: the open points listed under "What is still open" of each page in [components.md](components.md).
 
 ## Theme commands
 
@@ -298,3 +333,46 @@ Whatever the plan, production needs these once the code is there:
 - The About Us page: run `wp velocity seed-company --execute`, which also creates the page and its two Kadence queries. Copying the page's blocks alone is not enough: the queries are posts of their own, and their IDs differ between environments. Then `wp velocity seed-chrome --menus --force --execute`, so "About Us" and "Our Team" in the menus point to it.
 - The Contact page: copy its blocks from staging, or run `wp velocity seed-contact --execute` after `seed-forms`, which it needs for the form.
 - The loan amounts of existing deals saved as numbers, so Featured Deals sorts by amount. Saving each deal once does it, or a script can.
+- Super Jumbo is not in the menus, as in the design. To confirm with design whether that is on purpose.
+- The careers listing and job pages exist on staging as posts of the database (page, query, card and two Elements). They are not created by any command: they travel with the database.
+
+### The toolkit form: what to switch on, and what to check
+
+The Broker Toolkit form (Gravity Form 14) sends each request to Salesforce through a webhook, and an email to the site's admin address. Both are settings of the database, not of the code, so each environment has its own state:
+
+| Environment | Salesforce webhook | Gravity SMTP test mode | A test submission |
+|---|---|---|---|
+| Production | Must be on | Must be off | Is a real lead and a real email |
+| Staging | Off | On | Stays on staging |
+| Local, as set on 2026-11-17 | Off | On | Stays on the machine |
+| Local, after a database copied from production | On | Off | **Is a real lead.** Set both before testing |
+
+Where they are: Forms > Broker Toolkit Item Request > Settings > Webhooks, "Salesforce Lead Integration"; and Gravity SMTP > Settings, "Test mode".
+
+**Before launch, on production.** After the code and the pages are there:
+
+1. The webhook is active and Gravity SMTP test mode is off. If production's database was replaced or merged with staging's, both will be in staging's state: wrong for production.
+2. Velocity confirms a test request reaches Salesforce with its Request ID. This is the open question to Anand about the webhook.
+3. The "Admin Notification" of Form 14 reaches the inbox it should.
+
+**On staging and on production, after each deploy that touches the toolkit.** In a private window, so no cookie is left from an earlier test:
+
+1. `/broker-tools/` shows the "Unlock the Toolkit" form on the page, and every locked document says "Unlock to Download".
+2. A click on a locked document opens the form in a window, with no scrollbar on a laptop or on a phone.
+3. Sending the form shows the confirmation, downloads the file that was asked for, turns every button into "Download" and hides the form on the page.
+4. A document with a White Label file downloads the right file from each of its two buttons.
+5. On a phone: two buttons side by side under their labels, reading "Unlock" before unlocking.
+6. Reloading keeps the page unlocked. Deleting the cookie `velocity_toolkit_unlocked` brings the form back.
+7. An old link, `/broker-tools/#pdfrequest&resource_id=matricesrs`, opens the form, or downloads the file once unlocked.
+8. On staging only: the entry is under Forms > Entries, the email is under Gravity SMTP > Email Log as not sent, and nothing reached Salesforce.
+
+Tested this way on Local on 2026-11-17, from the window and from the page. Not tested on staging yet: the page is not there.
+
+**Still open on this page:**
+
+- The two forms libraries are empty until Velocity sends the files. Their titles show with nothing under them.
+- "Become a Partner" links, here and on every page, point to `/become-a-partner/`, which does not exist. Figma marks that page and Broker Login as built by Velocity in their portal (generatevelocity.com). The links need the portal's address, and `/become-a-partner/` a redirect to it.
+- The "Broker Resources" card links to `/broker-resources/`, an empty page.
+- Form 14 asks for the name as first and last, in one column. The design shows one name field and two columns. Changing the fields may change what reaches Salesforce, so it waits for Velocity.
+- Google Tag Manager loads on every environment: the check that limits it to production is commented out in `global-scripts.php`. A test on staging or Local can show up in Analytics.
+
