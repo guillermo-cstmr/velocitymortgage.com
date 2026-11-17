@@ -93,7 +93,7 @@ class Velocity_Home {
 	 * @param array $overrides Settings that differ from the default card.
 	 * @return array
 	 */
-	private static function card( $overrides = array() ) {
+	public static function card( $overrides = array() ) {
 		return array_merge(
 			array(
 				'background'         => Velocity_Seed::color( 'palette9' ),
@@ -121,7 +121,7 @@ class Velocity_Home {
 	 * @param string $animation Kadence animation name.
 	 * @return array
 	 */
-	private static function card_animation( $position, $animation = 'fade-up' ) {
+	public static function card_animation( $position, $animation = 'fade-up' ) {
 		return array(
 			'kadenceAnimation'  => $animation,
 			'kadenceAOSOptions' => array(
@@ -298,7 +298,7 @@ class Velocity_Home {
 	 * @param string $text    Text.
 	 * @return string
 	 */
-	private static function body( $post_id, $key, $text ) {
+	public static function body( $post_id, $key, $text ) {
 		return self::t( $post_id, $key . '-body', $text, array( 'margin' => array( '0', '', '0', '' ) ) );
 	}
 
@@ -311,7 +311,7 @@ class Velocity_Home {
 	 * @param array  $o       Extra options for t().
 	 * @return string
 	 */
-	private static function card_title( $post_id, $key, $text, $o = array() ) {
+	public static function card_title( $post_id, $key, $text, $o = array() ) {
 		return self::t(
 			$post_id,
 			$key . '-title',
@@ -333,12 +333,15 @@ class Velocity_Home {
 	 *
 	 * @param int    $post_id Page ID.
 	 * @param string $key     Key for the unique ID.
-	 * @param string $file    File name in assets/images/home.
+	 * @param string $file    File name in the folder.
 	 * @param int    $width   Max width in px.
 	 * @param string $alt     Alternative text. Empty for decorative images.
+	 * @param string $class   Extra class, such as a block style.
+	 * @param string $folder  Folder under assets/images.
+	 * @param array  $extra   Extra block settings, such as a border radius.
 	 * @return string
 	 */
-	private static function image( $post_id, $key, $file, $width, $alt = '', $class = '' ) {
+	public static function image( $post_id, $key, $file, $width, $alt = '', $class = '', $folder = 'home', $extra = array() ) {
 		$uid   = Velocity_Seed::uid( $post_id, 'img-' . $key );
 		$attrs = array(
 			'imgMaxWidth'     => $width,
@@ -349,6 +352,7 @@ class Velocity_Home {
 		if ( $class ) {
 			$attrs['className'] = $class;
 		}
+		$attrs = array_merge( $attrs, $extra );
 
 		return Velocity_Seed::block(
 			'kadence/image',
@@ -357,7 +361,7 @@ class Velocity_Home {
 				'<figure class="wp-block-kadence-image kb-image%1$s%2$s"><img src="%3$s" alt="%4$s" class="kb-img"/></figure>',
 				$uid,
 				( '.svg' === substr( $file, -4 ) ? ' image-is-svg' : '' ) . ( $class ? ' ' . $class : '' ),
-				esc_url( get_stylesheet_directory_uri() . '/assets/images/home/' . $file ),
+				esc_url( get_stylesheet_directory_uri() . '/assets/images/' . $folder . '/' . $file ),
 				esc_attr( $alt )
 			)
 		);
@@ -369,7 +373,7 @@ class Velocity_Home {
 	 *
 	 * @return array
 	 */
-	private static function on_dark() {
+	public static function on_dark() {
 		$white = Velocity_Seed::color( 'palette9' );
 
 		return array(
@@ -504,7 +508,7 @@ class Velocity_Home {
 	 * @param array  $surface Background settings for the inner Section.
 	 * @return string
 	 */
-	private static function panel( $post_id, $key, $inner, $name, $surface ) {
+	public static function panel( $post_id, $key, $inner, $name, $surface ) {
 		return Velocity_Seed::row(
 			$post_id,
 			$key,
@@ -1171,6 +1175,27 @@ class Velocity_Home {
 	 * @return string
 	 */
 	public static function cta( $post_id ) {
+		return self::cta_band(
+			$post_id,
+			'Ready to Close More Deals?',
+			array(
+				array( 'Become a Partner', home_url( '/become-a-partner/' ) ),
+				array( 'Start a Conversation', home_url( '/contact-us/' ), 'outline', self::on_dark() ),
+			)
+		);
+	}
+
+	/**
+	 * The call to action band that closes a page. Pages change its title and
+	 * its buttons; the text and the note are the same everywhere.
+	 *
+	 * @param int     $post_id Page ID.
+	 * @param string  $title   Title.
+	 * @param array[] $buttons Buttons, as buttons() takes them.
+	 * @param int     $width   Max width of the band in px.
+	 * @return string
+	 */
+	public static function cta_band( $post_id, $title, $buttons, $width = 1040 ) {
 		$band = Velocity_Seed::row(
 			$post_id,
 			'cta-band',
@@ -1178,7 +1203,7 @@ class Velocity_Home {
 				Velocity_Seed::column(
 					$post_id,
 					'cta-band-col',
-					self::title( $post_id, 'cta', 'Ready to Close More Deals?' ) . "\n\n" .
+					self::title( $post_id, 'cta', $title ) . "\n\n" .
 					self::subtitle(
 						$post_id,
 						'cta',
@@ -1189,14 +1214,7 @@ class Velocity_Home {
 							'margin' => array( '0', 'auto', '32', 'auto' ),
 						)
 					) . "\n\n" .
-					self::buttons(
-						$post_id,
-						'cta',
-						array(
-							array( 'Become a Partner', home_url( '/become-a-partner/' ) ),
-							array( 'Start a Conversation', home_url( '/contact-us/' ), 'outline', self::on_dark() ),
-						)
-					) . "\n\n" .
+					self::buttons( $post_id, 'cta', $buttons ) . "\n\n" .
 					self::t(
 						$post_id,
 						'cta-note',
@@ -1217,7 +1235,7 @@ class Velocity_Home {
 				'bgImgSize'     => 'cover',
 				'bgImgPosition' => 'center center',
 				'borderRadius'  => array( 26, 26, 26, 26 ),
-				'maxWidth'      => 1040,
+				'maxWidth'      => $width,
 				'textColor'     => Velocity_Seed::color( 'palette9' ),
 				'padding'       => array( '112', '', '112', '' ),
 				'mobilePadding' => array( '64', '', '64', '' ),

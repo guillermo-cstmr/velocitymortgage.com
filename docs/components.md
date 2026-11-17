@@ -158,6 +158,10 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-deal-card` | The Group around each post in that Query Loop | The card itself. Inside it go a Featured Image block and a Shortcode block with `[vm_deal_info]` |
 | `vm-faq` | Details | Styles a frequently asked question. Details has no styling settings. Questions placed one after another act as a group: opening one closes the others, and one always stays open. Tick "Open by default" on the first |
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule, bold text and an arrow. Navigation has no per-item styling |
+| `vm-people`, `vm-person` | Query Loop over Staff, and the Group around each person | Centered rows of people, each card one link. See "The About Us page" |
+| `vm-carousel` | Section around a Query Loop | Makes the list scroll sideways, with arrows when it does not fit |
+| `vm-careers`, `vm-career-card` | Query Loop over Careers, and the Group around each one | The position cards |
+| `vm-story-media`, `vm-story-stat` | Section around a photo, and the figures laid over it | Places the figures over the photo. Sections have no setting for overlapping |
 | `vm-footer-main`, `vm-footer-legal` | The two rows of the footer | Line heights, the rule above the legal text, and the underline on legal links |
 
 ## The deal card
@@ -174,6 +178,8 @@ The text of a deal card comes from the shortcode `[vm_deal_info]`, defined in `i
 A line is left out when the property has no value for it, so an incomplete card means incomplete data on that property. The one exception is the closing time tag: without a value it still keeps its space, invisibly, so the titles line up across the cards. The title links to the property, and that link covers the whole card.
 
 It is a shortcode because core blocks cannot print a custom field, or a taxonomy term without turning it into a link. In the editor the block shows the shortcode text, not the result.
+
+The people and the careers on the About Us page work the same way, with `[vm_staff_info]` and `[vm_career_info]`. See "The About Us page".
 
 ## Forms
 
@@ -242,6 +248,75 @@ If the drawing is replaced with a different one, the numbers have to be measured
 - Hovering a pin, focusing it with the keyboard or clicking it opens the office's card above it. A click keeps it open until another pin is clicked, Escape is pressed or the visitor clicks elsewhere.
 - Below 768px there is no room for that. The pins are decoration and the cards are listed under the map.
 - The card's look and the pin are in the block's `style.css`.
+
+## The About Us page
+
+The page at `/about-us/` is built from the recipes above plus four pieces of its own: a timeline, a photo with figures over it, a list of people and a carousel. `wp velocity seed-company` creates its first version.
+
+### Timeline
+
+Two block styles, picked in the Styles panel of the block.
+
+| Style | Put it on | What it does |
+|---|---|---|
+| Timeline | The Section that holds the texts | Draws the line down its left side. Give the Section 26px of left padding |
+| Timeline point | A Text (Adv) inside that Section | Draws a dot on the line, level with the text's first line |
+
+A text without "Timeline point" belongs to the point above it. To add a date to the story, duplicate a text that has the dot.
+
+### Photo with figures
+
+In "The Velocity Story", the photo and the three orange figures are normal blocks: a Kadence Image and three Sections, inside a Section with the class `vm-story-media`. Their texts, colors and sizes are block settings. The classes only place them:
+
+| Class | Put it on | Where it goes |
+|---|---|---|
+| `vm-story-media` | The Section around the photo and the figures | |
+| `vm-story-stat vm-story-stat--volume` | A figure's Section | Top left, over the photo's corner |
+| `vm-story-stat vm-story-stat--years` | A figure's Section | Bottom right |
+| `vm-story-stat vm-story-stat--offices` | A figure's Section | The wide one, bottom left |
+
+On phones nothing overlaps: the figures line up under the photo. In the editor they show stacked under the photo; use Preview to see them in place.
+
+The labels under the figures are 14px. The design draws them at 9.5px and 8px, which is too small to read.
+
+### People
+
+"The People Moving Deals Forward" is a Query Loop over Staff with the class `vm-people`. Each person is a Group with the class `vm-person` that holds a Featured Image block and a Shortcode block with `[vm_staff_info]`.
+
+| On the card | Where it comes from |
+|---|---|
+| Photo | The person's featured image |
+| Name | The person's title. It links to the person's page, and the link covers the whole card |
+| Line under the name | The field "Staff Title (short)". For sales directors that is their office |
+| LinkedIn icon | The field "Staff LinkedIn URL". Left out when it is empty |
+
+Who is listed is set on the Query Loop: Staff, filtered by Type. The seed sets it to "Sales Directors". To add someone, create the person in Staff with that type. The order is each person's Order field, under Page Attributes, lowest first.
+
+The section has the HTML anchor `team`, so `/about-us/#team` lands on it. "Our Team" in the menu uses that address.
+
+### Carousel
+
+A Section with the class `vm-carousel` turns the Query Loop inside it into a row that scrolls sideways: three items in view on desktop, two on tablet, one and a bit of the next on phones. It scrolls by touch, trackpad or keyboard. When the items do not fit, `assets/js/carousel.js` adds a previous and a next arrow at the bottom right of the Section, beside its last block. With few items there are no arrows.
+
+"Careers at Velocity" uses it with a Query Loop over Careers that has the class `vm-careers`. Each position is a Group with the class `vm-career-card` holding a Shortcode block with `[vm_career_info]`:
+
+| On the card | Where it comes from |
+|---|---|
+| Title | The career's title. It links to the career, and the link covers the whole card |
+| Offices | The field "City/Cities", on one line |
+| Summary | The field "Short Description", cut at three lines |
+
+Only published careers show. The label of the arrows is set in `inc/carousel.php`.
+
+### Colors that differ from the design
+
+- **Mission and promise cards**: the text is 19px bold instead of 16px regular. Deep Rust on that background has a contrast of 4.1 to 1. Body text needs 4.5, large text (19px bold and up) needs 3. To go back to a regular weight, the text needs a darker color.
+- **Intro texts in gray** use the Gray of the palette (`#666666`) instead of `#606060`.
+
+### What is still open
+
+- **"See Our Full Process"** and "Process" in the menu point to `#`. The Process page is not built yet.
+- **Order of the people**: the design shows Marco Castaneda first. The page follows each person's Order field.
 
 ## The loan calculator
 

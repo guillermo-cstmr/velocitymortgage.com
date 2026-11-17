@@ -33,8 +33,9 @@ class Velocity_Seed {
 	 * The site menu. Label, target, optional CSS class, optional children.
 	 *
 	 * A target starting with "/" is a path on this site. If a page lives there
-	 * the link is tied to that page. "#" is a placeholder for a page that does
-	 * not exist yet.
+	 * the link is tied to that page. A path may end in "#section" to land on a
+	 * part of the page. "#" alone is a placeholder for a page that does not
+	 * exist yet.
 	 *
 	 * @return array[]
 	 */
@@ -68,8 +69,9 @@ class Velocity_Seed {
 				'#',
 				'',
 				array(
-					array( 'About Us', '#' ),
-					array( 'Our Team', '/team/' ),
+					array( 'About Us', '/about-us/' ),
+					// The design sends "Our Team" to the people section of About Us.
+					array( 'Our Team', '/about-us/#team' ),
 					array( 'Careers', '/careers/' ),
 				),
 			),
@@ -295,18 +297,32 @@ class Velocity_Seed {
 		foreach ( $items as $index => $item ) {
 			$key    = $prefix . $index;
 			$target = $item[1];
-			$page   = '#' === $target ? null : get_page_by_path( trim( $target, '/' ) );
+			$anchor = '';
+
+			// "/about-us/#team": the page, then the section to land on.
+			if ( '#' !== $target && false !== strpos( $target, '#' ) ) {
+				list( $target, $anchor ) = explode( '#', $target, 2 );
+			}
+
+			$page = '#' === $target ? null : get_page_by_path( trim( $target, '/' ) );
 
 			$attrs = array(
 				'uniqueID' => self::uid( $post_id, 'link' . $key ),
 				'label'    => $item[0],
 			);
 
-			if ( $page ) {
+			if ( $page && '' !== $anchor ) {
+				// A link to a section is a custom link: a page link has no room for one.
+				$attrs['url']  = get_permalink( $page ) . '#' . $anchor;
+				$attrs['kind'] = 'custom';
+			} elseif ( $page ) {
 				$attrs['type'] = 'page';
 				$attrs['id']   = (int) $page->ID;
 				$attrs['url']  = get_permalink( $page );
 				$attrs['kind'] = 'post-type';
+			} elseif ( '' !== $anchor ) {
+				$attrs['url']  = home_url( $target ) . '#' . $anchor;
+				$attrs['kind'] = 'custom';
 			} else {
 				$attrs['url']  = '#' === $target ? '#' : home_url( $target );
 				$attrs['kind'] = 'custom';
@@ -636,8 +652,9 @@ class Velocity_Seed {
 				),
 				$attrs
 			),
-			// Kadence adds a class for a direction other than the default, vertical.
-			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['direction'][0] ) ? '' : ' kb-section-dir-' . esc_attr( $attrs['direction'][0] ) ) . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
+			// Kadence adds a class when the Section has an overlay, and one for a
+			// direction other than the default, vertical.
+			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['overlay'] ) && empty( $attrs['overlayGradient'] ) ? '' : ' kb-section-has-overlay' ) . ( empty( $attrs['direction'][0] ) ? '' : ' kb-section-dir-' . esc_attr( $attrs['direction'][0] ) ) . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
 		);
 	}
 

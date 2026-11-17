@@ -997,3 +997,445 @@ body .gform_wrapper.gravity-theme form.vm-form-inline .gfield input[type="email"
 	padding: 15px 23px;
 	border-width: 1px;
 }
+
+/*
+ * A line break typed into a title is for wide screens. On a phone the title
+ * wraps on its own, and the break would leave a word alone on a line.
+ */
+@media (max-width: 767px) {
+	:is(h1, h2).wp-block-kadence-advancedheading br {
+		display: none;
+	}
+}
+
+/*
+ * Timeline: two block styles, picked in the Styles panel.
+ * "Timeline" on a Section draws the line down its left side. "Timeline point"
+ * on a text inside it draws a dot on the line, level with its first line.
+ * The Section needs 26px of left padding, set in its block settings.
+ */
+.wp-block-kadence-column.is-style-vm-timeline > .kt-inside-inner-col {
+	position: relative;
+}
+
+.wp-block-kadence-column.is-style-vm-timeline > .kt-inside-inner-col::before {
+	content: "";
+	position: absolute;
+	top: -12px;
+	bottom: 0;
+	left: 5px;
+	width: 1px;
+	background: var(--global-palette1);
+}
+
+.is-style-vm-timeline .is-style-vm-timeline-point {
+	position: relative;
+}
+
+.is-style-vm-timeline .is-style-vm-timeline-point::before {
+	content: "";
+	position: absolute;
+	top: 0.735em;
+	left: -26px;
+	width: 11px;
+	height: 11px;
+	border-radius: 50%;
+	background: var(--global-palette1);
+	transform: translateY(-50%);
+}
+
+/*
+ * vm-story-media: a photo with three figures laid over it.
+ * The Section holds a Kadence Image and three Sections with the class
+ * vm-story-stat, plus vm-story-stat--volume (top left), --years (bottom
+ * right) or --offices (the wide one, bottom left). Their colors, sizes and
+ * texts are block settings. Only the positions are here.
+ * Measures are from Figma, frame "Our story", "Group 3".
+ */
+body .vm-story-media {
+	width: 100%;
+	max-width: 430px;
+	margin-inline: auto;
+}
+
+body .vm-story-media > .kt-inside-inner-col {
+	position: relative;
+	display: block;
+	padding: 23px 37px 43px 54px;
+}
+
+.vm-story-media .wp-block-kadence-image {
+	margin: 0;
+}
+
+.vm-story-media .wp-block-kadence-image img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 339 / 349;
+	object-fit: cover;
+}
+
+body .vm-story-media .vm-story-stat {
+	position: absolute;
+	width: 150px;
+	margin: 0;
+}
+
+body .vm-story-media .vm-story-stat--volume {
+	top: 0;
+	left: 0;
+}
+
+body .vm-story-media .vm-story-stat--years {
+	right: 0;
+	bottom: 0;
+}
+
+body .vm-story-media .vm-story-stat--offices {
+	bottom: 20px;
+	left: 0;
+	width: auto;
+	white-space: nowrap;
+}
+
+/* No room to overlap: the figures line up under the photo. */
+@media (max-width: 520px) {
+	body .vm-story-media > .kt-inside-inner-col {
+		display: flex;
+		flex-flow: row wrap;
+		gap: 12px;
+		padding: 0;
+	}
+
+	.vm-story-media .wp-block-kadence-image {
+		flex: 0 0 100%;
+	}
+
+	body .vm-story-media .vm-story-stat {
+		position: static;
+		flex: 1 1 calc(50% - 6px);
+		width: auto;
+	}
+
+	body .vm-story-media .vm-story-stat--offices {
+		flex-basis: 100%;
+		white-space: normal;
+	}
+}
+
+/*
+ * vm-people: a Query Loop over staff, shown as centered rows of people.
+ * Each card is a Group with the class vm-person holding the Featured Image
+ * block and the [vm_staff_info] shortcode. The whole card links to the
+ * person's page and turns light blue on hover.
+ * Measures are from Figma, frame "The people behind the deals".
+ */
+.vm-people .wp-block-post-template.wp-block-post-template {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 32px 48px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.vm-people .wp-block-post-template > li {
+	flex: 0 0 calc((100% - 144px) / 4);
+	min-width: 0;
+	margin: 0;
+}
+
+.vm-people .vm-person {
+	position: relative;
+	height: 100%;
+	padding: 16px 12px;
+	border-radius: 14px;
+	text-align: center;
+	transition: background-color 0.2s ease;
+}
+
+.vm-people .vm-person:hover,
+.vm-people .vm-person:focus-within {
+	background: var(--global-palette7);
+}
+
+.vm-people .vm-person .wp-block-post-featured-image {
+	width: 80px;
+	height: 80px;
+	margin: 0 auto 24px;
+	border-radius: 50%;
+	overflow: hidden;
+	line-height: 0;
+}
+
+.vm-people .vm-person .wp-block-post-featured-image img {
+	width: 80px;
+	height: 80px;
+	object-fit: cover;
+}
+
+.vm-person-info {
+	font-size: 16px;
+	line-height: 1.47;
+}
+
+/* Two classes, to outrank the theme's heading and paragraph rules. */
+.vm-person .vm-person-info > * {
+	margin: 0;
+}
+
+.vm-person-info :is(h2, h3).vm-person-name {
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.47;
+	letter-spacing: 0;
+}
+
+.vm-person-info .vm-person-name a {
+	color: var(--global-palette3);
+	text-decoration: none;
+}
+
+/* The name link is stretched over the card: one link for the whole card. */
+.vm-person-info .vm-person-name a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	border-radius: 14px;
+}
+
+.vm-person-info .vm-person-name a:focus-visible {
+	outline: none;
+}
+
+.vm-person-info .vm-person-name a:focus-visible::after {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+/* The LinkedIn link sits above the stretched link, with a 44px target. */
+.vm-person .vm-person-info .vm-person-linkedin {
+	position: relative;
+	z-index: 2;
+	display: inline-flex;
+	padding: 10px;
+	margin-top: 14px;
+	border-radius: 8px;
+	line-height: 0;
+	transition: opacity 0.2s ease;
+}
+
+.vm-person-info .vm-person-linkedin:hover {
+	opacity: 0.7;
+}
+
+.vm-person-info .vm-person-linkedin:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 0;
+}
+
+@media (max-width: 1024px) {
+	.vm-people .wp-block-post-template.wp-block-post-template {
+		gap: 24px;
+	}
+
+	.vm-people .wp-block-post-template > li {
+		flex-basis: calc((100% - 48px) / 3);
+	}
+}
+
+@media (max-width: 767px) {
+	.vm-people .wp-block-post-template > li {
+		flex-basis: calc((100% - 24px) / 2);
+	}
+
+	.vm-people .vm-person {
+		padding: 12px 4px;
+	}
+}
+
+/*
+ * vm-carousel: a Section whose Query Loop scrolls sideways.
+ * The list scrolls by touch, trackpad or keyboard on its own. When the
+ * items do not fit, assets/js/carousel.js adds the two arrows, at the right
+ * of the Section's last block. With few items there are no arrows.
+ * vm-careers and vm-career-card style the positions it lists here.
+ * Measures are from Figma, frame "Careers".
+ */
+.vm-carousel > .kt-inside-inner-col {
+	position: relative;
+}
+
+.vm-carousel .wp-block-post-template.wp-block-post-template {
+	display: flex;
+	gap: 24px;
+	/* Room for the cards' shadow, which the scrolling would cut off. */
+	margin: -8px -12px -12px;
+	padding: 8px 12px 28px;
+	overflow-x: auto;
+	list-style: none;
+	scroll-snap-type: x mandatory;
+	scroll-padding-inline: 12px;
+	scrollbar-width: none;
+}
+
+.vm-carousel .wp-block-post-template::-webkit-scrollbar {
+	display: none;
+}
+
+.vm-carousel .wp-block-post-template > li {
+	flex: 0 0 calc((100% - 48px) / 3);
+	min-width: 0;
+	margin: 0;
+	scroll-snap-align: start;
+}
+
+.vm-carousel .wp-block-post-template:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+.vm-carousel__arrows {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	gap: 8px;
+}
+
+.vm-carousel__arrow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	padding: 0;
+	border: 1px solid var(--global-palette2);
+	border-radius: 50%;
+	background: var(--global-palette9);
+	box-shadow: none;
+	cursor: pointer;
+	transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.vm-carousel__arrow:hover:not(:disabled),
+.vm-carousel__arrow:focus:not(:disabled) {
+	border-color: var(--global-palette2);
+	background: #f8e8de;
+	box-shadow: none;
+}
+
+.vm-carousel__arrow:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+.vm-carousel__arrow:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+.vm-carousel__arrow img {
+	display: block;
+}
+
+.vm-carousel__arrow--next img {
+	transform: rotate(180deg);
+}
+
+.vm-careers .vm-career-card {
+	position: relative;
+	height: 100%;
+	min-height: 200px;
+	padding: 24px;
+	border-radius: 8px;
+	background: var(--global-palette8);
+	box-shadow: var(--vm-shadow-medium);
+	transition: box-shadow 0.25s ease;
+}
+
+.vm-careers .vm-career-card:hover,
+.vm-careers .vm-career-card:focus-within {
+	box-shadow: 0 16px 24px -8px rgba(1, 7, 57, 0.18);
+}
+
+.vm-career-info {
+	color: var(--global-palette6);
+	font-size: 16px;
+	line-height: 1.47;
+}
+
+.vm-career-card .vm-career-info > * {
+	margin: 0;
+}
+
+.vm-career-info :is(h2, h3).vm-career-title {
+	margin-bottom: 24px;
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: 0;
+}
+
+.vm-career-info .vm-career-title a {
+	color: var(--global-palette3);
+	text-decoration: none;
+}
+
+.vm-career-info .vm-career-title a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	border-radius: 8px;
+}
+
+.vm-career-info .vm-career-title a:focus-visible {
+	outline: none;
+}
+
+.vm-career-info .vm-career-title a:focus-visible::after {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+.vm-careers .vm-career-card:hover .vm-career-title a {
+	color: var(--global-palette2);
+}
+
+/* The summary is written for the position's own page: three lines of it here. */
+.vm-career-info .vm-career-text {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+}
+
+@media (max-width: 1024px) {
+	.vm-carousel .wp-block-post-template > li {
+		flex-basis: calc((100% - 24px) / 2);
+	}
+}
+
+@media (max-width: 767px) {
+	.vm-carousel .wp-block-post-template > li {
+		flex-basis: 86%;
+	}
+
+	/* The arrows move under the button instead of beside it. */
+	.vm-carousel__arrows {
+		position: static;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.vm-people .vm-person,
+	.vm-careers .vm-career-card,
+	.vm-carousel__arrow {
+		transition: none;
+	}
+}

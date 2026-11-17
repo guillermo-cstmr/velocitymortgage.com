@@ -197,10 +197,17 @@ class Velocity_CLI {
 	 * : Also rebuild what already exists. This DISCARDS changes made in the
 	 * editor to the header, the menus and the footer.
 	 *
+	 * [--menus]
+	 * : Only the menus. The header and the footer are left as they are. With
+	 * --force, this is how a link changed in Velocity_Seed::menu() reaches
+	 * the menus: they are rebuilt, and changes made to them in the editor
+	 * are lost.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     wp velocity seed-chrome
 	 *     wp velocity seed-chrome --execute
+	 *     wp velocity seed-chrome --menus --force --execute
 	 *
 	 * @subcommand seed-chrome
 	 *
@@ -210,6 +217,7 @@ class Velocity_CLI {
 	public function seed_chrome( $args, $assoc_args ) {
 		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
 		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+		$menus_only    = ! empty( $assoc_args['menus'] );
 
 		foreach ( array( 'kadence_header', 'kadence_navigation', 'kadence_element' ) as $type ) {
 			if ( ! post_type_exists( $type ) ) {
@@ -219,7 +227,7 @@ class Velocity_CLI {
 
 		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
 		if ( $this->force ) {
-			WP_CLI::warning( '--force: existing header, menus and footer are rebuilt. Editor changes to them are lost.' );
+			WP_CLI::warning( $menus_only ? '--force: existing menus are rebuilt. Editor changes to them are lost.' : '--force: existing header, menus and footer are rebuilt. Editor changes to them are lost.' );
 		}
 
 		$ids = array();
@@ -242,6 +250,16 @@ class Velocity_CLI {
 				},
 				$meta
 			);
+		}
+
+		if ( $menus_only ) {
+			if ( $this->execute ) {
+				wp_cache_flush();
+				WP_CLI::success( 'Menus are in place. The header and the footer were not touched.' );
+			} else {
+				WP_CLI::success( 'Dry run finished. Nothing was changed.' );
+			}
+			return;
 		}
 
 		WP_CLI::log( '' );
@@ -437,6 +455,99 @@ class Velocity_CLI {
 		);
 
 		WP_CLI::success( 'Contact page content written. Edit it in the block editor from now on.' );
+	}
+
+	/**
+	 * Fills the About Us page with its sections as block content.
+	 *
+	 * It writes to the page with the slug "about-us", and creates that page
+	 * if it does not exist. The people section lists the staff of the type
+	 * "Sales Directors", and the careers section the published careers: both
+	 * read what is in the admin, so they stay up to date on their own.
+	 *
+	 * Without --execute it only reports what it would do. A page that already
+	 * has content is left alone, so editor work is never overwritten.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Create the page if it is missing and write the content if it is empty.
+	 *
+	 * [--force]
+	 * : Replace the content even if the page has some. This DISCARDS what is
+	 * there. WordPress keeps the old version as a revision.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-company
+	 *     wp velocity seed-company --execute
+	 *
+	 * @subcommand seed-company
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_company( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		$page = get_page_by_path( Velocity_Company::SLUG );
+
+		if ( $page ) {
+			WP_CLI::log( sprintf( 'About Us page: #%d "%s", %d bytes of content.', $page->ID, $page->post_title, strlen( $page->post_content ) ) );
+		} else {
+			WP_CLI::log( sprintf( 'There is no page with the slug "%s". It would be created.', Velocity_Company::SLUG ) );
+		}
+
+		$term = get_term_by( 'name', Velocity_Company::STAFF_TYPE, 'velocity-staff-type' );
+
+		if ( $term ) {
+			WP_CLI::log( sprintf( 'People section: staff of the type "%s", %d people.', $term->name, $term->count ) );
+		} else {
+			WP_CLI::warning( sprintf( 'There is no staff type named "%s". The people section would list all staff.', Velocity_Company::STAFF_TYPE ) );
+		}
+
+		if ( $page && '' !== trim( $page->post_content ) && ! $this->force ) {
+			WP_CLI::success( 'The page already has content. Left as it is.' );
+			return;
+		}
+
+		if ( ! $this->execute ) {
+			WP_CLI::success( 'Dry run finished. The page would be filled.' );
+			return;
+		}
+
+		if ( $page ) {
+			$page_id = (int) $page->ID;
+		} else {
+			$page_id = wp_insert_post(
+				array(
+					'post_type'   => 'page',
+					'post_title'  => 'About Us',
+					'post_name'   => Velocity_Company::SLUG,
+					'post_status' => 'publish',
+				),
+				true
+			);
+
+			if ( is_wp_error( $page_id ) ) {
+				WP_CLI::error( $page_id->get_error_message() );
+			}
+
+			WP_CLI::log( sprintf( '  create   page  About Us (#%d)', $page_id ) );
+		}
+
+		wp_update_post(
+			array(
+				'ID'           => $page_id,
+				'post_content' => wp_slash( Velocity_Company::content( $page_id, $term ? (int) $term->term_id : 0 ) ),
+			)
+		);
+
+		WP_CLI::success( 'About Us page content written. Edit it in the block editor from now on.' );
+		WP_CLI::log( 'To point the menus at it: wp velocity seed-chrome --menus --force --execute' );
 	}
 
 	/**
