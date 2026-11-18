@@ -1518,3 +1518,15 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	margin-top: 0;
 	margin-bottom: 0;
 }
+
+/*
+ * FAQs: the plus and minus of the Kadence accordion. The block has no setting
+ * for their size; the design draws them 14px wide, Kadence 20px.
+ */
+.kt-accodion-icon-style-basic .kt-blocks-accordion-icon-trigger::before,
+.kt-accodion-icon-style-basic .kt-blocks-accordion-icon-trigger::after {
+	width: 14px;
+	height: 3px;
+	left: 5px;
+	top: 10.5px;
+}

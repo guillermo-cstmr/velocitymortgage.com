@@ -269,7 +269,7 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 
 | Page | Address | Command that creates it | Local | Staging |
 |---|---|---|---|---|
-| Home | `/` | `seed-home` | Built | An earlier version. Its deals, FAQ and panel changes, and the links to the program pages, are not there |
+| Home | `/` | `seed-home` | Built | Built, 2026-11-18 |
 | Programs Overview | `/loan-programs/` | `seed-programs-page` | Built | Not yet |
 | 30-Year Fixed, Fast50, Flex I/O, Super Jumbo | `/loan-programs/30-year-fixed/`, `/fast50/`, `/flex-i-o/`, `/jumbo/` | `seed-program-pages` | Built | Not yet |
 | Process | `/process/` | `seed-process` | Built | Not yet |
@@ -280,9 +280,9 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 | Become a Partner, Broker Login | Velocity's portal | None | Not ours to build: Figma marks them "client will develop, CSTMR to QA" | |
 | News and Insights, and an article | `/insights/` | None yet | Not built: default template | |
 | Featured Deals | `/featured-investment-property-loans/` | `seed-deals-page` | Built | The automatic list, on the default template |
-| Terms of Use | `/terms-of-use/` | `seed-legal-pages` | Built | The old site's builder content |
-| Privacy (Privacy Notice for California Residents) | `/privacy/` | `seed-legal-pages` | Built | The old site's builder content: a text about cookies and the 2020 version of the notice |
-| 404 | Any address that does not exist | `seed-404` | Built, as a Kadence Element | The theme's own message |
+| Terms of Use | `/terms-of-use/` | `seed-legal-pages` | Built | Built, 2026-11-18 |
+| Privacy (Privacy Notice for California Residents) | `/privacy/` | `seed-legal-pages` | Built | Built, 2026-11-18. The old text about cookies is gone; a cookie banner replaces it and is not built yet |
+| 404 | Any address that does not exist | `seed-404` | Built, as a Kadence Element | Built, 2026-11-18 |
 | A deal | `/property/...` | None yet | Not built: default template | |
 | Case Studies, and a case study | `/case-studies/` | None yet | Not built: default template | |
 | Contact thank-you | `/contact/thank-you/` | None yet | Does not exist | |
