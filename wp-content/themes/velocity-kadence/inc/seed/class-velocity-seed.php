@@ -266,6 +266,74 @@ class Velocity_Seed {
 	}
 
 	/**
+	 * A file of inc/seed/media as a media library item.
+	 *
+	 * Videos and photos are content, so they live in the media library, where an
+	 * editor can replace them. The file is copied to uploads the first time and
+	 * found again after that, so seeding twice does not add it twice.
+	 *
+	 * @param string $file  File name inside inc/seed/media.
+	 * @param string $title Title of the media library item.
+	 * @return array { id: int, url: string } Empty id and url when it fails.
+	 */
+	public static function media( $file, $title = '' ) {
+		$found = get_posts(
+			array(
+				'post_type'      => 'attachment',
+				'post_status'    => 'inherit',
+				'meta_key'       => '_vm_seed_media', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'     => $file, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+			)
+		);
+		if ( $found && file_exists( (string) get_attached_file( $found[0] ) ) ) {
+			return array(
+				'id'  => (int) $found[0],
+				'url' => (string) wp_get_attachment_url( $found[0] ),
+			);
+		}
+
+		$none   = array(
+			'id'  => 0,
+			'url' => '',
+		);
+		$source = __DIR__ . '/media/' . $file;
+		if ( ! is_readable( $source ) ) {
+			return $none;
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- A local file of the theme.
+		$upload = wp_upload_bits( basename( $file ), null, file_get_contents( $source ) );
+		if ( ! empty( $upload['error'] ) ) {
+			return $none;
+		}
+
+		$type = wp_check_filetype( $upload['file'] );
+		$id   = wp_insert_attachment(
+			array(
+				'post_title'     => $title ? $title : pathinfo( $file, PATHINFO_FILENAME ),
+				'post_mime_type' => $type['type'],
+				'post_status'    => 'inherit',
+			),
+			$upload['file']
+		);
+		if ( ! $id || is_wp_error( $id ) ) {
+			return $none;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $upload['file'] ) );
+		update_post_meta( $id, '_vm_seed_media', $file );
+
+		return array(
+			'id'  => (int) $id,
+			'url' => (string) $upload['url'],
+		);
+	}
+
+	/**
 	 * Serialize one block.
 	 *
 	 * @param string      $name  Block name without the "wp:" prefix.
@@ -662,9 +730,10 @@ class Velocity_Seed {
 				),
 				$attrs
 			),
-			// Kadence adds a class when the Section has an overlay, and one for a
-			// direction other than the default, vertical, on each screen size.
-			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['overlay'] ) && empty( $attrs['overlayGradient'] ) ? '' : ' kb-section-has-overlay' ) . ( empty( $attrs['direction'][0] ) ? '' : ' kb-section-dir-' . esc_attr( $attrs['direction'][0] ) ) . ( empty( $attrs['direction'][1] ) ? '' : ' kb-section-md-dir-' . esc_attr( $attrs['direction'][1] ) ) . ( empty( $attrs['direction'][2] ) ? '' : ' kb-section-sm-dir-' . esc_attr( $attrs['direction'][2] ) ) . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
+			// Kadence adds a class when the Section is hidden on a screen size, is sticky
+			// or has an overlay, and
+			// one for a direction other than the default, vertical, on each screen size.
+			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['vsdesk'] ) ? '' : ' kvs-lg-false' ) . ( empty( $attrs['vstablet'] ) ? '' : ' kvs-md-false' ) . ( empty( $attrs['vsmobile'] ) ? '' : ' kvs-sm-false' ) . ( empty( $attrs['sticky'] ) ? '' : ' kb-section-is-sticky' ) . ( empty( $attrs['overlay'] ) && empty( $attrs['overlayGradient'] ) ? '' : ' kb-section-has-overlay' ) . ( empty( $attrs['direction'][0] ) ? '' : ' kb-section-dir-' . esc_attr( $attrs['direction'][0] ) ) . ( empty( $attrs['direction'][1] ) ? '' : ' kb-section-md-dir-' . esc_attr( $attrs['direction'][1] ) ) . ( empty( $attrs['direction'][2] ) ? '' : ' kb-section-sm-dir-' . esc_attr( $attrs['direction'][2] ) ) . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
 		);
 	}
 

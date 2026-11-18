@@ -193,8 +193,10 @@ class Velocity_Home {
 		}
 
 		if ( ! empty( $o['lh'] ) ) {
-			$attrs['fontHeight']     = array( $o['lh'], '', '' );
-			$attrs['fontHeightType'] = '-';
+			// A number with no unit. The unit is left out: with "-", the
+			// editor's name for "no unit", Kadence prints "line-height:1.5-"
+			// on the site, which the browser throws away.
+			$attrs['fontHeight'] = array( $o['lh'], '', '' );
 		}
 
 		if ( ! empty( $o['weight'] ) ) {
@@ -467,9 +469,11 @@ class Velocity_Home {
 	 * @param string  $key     Key for the unique IDs.
 	 * @param array[] $buttons Each: label, URL, style (fill or outline), extra settings.
 	 * @param string  $align   left or center.
+	 * @param int[]   $gap     Space between two buttons in px, on desktop and on a phone.
+	 *                         Left out, Kadence's "md" and "sm".
 	 * @return string
 	 */
-	public static function buttons( $post_id, $key, $buttons, $align = 'center' ) {
+	public static function buttons( $post_id, $key, $buttons, $align = 'center', $gap = array() ) {
 		$wrap  = Velocity_Seed::uid( $post_id, $key . 'btns' );
 		$inner = array();
 
@@ -501,7 +505,7 @@ class Velocity_Home {
 		}
 
 		if ( count( $buttons ) > 1 ) {
-			$attrs['gap'] = array( 'md', '', 'sm' );
+			$attrs['gap'] = $gap ? array( $gap[0], '', $gap[1] ) : array( 'md', '', 'sm' );
 		}
 
 		return Velocity_Seed::block(
@@ -651,6 +655,9 @@ class Velocity_Home {
 			) . "\n\n" .
 			self::buttons( $post_id, 'hero', array( array( 'Become a Partner', home_url( '/become-a-partner/' ) ) ) );
 
+		// The video is a media library item, so an editor can replace it.
+		$video = Velocity_Seed::media( 'hero.mp4', 'Home hero video' );
+
 		return Velocity_Seed::row(
 			$post_id,
 			'hero',
@@ -665,8 +672,8 @@ class Velocity_Home {
 				'backgroundVideo'      => array(
 					array(
 						'youTube'  => '',
-						'local'    => get_stylesheet_directory_uri() . '/assets/video/hero.mp4',
-						'localID'  => '',
+						'local'    => $video['url'],
+						'localID'  => $video['id'] ? $video['id'] : '',
 						'vimeo'    => '',
 						'ratio'    => '16/9',
 						'btns'     => true,

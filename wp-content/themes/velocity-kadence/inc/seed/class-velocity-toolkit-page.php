@@ -525,28 +525,45 @@ class Velocity_Toolkit_Page {
 	 */
 	public static function hero( $post_id ) {
 		// No arrow: these stay on the page. Smaller on phones, so the five
-		// take two lines at most.
+		// take two lines at most. The design: 16px, regular weight, and a
+		// dashed line around the ones that are not "All".
 		$pill = array(
 			'icon'          => '',
 			'mobilePadding' => array( '8', '16', '8', '16' ),
 			'typography'    => array(
 				array(
-					'size'          => array( '', '', 14 ),
+					'size'          => array( 16, '', 14 ),
 					'sizeType'      => 'px',
-					'lineHeight'    => array( '', '', '' ),
-					'lineType'      => '',
+					// Lines of 24px: with the padding, a pill 56px tall.
+					'lineHeight'    => array( 24, '', 20 ),
+					'lineType'      => 'px',
 					'letterSpacing' => array( '', '', '' ),
 					'letterType'    => 'px',
 					'textTransform' => '',
 					'family'        => '',
 					'google'        => '',
 					'style'         => '',
-					'weight'        => '',
+					'weight'        => '400',
 					'variant'       => '',
 					'subset'        => '',
 					'loadGoogle'    => true,
 				),
 			),
+		);
+		$dash = array( Velocity_Seed::color( 'palette1' ), 'dashed', 1 );
+		$line = array_merge(
+			$pill,
+			array(
+				'borderStyle' => array(
+					array(
+						'top'    => $dash,
+						'right'  => $dash,
+						'bottom' => $dash,
+						'left'   => $dash,
+						'unit'   => 'px',
+					),
+				),
+			)
 		);
 
 		$inner =
@@ -598,12 +615,14 @@ class Velocity_Toolkit_Page {
 				'hero-nav',
 				array(
 					array( 'All', '#forms', 'fill', $pill ),
-					array( 'Forms', '#forms', 'outline', $pill ),
-					array( 'Matrices', '#matrices', 'outline', $pill ),
-					array( 'Flyers', '#flyers', 'outline', $pill ),
-					array( 'Links', '#links', 'outline', $pill ),
+					array( 'Forms', '#forms', 'outline', $line ),
+					array( 'Matrices', '#matrices', 'outline', $line ),
+					array( 'Flyers', '#flyers', 'outline', $line ),
+					array( 'Links', '#links', 'outline', $line ),
 				),
-				'left'
+				'left',
+				// 12px between two of them, as in the design.
+				array( 12, 8 )
 			);
 
 		return Velocity_Home::section(

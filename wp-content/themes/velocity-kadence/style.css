@@ -1438,3 +1438,83 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 		margin-top: 8px;
 	}
 }
+
+/*
+ * The legal pages (inc/seed/class-velocity-legal.php).
+ *
+ * vm-legal-toc: the list of sections, Kadence's Table of Contents. Its card,
+ * sizes and colors are settings of the block. It has none for the line
+ * between two links, nor for the weight of the section in view.
+ */
+.vm-legal-toc .kb-table-of-content-list li + li {
+	padding-top: 15px;
+	border-top: 1px solid #e5e5e5;
+}
+
+.vm-legal-toc .kb-table-of-content-list .active > .kb-table-of-contents__entry {
+	font-weight: 600;
+}
+
+/*
+ * vm-legal-toc--bar: the same list on a phone and a tablet, a bar that opens
+ * on a press. A long list scrolls inside the bar instead of leaving the screen.
+ */
+.vm-legal-toc--bar .kb-table-of-content-list {
+	max-height: calc(100vh - 200px);
+	overflow-y: auto;
+}
+
+/*
+ * vm-legal-table: the table of a legal page. Its lines, widths and sizes are
+ * block settings. The block has no setting to start every cell at the top
+ * of its row. On a phone, as with vm-compare, it keeps a readable width and
+ * scrolls sideways inside its container instead of squeezing its columns.
+ */
+/* The table takes the keyboard focus so it can be scrolled (inc/legal.php). */
+.kb-table-container.vm-legal-table:focus-visible,
+.kb-table-container.vm-compare:focus-visible {
+	outline: 2px solid var(--global-palette2);
+	outline-offset: 4px;
+}
+
+.kb-table-container.vm-legal-table th,
+.kb-table-container.vm-legal-table td {
+	vertical-align: top;
+}
+
+@media (max-width: 767px) {
+	.kb-table-container.vm-legal-table {
+		overflow-x: auto;
+	}
+
+	.kb-table-container.vm-legal-table > table {
+		min-width: 640px;
+	}
+}
+
+/* A list in the text, and one that belongs under the item before it. */
+.single-content .vm-legal-list {
+	margin: 0 0 24px;
+	padding-left: 1em;
+	line-height: 1.5;
+}
+
+.vm-legal-list li {
+	margin: 0;
+}
+
+/* It follows the list before it with no space between them. */
+.single-content .vm-legal-list--sub {
+	margin-top: -24px;
+	padding-left: 1.9em;
+	list-style-type: "– ";
+}
+
+/*
+ * The 404 screen (Kadence > Elements, "404 page"): the theme leaves a space
+ * around the content of a 404, which showed as a white band above the footer.
+ */
+.error404 .content-area {
+	margin-top: 0;
+	margin-bottom: 0;
+}

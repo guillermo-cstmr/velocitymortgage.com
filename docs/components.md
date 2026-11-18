@@ -166,6 +166,9 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-toggle` | Kadence Tabs | Joins the tabs into one control and rounds only its two ends. The block has one radius setting for every tab. See "The program pages" |
 | `vm-hide-empty` | Text (Adv) with dynamic content | The text is not printed when it has no value. Kadence would print it empty, with its background and margins |
 | `vm-filters` | Section holding the Filter, Sort and Filter Reset blocks of a query | Size of the filters, the sort as a pill with its menu, the underline of the reset, and the fold into one button on phones. See "The Featured Deals page" |
+| `vm-legal-toc` | Table of Contents of a legal page | The line between two links and the weight of the section in view. `vm-legal-toc--bar` is the one of a phone and a tablet, which opens and closes. See "The legal pages" |
+| `vm-legal-list` | List (core) in a legal page | Spacing of the list. `vm-legal-list--sub` is a list that belongs under the item before it |
+| `vm-back` | A link | Goes one step back in the browser's history. Only on the 404 page. See "The 404 page" |
 | `vm-needs-items`, `vm-after-items` | A section built around a Kadence query, and the section after it | The first hides while the query lists nothing. The second then loses the colored top it shares with it. See "The Featured Deals page" |
 | `vm-toolkit-inline`, `vm-toolkit-form`, `vm-toolkit-doc`, `vm-toolkit-wl`, `vm-toolkit-branded` | Broker Tools page | Where the unlock form lands, and what hides by itself. Their rules are in the must-use plugin. See [database-and-content.md](database-and-content.md), "Broker Toolkit" |
 | `vm-story-media`, `vm-story-stat` | Section around a photo, and the figures laid over it | Places the figures over the photo. Sections have no setting for overlapping |
@@ -339,6 +342,8 @@ Only published careers show. The card's Section has `vm-card-link` too. The labe
 - **Mission and promise cards**: the text is 19px bold instead of 16px regular. Deep Rust on that background has a contrast of 4.1 to 1. Body text needs 4.5, large text (19px bold and up) needs 3. To go back to a regular weight, the text needs a darker color.
 - **Intro texts in gray** use the Gray of the palette (`#666666`) instead of `#606060`.
 
+**The spacing is the design's**, measured against Figma: lines of 24px, 24px between two paragraphs, 60px above a heading and 24px under it, 24px above and under the table, no space between a paragraph and the list it introduces nor between two items. The title starts 83px under the header and the card 44px under the top of the title; the card is 343px wide and the text 738px.
+
 ### What is still open
 
 - **Order of the people**: the design shows Marco Castaneda first. The page follows each person's Order field.
@@ -508,6 +513,51 @@ The section has the class `vm-needs-items`: while no case study is published, th
 - **A deal with no photo shows an empty frame.**
 - **The new address, `/featured-deals/`,** in Velocity's list of addresses, is not applied. It is now a matter of renaming the page and adding the redirect.
 
+## The legal pages
+
+Terms of Use (`/terms-of-use/`) and Privacy (`/privacy/`, the Privacy Notice for California Residents) share one layout, built by `wp velocity seed-legal-pages` and edited in the block editor after that: a card with the list of sections on the left, the title and the text on the right.
+
+| Part | Block | Where its look is set |
+|---|---|---|
+| List of sections | Kadence Table of Contents | Block settings: the card (border, radius, shadow), the size and color of the links, the color on hover and of the section in view, the scroll to a section on a click |
+| The column that holds it | Section, with "Sticky" on | Block settings, Advanced: it stays in view while the text scrolls, 120px from the top so the fixed header does not cover it |
+| List of sections on a phone and a tablet | A second Table of Contents, in a Section inside the text column | Block settings: its title "On this page", "Collapsible" on and closed at the start, the Section hidden on desktop and sticky under the header |
+| Title, subtitle, headings, paragraphs | Text (Adv) | Block settings |
+| Lists | List (core) | `vm-legal-list` in `style.css` |
+| Table of categories | Kadence Table | Block settings: no stripes, a line under each row ("Border on rows only"), the width of each column (30, 56.5 and 13.5%), the cell padding. `style.css` starts every cell at the top of its row (`vm-legal-table`). On a phone it keeps a width of 640px and scrolls sideways: `vm-legal-table` in `style.css`, as `vm-compare` does for the comparison tables |
+
+**The list of sections writes itself.** The Table of Contents block reads the headings of the page: add, rename or remove a heading and the list follows. It lists the H2 headings only. A section that should not be in the list is an H3; both look the same. The Privacy Notice has nineteen sections and eight of them in the list, as in the design.
+
+`style.css` adds two things the block has no setting for (`vm-legal-toc`): the line between two links, and the heavier weight of the section in view. For the bar of a phone (`vm-legal-toc--bar`) it adds a height limit, so a long list scrolls inside the bar.
+
+**The table on a phone.** Above it there is a line, "Swipe to see the full table", in a Section hidden on desktop and tablet. `inc/legal.php` also makes the table (and the comparison tables, `vm-compare`) reachable without a finger: it takes the keyboard focus, so the arrow keys scroll it, and a screen reader announces it as a region with a name. A box that scrolls and cannot take the focus fails WCAG 2.1.1.
+
+**Two lists, one per screen size.** The Section of the left column is hidden on tablet and phone; the Section with the bar is hidden on desktop (Block settings, Advanced, Visibility). Both read the same headings.
+
+`assets/js/legal.js`, loaded by `inc/legal.php` only on a page with this list, does two things the block does not:
+
+- It closes the bar of a phone after a press on one of its links.
+- It lands the heading under the header. Kadence works out where to scroll before the page moves, and the header gets shorter as soon as it does, so a press made from the top of the page left the heading under the header. When the scroll stops, the script moves the heading to 24px under the header (and under the bar, on a phone).
+
+**One privacy page.** The old `/privacy/` had a text about cookies and an older version (2020) of this same notice. The notice of the design replaced both. The text about cookies is gone from the page: it is to be covered by a cookie banner, which is not built yet.
+
+**The text came from the design**, not from a document: `inc/seed/data/legal-terms.json` and `legal-privacy.json`. The command only reads them to fill a page. After that the text lives in the page.
+
+### What is still open
+
+- **The text needs a read by Velocity's legal team.** It was copied from Figma word for word, typos included ("non- affiliates", "Part 99)))").
+- **Only one address in the text is a link:** Compliance@velocitymortgage.com, which opens an email (four times in Privacy). The design draws no links, so the other emails, the phone numbers and the web addresses are plain text. "Opt-Out" and "Opt-In", in "Sales of Personal Information", are meant to be links ("By clicking the Opt-Out link, you will generate an email"), and the design gives no address for them.
+- **Two names in the design's list are shorter than their headings:** "Exercising Your Rights" and "Other Privacy Rights". The block prints the heading as it is written.
+- **The cookie banner is not built.** Until it is, the site says nothing about cookies: the old Privacy page did.
+- **The title of the only privacy page is "Privacy Notice for California Residents"**, as in the design, and the footer calls it "Privacy Policy".
+- **Both pages keep their Yoast settings**, "noindex, nofollow" among them.
+
+## The 404 page
+
+A Kadence Element, "404 page" (Kadence > Elements), built by `wp velocity seed-404`. Its placement is "Replace 404 page content", so it takes the place of the theme's own message and is edited with blocks: the icon, "404", the title and the text.
+
+"previous page" is a link with the class `vm-back`. `inc/not-found.php` makes any link with that class go one step back in the browser's history. A visitor who opened the broken address directly has no page to go back to: for them the link keeps its own address, the home page.
+
 ## The loan calculator
 
 A block of the theme, "Loan Scenario Calculator", in `blocks/loan-calculator`. It has no settings in the editor: the editor shows it as it looks on the site, but it cannot be clicked there. To try it, use Preview or the published page.
@@ -527,6 +577,8 @@ The home hero plays a looping background video. It is set in the Hero row's own 
 3. Replace the video file. Keep "Show play and pause buttons" on.
 4. Replace the **Background image** too, with a still of the video's first frame. It is the poster: what visitors see before the video starts, and what they keep if they asked for reduced motion or data saving.
 5. Update.
+
+The video is a media library item ("Home hero video"), not a file of the theme. `wp velocity seed-home` copies it there from `inc/seed/media/hero.mp4` the first time, and reuses that item after that.
 
 ### Preparing the file
 

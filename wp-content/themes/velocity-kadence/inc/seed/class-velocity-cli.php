@@ -1020,6 +1020,154 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Fills the legal pages: Terms of Use and Privacy (the Privacy Notice for
+	 * California Residents).
+	 *
+	 * Each page gets the layout of the design: the list of sections on the
+	 * left, which stays in view, and the text on the right. The text comes
+	 * from the files in inc/seed/data, taken from the design.
+	 *
+	 * A page that is missing is created. A page that already has content is
+	 * left alone unless --force is given: Terms of Use exists, with the text
+	 * of the old site, so it needs --force to get the new one.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--page=<key>]
+	 * : Only this page: terms or privacy. All of them when left out.
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * [--force]
+	 * : Replace the content of a page that already has some.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-legal-pages
+	 *     wp velocity seed-legal-pages --page=terms --force --execute
+	 *
+	 * @subcommand seed-legal-pages
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_legal_pages( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+		$only          = (string) WP_CLI\Utils\get_flag_value( $assoc_args, 'page', '' );
+		$pages         = Velocity_Legal::pages();
+
+		if ( '' !== $only && ! isset( $pages[ $only ] ) ) {
+			WP_CLI::error( sprintf( 'Unknown page "%s". Use one of: %s.', $only, implode( ', ', array_keys( $pages ) ) ) );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		foreach ( $pages as $key => $legal ) {
+			if ( '' !== $only && $key !== $only ) {
+				continue;
+			}
+
+			$data = Velocity_Legal::data( $legal['data'] );
+			$page = get_page_by_path( $legal['slug'] );
+
+			if ( ! $data ) {
+				WP_CLI::warning( sprintf( '%s: the file inc/seed/data/%s is missing or is not valid. Skipped.', $legal['title'], $legal['data'] ) );
+				continue;
+			}
+
+			if ( $page && '' !== trim( $page->post_content ) && ! $this->force ) {
+				WP_CLI::log( sprintf( '  keep     page  %s (#%d): it already has content. Use --force to replace it.', $legal['title'], $page->ID ) );
+				continue;
+			}
+
+			if ( ! $this->execute ) {
+				WP_CLI::log( sprintf( '  %s  page  %s, %d sections', $page ? 'fill    ' : 'create  ', $legal['title'], count( $data['sections'] ) ) );
+				continue;
+			}
+
+			if ( $page ) {
+				$page_id = (int) $page->ID;
+			} else {
+				$page_id = wp_insert_post(
+					array(
+						'post_type'   => 'page',
+						'post_title'  => $legal['title'],
+						'post_name'   => $legal['slug'],
+						'post_status' => 'publish',
+					),
+					true
+				);
+
+				if ( is_wp_error( $page_id ) ) {
+					WP_CLI::error( $page_id->get_error_message() );
+				}
+			}
+
+			wp_update_post(
+				array(
+					'ID'           => $page_id,
+					'post_title'   => $legal['title'],
+					'post_content' => wp_slash( Velocity_Legal::content( $page_id, $data ) ),
+				)
+			);
+
+			WP_CLI::log( sprintf( '  %s  page  %s (#%d), %d sections', $page ? 'fill    ' : 'create  ', $legal['title'], $page_id, count( $data['sections'] ) ) );
+		}
+
+		WP_CLI::success( $this->execute ? 'Legal pages written. Edit them in the block editor from now on.' : 'Dry run finished.' );
+	}
+
+	/**
+	 * Creates the "page not found" screen: a Kadence Element that takes the
+	 * place of the theme's own 404 content (Kadence > Elements, "404 page").
+	 *
+	 * An element that already exists is left alone unless --force is given.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * [--force]
+	 * : Rebuild the element. This DISCARDS what was changed in the editor.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-404
+	 *     wp velocity seed-404 --execute
+	 *
+	 * @subcommand seed-404
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_404( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		$this->seed_post(
+			'not-found',
+			'kadence_element',
+			'404 page',
+			static function ( $post_id ) {
+				return Velocity_Legal::not_found( $post_id );
+			},
+			array(
+				'_kad_element_type'              => 'default',
+				'_kad_element_hook'              => 'replace_404',
+				'_kad_element_hook_priority'     => 10,
+				'_kad_element_show_conditionals' => '[{"rule":"general|site","select":"all","ids":[],"subRule":"","subSelection":[],"mustMatch":false}]',
+			)
+		);
+
+		WP_CLI::success( $this->execute ? 'The 404 element is in place. Edit it in the block editor from now on.' : 'Dry run finished.' );
+	}
+
+	/**
 	 * Moves pages to their addresses in the new site's URL list.
 	 *
 	 * For each page in PAGE_SLUG_CHANGES that still has its old slug, it

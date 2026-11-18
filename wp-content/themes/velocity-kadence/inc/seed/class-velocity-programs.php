@@ -514,18 +514,29 @@ class Velocity_Programs {
 	 * @param array[]  $rows    Rows of cells. A cell is a string, or a list of items.
 	 * @param array    $o       Options: size (text size in px, 14), first (width of
 	 *                          the first column in percent, 22), label (weight of
-	 *                          a row's label, 400), class and name.
+	 *                          a row's label, 400), class and name. For a table
+	 *                          with lines instead of stripes: lines (true),
+	 *                          widths (percent of every column), head (weight
+	 *                          of the header, 600), lh (line height, 1.3) and
+	 *                          padding (of a cell: top, right, bottom, left) and
+	 *                          margin (of the table).
 	 * @return string
 	 */
 	public static function table( $post_id, $key, $head, $rows, $o = array() ) {
 		$o = array_merge(
 			array(
-				'size'  => 14,
-				'first' => 22,
-				'label' => '400',
+				'size'    => 14,
+				'first'   => 22,
+				'label'   => '400',
+				'lines'   => false,
+				'widths'  => array(),
+				'head'    => '600',
+				'lh'      => 1.3,
+				'padding' => array( '16', '16', '16', '16' ),
+				'margin'  => array(),
 				// Keeps a readable width on small screens and scrolls sideways. See style.css.
-				'class' => 'vm-compare',
-				'name'  => 'Comparison table',
+				'class'   => 'vm-compare',
+				'name'    => 'Comparison table',
 			),
 			$o
 		);
@@ -533,7 +544,7 @@ class Velocity_Programs {
 		$plain = array(
 			'size'   => array( $o['size'], '', '' ),
 			'weight' => '400',
-			'lh'     => 1.3,
+			'lh'     => $o['lh'],
 			'margin' => array( '0', '', '0', '' ),
 		);
 
@@ -618,8 +629,8 @@ class Velocity_Programs {
 		$columns = array();
 		foreach ( $head as $c => $cell ) {
 			$columns[] = array(
-				'useAuto' => 0 !== $c,
-				'width'   => 0 === $c ? $o['first'] : '',
+				'useAuto' => $o['widths'] ? false : 0 !== $c,
+				'width'   => $o['widths'] ? $o['widths'][ $c ] : ( 0 === $c ? $o['first'] : '' ),
 				'unit'    => '%',
 			);
 		}
@@ -634,11 +645,11 @@ class Velocity_Programs {
 			'evenOddBackground'   => true,
 			'backgroundColorOdd'  => '#f2f4fc',
 			'backgroundColorEven' => Velocity_Seed::color( 'palette9' ),
-			'cellPadding'         => array( '16', '16', '16', '16' ),
-			'mobileCellPadding'   => array( '12', '12', '12', '12' ),
+			'cellPadding'         => $o['padding'],
+			'mobileCellPadding'   => $o['lines'] ? $o['padding'] : array( '12', '12', '12', '12' ),
 			'headerAlign'         => 'left',
-			'headerTypography'    => Velocity_Seed::typography( 16, '600', 1.47 ),
-			'dataTypography'      => Velocity_Seed::typography( $o['size'], '', 1.3 ),
+			'headerTypography'    => Velocity_Seed::typography( 16, $o['head'], 1.47 ),
+			'dataTypography'      => Velocity_Seed::typography( $o['size'], '', $o['lh'] ),
 			'columnSettings'      => $columns,
 			'className'           => $o['class'],
 			'borderStyle'         => array(
@@ -652,6 +663,18 @@ class Velocity_Programs {
 			),
 			'metadata'            => array( 'name' => $o['name'] ),
 		);
+
+		if ( $o['margin'] ) {
+			$attrs['margin'] = $o['margin'];
+		}
+
+		// Lines under the rows instead of stripes.
+		if ( $o['lines'] ) {
+			$attrs['evenOddBackground'] = false;
+			$attrs['borderOnRowOnly']   = true;
+			$attrs['borderStyle'][0]['bottom'] = array( '#d1d6de', 'solid', 1 );
+			unset( $attrs['backgroundColorOdd'], $attrs['backgroundColorEven'] );
+		}
 
 		// No class leaves the table to shrink with the screen.
 		if ( ! $attrs['className'] ) {
