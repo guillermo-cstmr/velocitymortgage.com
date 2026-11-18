@@ -85,10 +85,12 @@ Row Layout, one column.
 
 The rounded, colored area that sits inset from the page edges, as in Programs and in the five steps.
 
-- **Outer Row Layout**: full width, no background. Padding 32 left and right. Mobile padding 0.
+- **Outer Row Layout**: full width, no background. Max width 1920. Padding 32 left and right. Mobile padding 0.
 - **Section inside it**: carries the look. Background color or gradient. Border radius 30, mobile 0. Padding 112 top and bottom, 64 sides. Tablet 80 and 32. Mobile 64 and 20.
 
 On mobile the gutters and the radius drop to zero, so the panel runs edge to edge. That is the rule for any section wider than the content column.
+
+On very wide screens a panel stops growing at 1920px, gutters included, and stays centered. A row inside a panel gets its own max width, 1280 for a full row, so the content lines up with the rest of the page while the panel grows. A section with a plain full-width background, such as the people on the About Us page, has no limit.
 
 ### A card
 
@@ -154,26 +156,47 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 |---|---|---|
 | `vm-eyebrow` | Text (Adv) | Adds the orange dot before a small label. Text has no setting for that |
 | `vm-stats` | Row Layout | On tablet and mobile the items wrap centered, so an odd one out sits in the middle. A row's grid leaves it on the left |
-| `vm-deals` | Query Loop over the properties | Shows them as deal cards in three columns. Query Loop is made of core blocks, which have no card settings in this theme |
-| `vm-deal-card` | The Group around each post in that Query Loop | The card itself. Inside it go a Featured Image block and a Shortcode block with `[vm_deal_info]` |
-| `vm-faq` | Details | Styles a frequently asked question. Details has no styling settings. Questions placed one after another act as a group: opening one closes the others, and one always stays open. Tick "Open by default" on the first |
+| `vm-tag` | Text (Adv) used as a small filled label | Makes it as wide as its text, and hides it, keeping its space, when its dynamic content is empty |
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule, bold text and an arrow. Navigation has no per-item styling |
+| `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
+| `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
+| `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
+| `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
+| `vm-compare` | Kadence Table | Keeps the table at a readable width on small screens, scrolling sideways. Kadence has no minimum width setting |
+| `vm-toggle` | Kadence Tabs | Joins the tabs into one control and rounds only its two ends. The block has one radius setting for every tab. See "The program pages" |
+| `vm-hide-empty` | Text (Adv) with dynamic content | The text is not printed when it has no value. Kadence would print it empty, with its background and margins |
+| `vm-filters` | Section holding the Filter, Sort and Filter Reset blocks of a query | Size of the filters, the sort as a pill with its menu, the underline of the reset, and the fold into one button on phones. See "The Featured Deals page" |
+| `vm-legal-toc` | Table of Contents of a legal page | The line between two links and the weight of the section in view. `vm-legal-toc--bar` is the one of a phone and a tablet, which opens and closes. See "The legal pages" |
+| `vm-legal-list` | List (core) in a legal page | Spacing of the list. `vm-legal-list--sub` is a list that belongs under the item before it |
+| `vm-back` | A link | Goes one step back in the browser's history. Only on the 404 page. See "The 404 page" |
+| `vm-needs-items`, `vm-after-items` | A section built around a Kadence query, and the section after it | The first hides while the query lists nothing. The second then loses the colored top it shares with it. See "The Featured Deals page" |
+| `vm-toolkit-inline`, `vm-toolkit-form`, `vm-toolkit-doc`, `vm-toolkit-wl`, `vm-toolkit-branded` | Broker Tools page | Where the unlock form lands, and what hides by itself. Their rules are in the must-use plugin. See [database-and-content.md](database-and-content.md), "Broker Toolkit" |
+| `vm-story-media`, `vm-story-stat` | Section around a photo, and the figures laid over it | Places the figures over the photo. Sections have no setting for overlapping |
 | `vm-footer-main`, `vm-footer-legal` | The two rows of the footer | Line heights, the rule above the legal text, and the underline on legal links |
 
 ## The deal card
 
-The text of a deal card comes from the shortcode `[vm_deal_info]`, defined in `inc/shortcodes.php`. It prints, for the property being shown:
+"Deals Other Brokers Already Placed" on the home page is a Kadence query, "Home: closed deals" (Kadence > Queries), with its card, "Home: closed deals card" (Kadence > Query Cards). The card is made of normal blocks with Kadence's dynamic content, so its look is set in the sidebar:
 
-| Line | Where it comes from |
-|---|---|
-| Closing time tag, with the bolt | The property field "Processed Details Text" |
-| Title | Property type and purpose. Falls back to the property name when both are empty |
-| Program | Loan program |
-| Name | Account executive |
+| On the card | Block | Dynamic content |
+|---|---|---|
+| Photo | Image, with a fixed 2:1 shape | Post featured image |
+| Closing time, with the bolt | Text (Adv) with an icon, a background and the class `vm-tag` | "Deal: closing time". The property field "Processed Details Text" |
+| Title | Text (Adv), linked to the post | "Deal: property type and purpose". Falls back to the property name when both are empty |
+| Program | Text (Adv) | "Deal: loan program" |
+| Name | Text (Adv) | "Deal: account executive" |
 
-A line is left out when the property has no value for it, so an incomplete card means incomplete data on that property. The one exception is the closing time tag: without a value it still keeps its space, invisibly, so the titles line up across the cards. The title links to the property, and that link covers the whole card.
+The four "Deal: ..." fields are in the dynamic content list under "Velocity". They exist because Kadence has no field for a taxonomy term as plain text. They are defined in `inc/dynamic-content.php`, where a new one takes a line and a small function.
 
-It is a shortcode because core blocks cannot print a custom field, or a taxonomy term without turning it into a link. In the editor the block shows the shortcode text, not the result.
+A text is left out when the property has no value for it, so an incomplete card means incomplete data on that property. The one exception is the closing time: without a value it keeps its space, invisibly, so the titles line up across the cards. The title links to the property, and `vm-card-link` on the card stretches that link over the whole card.
+
+`wp velocity seed-home` creates the query and its card.
+
+## Frequently asked questions
+
+A Kadence Accordion block. The look of a question at rest, on hover and open, the gap between questions, the plus and minus icon and the answer's padding are settings of the Accordion, under Style. Each question is a pane; its answer is made of Paragraph blocks.
+
+Opening a question closes the others, and "Enable FAQ Schema" is on, so search engines can read the questions and answers. To add a question, select the Accordion and add a pane.
 
 ## Forms
 
@@ -198,6 +221,343 @@ The look of every Gravity Form is in the theme's `style.css`, "Forms": fields, l
 
 `wp velocity seed-forms` prepares both forms on a new environment. See [database-and-content.md](database-and-content.md), "Theme commands".
 
+## Offices map
+
+The map on the Contact page is the block **Offices Map**. It is one of the theme's own blocks, in `blocks/offices-map`, like the loan calculator.
+
+### Editing the offices
+
+Select the map in the editor. The block settings in the sidebar list the offices, one panel each.
+
+| Field | Use |
+|---|---|
+| City | The title of the card, for example "Las Vegas, NV" |
+| Address | As it reads on the card, one line per row: street and suite, then city, state and ZIP code |
+| Latitude, Longitude | Filled in from the address. They can be typed by hand |
+| Move pin right, Move pin down | Optional. To separate pins that sit on top of each other, in pixels of the full size map, which is 904 wide |
+
+To add an office, press "Add office", type the city and the address, and click outside the address field. The pin appears on the map in the editor. "Move up" and "Move down" change the order of the cards in the list shown on phones.
+
+The offices are saved in the block, with the page. Copying the block to another environment brings them along.
+
+### How a pin is placed
+
+1. When an address is typed or changed, the editor asks the site for its coordinates. The site looks the exact address up in the US Census Bureau geocoder.
+2. The Census Bureau does not know every street, office parks in particular. For those, the last line of the address (city, state and ZIP code) is looked up in OpenStreetMap instead, and the pin goes on the town. On a map of the whole country that is the same place. The editor says which of the two happened.
+3. The theme turns the coordinates into a position on the drawing.
+
+Neither service needs a key. Nothing is looked up when a visitor opens the page: the coordinates are stored in the block.
+
+Only US addresses are found. For any other place, or if both lookups fail, type the latitude and longitude by hand.
+
+### The seven offices of the design
+
+The design moves some pins away from their real place so that neighboring offices can be told apart, mostly in Southern California. The offices created by `wp velocity seed-contact` carry those moves in "Move pin right" and "Move pin down", so they sit exactly where the design draws them. A new office starts at its real place.
+
+### The drawing
+
+`assets/images/us-map.svg` is the map from Figma, without the pins. It follows the Albers USA projection, with Alaska and Hawaii drawn smaller in the bottom left corner. `inc/offices.php` projects a place the standard way and then scales it onto the drawing, with one scale for the lower 48 states, one for Alaska and one for Hawaii. Those numbers were measured against this drawing: for the lower 48, a state's outline and its projection agree within about 3 pixels.
+
+If the drawing is replaced with a different one, the numbers have to be measured again, or the pins will be off.
+
+### On the page
+
+- Hovering a pin, focusing it with the keyboard or clicking it opens the office's card above it. A click keeps it open until another pin is clicked, Escape is pressed or the visitor clicks elsewhere.
+- Below 768px there is no room for that. The pins are decoration and the cards are listed under the map.
+- The card's look and the pin are in the block's `style.css`.
+
+## The About Us page
+
+The page at `/about/` is built from the recipes above plus four pieces of its own: a timeline, a photo with figures over it, a list of people and a carousel. The two lists are Kadence queries. `wp velocity seed-company` creates its first version.
+
+### Timeline
+
+Two block styles, picked in the Styles panel of the block.
+
+| Style | Put it on | What it does |
+|---|---|---|
+| Timeline | The Section that holds the texts | Draws the line down its left side. Give the Section 26px of left padding |
+| Timeline point | A Text (Adv) inside that Section | Draws a dot on the line, level with the text's first line |
+
+A text without "Timeline point" belongs to the point above it. To add a date to the story, duplicate a text that has the dot.
+
+### Photo with figures
+
+In "The Velocity Story", the photo and the three orange figures are normal blocks: a Kadence Image and three Sections, inside a Section with the class `vm-story-media`. Their texts, colors and sizes are block settings. The classes only place them:
+
+| Class | Put it on | Where it goes |
+|---|---|---|
+| `vm-story-media` | The Section around the photo and the figures | |
+| `vm-story-stat vm-story-stat--volume` | A figure's Section | Top left, over the photo's corner |
+| `vm-story-stat vm-story-stat--years` | A figure's Section | Bottom right |
+| `vm-story-stat vm-story-stat--offices` | A figure's Section | The wide one, bottom left |
+
+On phones nothing overlaps: the figures line up under the photo. In the editor they show stacked under the photo; use Preview to see them in place.
+
+The labels under the figures are 14px. The design draws them at 9.5px and 8px, which is too small to read.
+
+### People
+
+"The People Moving Deals Forward" is a Kadence query, the same kind of block as the careers listing page. It has two parts, both edited in the block editor:
+
+| Part | Where | What it holds |
+|---|---|---|
+| The query | Kadence > Queries, "About Us: people" | What is listed: Staff, of the type "Sales Directors", by their Order field, lowest first |
+| The card | Kadence > Query Cards, "About Us: people card" | The look of one person, and how many show per line: 4, 3 on tablet, 2 on phones |
+
+The card is made of normal blocks with Kadence's dynamic content, so each part is styled in the sidebar:
+
+| On the card | Block | Dynamic content |
+|---|---|---|
+| Photo | Image | Post featured image, size Thumbnail |
+| Name | Text (Adv), linked to the post | Post title |
+| Line under the name | Text (Adv) | Custom field `velocity_staff_title_short`. For sales directors that is their office |
+| LinkedIn icon | Icon, with a link | Custom field `velocity_staff_linkedin_url` |
+
+To add someone, create the person in Staff with that type. Nothing changes on the page.
+
+Two classes do what the blocks cannot:
+
+- `vm-card-link`, on the card's Section, stretches the name's link over the whole card. Kadence's own "link the Section" option lays an empty link over the card, with no name for screen readers.
+- `vm-people`, on the section's row, centers a last line of people that is not full. If the cards per line or the gaps change on the query card, the numbers in `style.css` under "vm-people" have to follow.
+
+The section has the HTML anchor `team`, so `/about/#team` lands on it. "Our Team" in the menu uses that address.
+
+### Carousel
+
+A Section with the class `vm-carousel` turns the Kadence query inside it into a row that scrolls sideways: three cards in view on desktop, two on tablet, one and a bit of the next on phones. It scrolls by touch, trackpad or keyboard. When the cards do not fit, `assets/js/carousel.js` adds a previous and a next arrow at the bottom right of the Section, beside its last block. With few cards there are no arrows. Kadence's query has no carousel of its own.
+
+"Careers at Velocity" uses it with the query "About Us: open positions" and its card, "About Us: open positions card":
+
+| On the card | Block | Dynamic content |
+|---|---|---|
+| Title | Text (Adv), linked to the post | Post title |
+| Offices | Text (Adv) | "Career: cities on one line", under Velocity in the list. It prints the "City/Cities" field with a dot between cities. Defined in `inc/dynamic-content.php` |
+| Summary | Text (Adv) | Custom field `career-short-description` |
+
+Only published careers show. The card's Section has `vm-card-link` too. The label of the arrows is set in `inc/carousel.php`.
+
+### Colors that differ from the design
+
+- **Mission and promise cards**: the text is 19px bold instead of 16px regular. Deep Rust on that background has a contrast of 4.1 to 1. Body text needs 4.5, large text (19px bold and up) needs 3. To go back to a regular weight, the text needs a darker color.
+- **Intro texts in gray** use the Gray of the palette (`#666666`) instead of `#606060`.
+
+**The spacing is the design's**, measured against Figma: lines of 24px, 24px between two paragraphs, 60px above a heading and 24px under it, 24px above and under the table, no space between a paragraph and the list it introduces nor between two items. The title starts 83px under the header and the card 44px under the top of the title; the card is 343px wide and the text 738px.
+
+### What is still open
+
+- **Order of the people**: the design shows Marco Castaneda first. The page follows each person's Order field.
+
+## The Programs Overview page
+
+The page at `/loan-programs/` reuses the home page's pieces: the trust strip, the cards, the panel, the call to action band and the frequently asked questions. `wp velocity seed-programs-page` creates its first version.
+
+### The four programs
+
+Each program is the same pair of rows, inside the panel:
+
+- **Image and text**: a two-column row, like the programs of the home page. The photo is a plain rectangle with the block style "Program: cut right" when it sits on the left and "Program: cut left" when it sits on the right (see "Program images"). The small label above the title has the class `vm-eyebrow`.
+- **Figures**: a three-column row with a top and a bottom border, set in the row's Border settings. Each column holds three texts: the label, the figure and a note.
+
+To add a program, duplicate a whole "Program" row and replace its photo and texts. Photos are 1084 by 762 pixels.
+
+### The comparison table
+
+A Kadence Table block. Its look is all block settings: the striped rows (Even and Odd row backgrounds), the cell padding, the text sizes, the first column's width, and the first row and first column as headers. Each cell holds blocks of its own: a Text (Adv), or a List when it has several items. The program names in the header are links to each program's page.
+
+The table has the class `vm-compare`. Kadence has no setting for a minimum width, so on small screens that class keeps the table at a readable width and lets it scroll sideways.
+
+### The hero illustration
+
+The photo with the Velocity mark and the four program labels is one image, `assets/images/programs/hero.webp`, exported from Figma. The labels are part of the picture, so a change to a program's name means a new export.
+
+### What is still open
+
+- **The links to each program's page** ("Explore ..." and the table header) point to `#`. Those pages are not built yet. The addresses of the program pages are in one place, `Velocity_Programs::links()`.
+- **Flex I/O's label** reads "Short-term loan". The design repeats "Long-term loan" there.
+
+## The Process page
+
+The page at `/process/` reuses the cards, the panel, the call to action band and the frequently asked questions. `wp velocity seed-process` creates its first version. Three things are its own.
+
+### Numbered steps
+
+Each step is a horizontal Section with a rule above it, set as its top border. Inside it sit two Sections:
+
+- **The number**: 48 by 48, with its background, border and radius in the block settings, and the number as a Text (Adv).
+- **Title and text**: set to grow, with a 12px gap between its two texts.
+
+To add a step, duplicate one and change its number and texts. The rules are Deep Rust in "Partner With Us in Five Steps" and gray in "How Your First Deal Moves Forward"; that is the border color of each step.
+
+### Document lists
+
+The two lists of the approval package are Kadence Icon List blocks: the bullet is the icon (a small filled circle), and the gap between items, the text size and the colors are block settings.
+
+### Cards that scroll sideways
+
+"What You’ll Need From Your Client" uses the carousel with cards typed into the page, instead of a query:
+
+| Class | Put it on | What it does |
+|---|---|---|
+| `vm-carousel` | The Section around the cards | Adds the arrows when the cards do not fit |
+| `vm-carousel--below` | The same Section | Puts the arrows under the cards. Without it they sit at the bottom right, beside the Section's last block |
+| `vm-carousel-track` | A horizontal Section inside it, holding the cards | Makes the cards scroll sideways and keep the width set in their block settings (410px here; never more than 86% of the list, so the next card shows) |
+
+To add a card, duplicate one inside the track.
+
+### The hero drawing
+
+The four steps on the line are one SVG, `assets/images/process/hero-steps.svg`, exported from Figma. The animation lives inside the file, in its `<style>`: the line draws from the first step to the last and each step appears as the line reaches it, once, when the image loads. Visitors who ask for reduced motion see the finished drawing. A new export from Figma loses the animation: copy the `<style>`, the mask and the `step` classes over from the current file.
+
+### What is still open
+
+- **"How long does approval last?"** answers 30 days, as the copy document has it. The rest of the page, and the call to action on every page, say a year. One of the two is wrong.
+- **The design lets the call to action band overlap the section above it.** Here the band starts after that section.
+
+## The program pages
+
+30-Year Fixed, Fast50, Flex I/O and Super Jumbo are four pages under Programs Overview: `/loan-programs/30-year-fixed/`, `/loan-programs/fast50/`, `/loan-programs/flex-i-o/` and `/loan-programs/jumbo/`. `wp velocity seed-program-pages` creates their first version. One builder makes the four, so they share every section and differ in copy, photo and icons. After that each page is edited on its own in the editor.
+
+### The terms
+
+"... at a Glance" holds a Kadence Table of two columns, with the same settings as the comparison table. 30-Year Fixed and Fast50 have terms for 1-4 units and for commercial property, so they show two tables inside a Kadence Tabs block, "1-4 Units" and "Commercial". The tabs are drawn as one control with two halves: their colors at rest, on hover and selected, their border and padding are settings of the Tabs block, under Style. The class `vm-toggle` on the block joins the two tabs and rounds only the ends, which the block has no setting for. Flex I/O and Super Jumbo lend on 1-4 units only and show one table, with no tabs.
+
+A term that reads the same for both kinds of property is typed twice, once in each table.
+
+### The case study
+
+"A Deal That Fits" is a Kadence query per program, "Program case study: ..." (Kadence > Queries). It lists the latest case study filed under that program in Properties, Programs. The four queries share one card, "Program case study card" (Kadence > Query Cards), so a change to the card shows on the four pages.
+
+| On the card | Block | Dynamic content |
+|---|---|---|
+| Title | Text (Adv), H2 | Post title |
+| Photo | Image, with a fixed 3:4 shape | Post featured image |
+| Three boxes | Section with two Text (Adv) each | The case study fields "Loan Amount", "Days to Close" and "Location" |
+| Button | Button | Post URL |
+
+**A program with no case study shows nothing.** The section's space is part of the card, so the page closes up, with no empty band. To show the section, publish a case study and choose its program. To change which one shows when a program has several, edit the query: it takes the most recent.
+
+The design leaves the three boxes, and a "Result" label over the photo, to be defined. The boxes show what a case study already holds. The label is not built.
+
+### The other programs
+
+Three cards on the peach band, one for each of the other programs. Each is a Section with a set height on desktop and its content pushed apart: icon at the top, text and button at the bottom. Their buttons have less side padding than the rest, so the longest label fits on one line.
+
+The call to action band sits half over the peach. No CSS: the background of its section is a gradient with a hard stop, peach for the first 136px and white after.
+
+### The hero photo
+
+Each hero photo is one image exported from Figma, `assets/images/programs/hero-*.webp`, with the orange shape and the small label ("Property types ...") in it. The label's text is in the image's alternative text.
+
+### What is still open
+
+- **The copy documents (V1) differ from the text in Figma** in the titles, the figures on the orange band and some terms. The pages follow the copy documents.
+- **Fast50, "How fast does Fast50 close?"** says two to six weeks. The table and the orange band say two to four weeks for 1-4 units and 30 to 45 days for commercial.
+- **Super Jumbo, "How long does a Super Jumbo loan take to close?"** says two to four weeks. The table and the orange band say two weeks to 45 days.
+- **Super Jumbo, "How large can a Super Jumbo loan be?"** says combined financing can reach "90% (i.e., 95% CLTV)". One of the two figures is wrong.
+- **The Flex I/O hero photo is a stock preview with a watermark**, and a comment in Figma asks for another photo.
+- **The Kadence Table has no setting for top alignment**, so a row's label is centered beside a long list, where the design aligns it to the top.
+
+## The Featured Deals page
+
+`/featured-investment-property-loans/` is a page, built by `wp velocity seed-deals-page` and edited in the block editor after that. The address used to be the list of deals WordPress makes by itself, which cannot be edited with blocks: the must-use plugin no longer makes that list, so the page takes the address. Each deal keeps its own page, under `/property/`.
+
+### The gallery
+
+One Kadence query, "Featured Deals: gallery" (Kadence > Queries), with its card, "Featured Deals: gallery card" (Kadence > Query Cards). Inside the query, above and below the cards, are Kadence's own blocks:
+
+| Block | What it does here |
+|---|---|
+| Filter, three of them | A dropdown each for Property Type, Loan Purpose and Loan Program. They list the terms in use |
+| Sort | Date, newest and oldest; amount, high to low and low to high. Drawn as the "Sort By" pill |
+| Filter Reset | "Clear" |
+| Pagination | Nine deals a page, with numbers and arrows |
+| No Results | The message when no deal matches |
+
+Choosing a filter, a sort or a page updates the list without reloading the page, and the address keeps the choice (`?purpose=...`), so a filtered list can be shared as a link.
+
+The look of the dropdowns (border, radius, label and text size) is set on the query itself, under Style. The peach panel around them is a Section with the class `vm-filters`. That class does what the blocks have no setting for: the size and inner space of each filter and its arrow, the sort as a pill, and the underline of "Clear". The circles around the two arrows of the pagination are in `style.css` too: the Pagination block has no setting for them.
+
+**Every dropdown of the panel has a menu drawn by the theme** (`vm-select`), white under a filter and peach under the sort, in place of the browser's own list. The filters keep the look of a field and read their choice.
+
+**"Sort By" is a pill with its own menu.** The Filter and Sort blocks print plain dropdowns, whose open list cannot be styled. `assets/js/filters.js` leaves each dropdown in the page, hidden, and adds the field or the pill and the menu over it: choosing in the menu sets the dropdown, and Kadence does the rest. Kadence redraws the filters after each choice, and the script gives the new ones their menu. The choices and their texts are still the Sort block's, edited in the query. The menu works with the keyboard (arrows, Enter, Escape). Kadence lists each pair high to low first, so the menu reads "Amount (High - Low)" before "Amount (Low - High)": the design has them the other way round.
+
+**On phones the panel folds into one button, "Filter and sort".** A tap opens it, and it closes by itself once a filter or a sort is chosen, so the results are back in view. The button shows how many filters are in use: "Filter and sort (1)". The button is added by `assets/js/filters.js` (see `inc/filters.php`). Any Section with the class `vm-filters` gets it.
+
+The card reads the deal with dynamic content:
+
+| On the card | Dynamic content |
+|---|---|
+| Photo | Post featured image, in a fixed 2:1 shape |
+| Closing time, with the bolt | "Deal: closing time". Left out when the deal has none |
+| Title, linked to the deal | "Deal: amount and place" |
+| Under the title | "Deal: program and purpose" |
+| Name | "Deal: account executive" |
+
+**The Region filter is not there yet.** Region has no terms until Velocity sends the list. A filter with nothing to choose prints its label alone, so the command leaves it out while the taxonomy is empty. Once deals have regions, run `wp velocity seed-deals-page --force --execute`, or add a Filter block to the query in the editor and choose Region.
+
+**Sorting by date uses the date the deal was published**, not its "Date Funded" field. Kadence's Sort block takes one custom field, and that one is the loan amount.
+
+Kadence keeps an index of the deals for its filters. It builds it by itself the first time the page is opened after the query is created, and updates it when a deal is saved. If a filter ever shows no choices, Kadence > Queries has "Force Reindex" at the top of the list.
+
+### The stories
+
+"The Stories Behind the Deals" is a second query, "Featured Deals: case studies": the three latest case studies. Its card shows photo, program and purpose, title, summary, amount and date.
+
+The section has the class `vm-needs-items`: while no case study is published, the whole section hides, title and button included, and the call to action after it (`vm-after-items`) loses the peach top it shares with it.
+
+### What is still open
+
+- **Copy and design differ on three points.** The gallery's title: the copy document says "Browse the Deals That We’ve Funded", Figma says "Browse Past Deals We’ve Funded". The page uses the copy document. The copy mentions a filter by date; Figma has Region in its place. The call to action: the copy says "within 24 hours", Figma and every other page say 48. The page says 48.
+- **The programs on the deals are the old ones.** Fifteen deals are filed under FlexTerm and two under Fast50, so those are the choices of the Loan Program filter. None is filed under 30-Year Fixed, Flex I/O or Super Jumbo.
+- **A deal with no photo shows an empty frame.**
+- **The new address, `/featured-deals/`,** in Velocity's list of addresses, is not applied. It is now a matter of renaming the page and adding the redirect.
+
+## The legal pages
+
+Terms of Use (`/terms-of-use/`) and Privacy (`/privacy/`, the Privacy Notice for California Residents) share one layout, built by `wp velocity seed-legal-pages` and edited in the block editor after that: a card with the list of sections on the left, the title and the text on the right.
+
+| Part | Block | Where its look is set |
+|---|---|---|
+| List of sections | Kadence Table of Contents | Block settings: the card (border, radius, shadow), the size and color of the links, the color on hover and of the section in view, the scroll to a section on a click |
+| The column that holds it | Section, with "Sticky" on | Block settings, Advanced: it stays in view while the text scrolls, 120px from the top so the fixed header does not cover it |
+| List of sections on a phone and a tablet | A second Table of Contents, in a Section inside the text column | Block settings: its title "On this page", "Collapsible" on and closed at the start, the Section hidden on desktop and sticky under the header |
+| Title, subtitle, headings, paragraphs | Text (Adv) | Block settings |
+| Lists | List (core) | `vm-legal-list` in `style.css` |
+| Table of categories | Kadence Table | Block settings: no stripes, a line under each row ("Border on rows only"), the width of each column (30, 56.5 and 13.5%), the cell padding. `style.css` starts every cell at the top of its row (`vm-legal-table`). On a phone it keeps a width of 640px and scrolls sideways: `vm-legal-table` in `style.css`, as `vm-compare` does for the comparison tables |
+
+**The list of sections writes itself.** The Table of Contents block reads the headings of the page: add, rename or remove a heading and the list follows. It lists the H2 headings only. A section that should not be in the list is an H3; both look the same. The Privacy Notice has nineteen sections and eight of them in the list, as in the design.
+
+`style.css` adds two things the block has no setting for (`vm-legal-toc`): the line between two links, and the heavier weight of the section in view. For the bar of a phone (`vm-legal-toc--bar`) it adds a height limit, so a long list scrolls inside the bar.
+
+**The table on a phone.** Above it there is a line, "Swipe to see the full table", in a Section hidden on desktop and tablet. `inc/legal.php` also makes the table (and the comparison tables, `vm-compare`) reachable without a finger: it takes the keyboard focus, so the arrow keys scroll it, and a screen reader announces it as a region with a name. A box that scrolls and cannot take the focus fails WCAG 2.1.1.
+
+**Two lists, one per screen size.** The Section of the left column is hidden on tablet and phone; the Section with the bar is hidden on desktop (Block settings, Advanced, Visibility). Both read the same headings.
+
+`assets/js/legal.js`, loaded by `inc/legal.php` only on a page with this list, does two things the block does not:
+
+- It closes the bar of a phone after a press on one of its links.
+- It lands the heading under the header. Kadence works out where to scroll before the page moves, and the header gets shorter as soon as it does, so a press made from the top of the page left the heading under the header. When the scroll stops, the script moves the heading to 24px under the header (and under the bar, on a phone).
+
+**One privacy page.** The old `/privacy/` had a text about cookies and an older version (2020) of this same notice. The notice of the design replaced both. The text about cookies is gone from the page: it is to be covered by a cookie banner, which is not built yet.
+
+**The text came from the design**, not from a document: `inc/seed/data/legal-terms.json` and `legal-privacy.json`. The command only reads them to fill a page. After that the text lives in the page.
+
+### What is still open
+
+- **The text needs a read by Velocity's legal team.** It was copied from Figma word for word, typos included ("non- affiliates", "Part 99)))").
+- **Only one address in the text is a link:** Compliance@velocitymortgage.com, which opens an email (four times in Privacy). The design draws no links, so the other emails, the phone numbers and the web addresses are plain text. "Opt-Out" and "Opt-In", in "Sales of Personal Information", are meant to be links ("By clicking the Opt-Out link, you will generate an email"), and the design gives no address for them.
+- **Two names in the design's list are shorter than their headings:** "Exercising Your Rights" and "Other Privacy Rights". The block prints the heading as it is written.
+- **The cookie banner is not built.** Until it is, the site says nothing about cookies: the old Privacy page did.
+- **The title of the only privacy page is "Privacy Notice for California Residents"**, as in the design, and the footer calls it "Privacy Policy".
+- **Both pages keep their Yoast settings**, "noindex, nofollow" among them.
+
+## The 404 page
+
+A Kadence Element, "404 page" (Kadence > Elements), built by `wp velocity seed-404`. Its placement is "Replace 404 page content", so it takes the place of the theme's own message and is edited with blocks: the icon, "404", the title and the text.
+
+"previous page" is a link with the class `vm-back`. `inc/not-found.php` makes any link with that class go one step back in the browser's history. A visitor who opened the broken address directly has no page to go back to: for them the link keeps its own address, the home page.
+
 ## The loan calculator
 
 A block of the theme, "Loan Scenario Calculator", in `blocks/loan-calculator`. It has no settings in the editor: the editor shows it as it looks on the site, but it cannot be clicked there. To try it, use Preview or the published page.
@@ -217,6 +577,8 @@ The home hero plays a looping background video. It is set in the Hero row's own 
 3. Replace the video file. Keep "Show play and pause buttons" on.
 4. Replace the **Background image** too, with a still of the video's first frame. It is the poster: what visitors see before the video starts, and what they keep if they asked for reduced motion or data saving.
 5. Update.
+
+The video is a media library item ("Home hero video"), not a file of the theme. `wp velocity seed-home` copies it there from `inc/seed/media/hero.mp4` the first time, and reuses that item after that.
 
 ### Preparing the file
 
@@ -257,6 +619,10 @@ Where each part lives:
 The mobile and tablet menu (Off Canvas) opens **under** the header, which stays visible on top. Its top edge follows the header's height at that moment: 72 px at the top of the page, 56 px once scrolled. The hamburger turns into an X while the menu is open and closes it. The panel's own close button is hidden, but still reached with the keyboard. `assets/js/header.js` measures the header and adds the closing; the rules are in `style.css`.
 
 `style.css` also fixes a Kadence detail: after the menu closes, the hamburger got the inherited navy color on focus and disappeared on the navy header.
+
+### Menu items that only open a submenu
+
+"Broker Programs", "Resources" and "Company" have no page of their own. In the menu (Kadence > Navigation) each has "Disable link" and "Open dropdown on click" on, in the link's settings: a click on the name opens its submenu, on desktop and in the mobile menu. Without them the item is a link to "#", and a click on it closes the mobile menu and marks the three items as the current page.
 
 ## Where block styles live in the sidebar
 

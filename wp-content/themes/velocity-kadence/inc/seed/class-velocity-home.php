@@ -73,7 +73,7 @@ class Velocity_Home {
 	 * @param string $color Border color.
 	 * @return array
 	 */
-	private static function border( $color ) {
+	public static function border( $color ) {
 		$side = array( $color, '', 1 );
 
 		return array(
@@ -93,7 +93,7 @@ class Velocity_Home {
 	 * @param array $overrides Settings that differ from the default card.
 	 * @return array
 	 */
-	private static function card( $overrides = array() ) {
+	public static function card( $overrides = array() ) {
 		return array_merge(
 			array(
 				'background'         => Velocity_Seed::color( 'palette9' ),
@@ -121,7 +121,7 @@ class Velocity_Home {
 	 * @param string $animation Kadence animation name.
 	 * @return array
 	 */
-	private static function card_animation( $position, $animation = 'fade-up' ) {
+	public static function card_animation( $position, $animation = 'fade-up' ) {
 		return array(
 			'kadenceAnimation'  => $animation,
 			'kadenceAOSOptions' => array(
@@ -143,7 +143,15 @@ class Velocity_Home {
 	 * Options: tag (h1 to h6, or p), align, size [desktop, tablet, mobile],
 	 * weight, lh (unitless line height), color and background (palette slug or
 	 * any CSS color), margin and padding [top, right, bottom, left], transform,
-	 * family ("heading" for the heading font), width (max width in px), class.
+	 * family ("heading" or "body", to set a text in the other font), width
+	 * (max width in px), class,
+	 * link and link_hover (colors of the links inside the text), radius
+	 * [four corners] and icon (a Kadence icon name, shown before the text).
+	 *
+	 * Inside a Kadence query card, two more options read the post being
+	 * listed: dynamic, a Kadence dynamic content field such as "post|post_title",
+	 * or array( "post|post_custom_field", "the-field-name" ) for a custom field,
+	 * which replaces the text; and to_post, which links the text to the post.
 	 *
 	 * @param int    $post_id Page ID.
 	 * @param string $key     Key for the unique ID.
@@ -151,7 +159,7 @@ class Velocity_Home {
 	 * @param array  $o       Options.
 	 * @return string
 	 */
-	private static function t( $post_id, $key, $text, $o = array() ) {
+	public static function t( $post_id, $key, $text, $o = array() ) {
 		$uid     = Velocity_Seed::uid( $post_id, 't-' . $key );
 		$tag     = isset( $o['tag'] ) ? $o['tag'] : 'p';
 		$attrs   = array( 'uniqueID' => $uid );
@@ -185,8 +193,10 @@ class Velocity_Home {
 		}
 
 		if ( ! empty( $o['lh'] ) ) {
-			$attrs['fontHeight']     = array( $o['lh'], '', '' );
-			$attrs['fontHeightType'] = '-';
+			// A number with no unit. The unit is left out: with "-", the
+			// editor's name for "no unit", Kadence prints "line-height:1.5-"
+			// on the site, which the browser throws away.
+			$attrs['fontHeight'] = array( $o['lh'], '', '' );
 		}
 
 		if ( ! empty( $o['weight'] ) ) {
@@ -195,6 +205,11 @@ class Velocity_Home {
 
 		if ( ! empty( $o['family'] ) && 'heading' === $o['family'] ) {
 			$attrs['typography'] = 'var( --global-heading-font-family, inherit )';
+		}
+
+		// A heading set in the text font.
+		if ( ! empty( $o['family'] ) && 'body' === $o['family'] ) {
+			$attrs['typography'] = 'var( --global-body-font-family, inherit )';
 		}
 
 		if ( ! empty( $o['transform'] ) ) {
@@ -209,6 +224,32 @@ class Velocity_Home {
 			$attrs['maxWidth'] = array( $o['width'], '', '' );
 		}
 
+		// A filled label: background, padding, radius and an icon before the text.
+		if ( ! empty( $o['background'] ) ) {
+			$attrs['background'] = $o['background'];
+		}
+
+		if ( isset( $o['padding'] ) ) {
+			$attrs['padding'] = $o['padding'];
+		}
+
+		if ( isset( $o['radius'] ) ) {
+			$attrs['borderRadius'] = $o['radius'];
+		}
+
+		if ( ! empty( $o['icon'] ) ) {
+			$attrs['icon'] = $o['icon'];
+		}
+
+		// Color of the links inside the text, and on hover.
+		if ( ! empty( $o['link'] ) ) {
+			$attrs['linkColor'] = $o['link'];
+		}
+
+		if ( ! empty( $o['link_hover'] ) ) {
+			$attrs['linkHoverColor'] = $o['link_hover'];
+		}
+
 		// A highlighted word drawn as a pill, using Kadence's text highlight.
 		if ( ! empty( $o['pill'] ) ) {
 			$attrs['markColor']        = Velocity_Seed::color( 'palette5' );
@@ -219,17 +260,63 @@ class Velocity_Home {
 			$text                      = '<mark class="kt-highlight">' . $text . '</mark>';
 		}
 
-		return Velocity_Seed::block(
-			'kadence/advancedheading',
-			$attrs,
-			sprintf(
-				'<%1$s class="%2$s" data-kb-block="kb-adv-heading%3$s">%4$s</%1$s>',
-				$tag,
-				esc_attr( implode( ' ', $classes ) ),
-				$uid,
-				$text
-			)
+		$dynamic = array();
+
+		// The text comes from the post being listed. Kadence swaps the placeholder.
+		if ( ! empty( $o['dynamic'] ) ) {
+			$field  = (array) $o['dynamic'];
+			$custom = isset( $field[1] ) ? $field[1] : '';
+			$text   = sprintf(
+				'<span data-field="%1$s"%2$s class="kb-inline-dynamic">dynamic text placeholder</span>',
+				esc_attr( $field[0] ),
+				$custom ? ' data-para="kb_custom_input" data-custom="' . esc_attr( $custom ) . '"' : ''
+			);
+
+			$dynamic['content'] = array(
+				'enable'        => true,
+				'source'        => '',
+				'field'         => $field[0],
+				'custom'        => $custom,
+				'para'          => $custom ? 'kb_custom_input' : '',
+				'before'        => '',
+				'after'         => '',
+				'fallback'      => '',
+				'relate'        => '',
+				'relcustom'     => '',
+				'shouldReplace' => 1,
+			);
+		}
+
+		$html = sprintf(
+			'<%1$s class="%2$s" data-kb-block="kb-adv-heading%3$s">%4$s</%1$s>',
+			$tag,
+			esc_attr( implode( ' ', $classes ) ),
+			$uid,
+			$text
 		);
+
+		// The whole text links to the post being listed.
+		if ( ! empty( $o['to_post'] ) ) {
+			$attrs['link']   = "[kb-dynamic field='post|post_url' type='url']";
+			$dynamic['link'] = array(
+				'enable'   => true,
+				'source'   => '',
+				'field'    => 'post|post_url',
+				'custom'   => '',
+				'para'     => '',
+				'before'   => '',
+				'after'    => '',
+				'fallback' => '',
+			);
+			$html            = '<a href="' . $attrs['link'] . '" class="kb-advanced-heading-link kt-adv-heading-link' . $uid . '">' . $html . '</a>';
+		}
+
+		if ( $dynamic ) {
+			$attrs['inQueryBlock']   = true;
+			$attrs['kadenceDynamic'] = $dynamic;
+		}
+
+		return Velocity_Seed::block( 'kadence/advancedheading', $attrs, $html );
 	}
 
 	/**
@@ -240,7 +327,7 @@ class Velocity_Home {
 	 * @param string $text    Title. May contain inline HTML.
 	 * @return string
 	 */
-	private static function title( $post_id, $key, $text ) {
+	public static function title( $post_id, $key, $text ) {
 		return self::t(
 			$post_id,
 			$key . '-title',
@@ -264,7 +351,7 @@ class Velocity_Home {
 	 * @param array  $o       Extra options for t().
 	 * @return string
 	 */
-	private static function subtitle( $post_id, $key, $text, $o = array() ) {
+	public static function subtitle( $post_id, $key, $text, $o = array() ) {
 		return self::t(
 			$post_id,
 			$key . '-subtitle',
@@ -288,7 +375,7 @@ class Velocity_Home {
 	 * @param string $text    Text.
 	 * @return string
 	 */
-	private static function body( $post_id, $key, $text ) {
+	public static function body( $post_id, $key, $text ) {
 		return self::t( $post_id, $key . '-body', $text, array( 'margin' => array( '0', '', '0', '' ) ) );
 	}
 
@@ -301,7 +388,7 @@ class Velocity_Home {
 	 * @param array  $o       Extra options for t().
 	 * @return string
 	 */
-	private static function card_title( $post_id, $key, $text, $o = array() ) {
+	public static function card_title( $post_id, $key, $text, $o = array() ) {
 		return self::t(
 			$post_id,
 			$key . '-title',
@@ -323,12 +410,15 @@ class Velocity_Home {
 	 *
 	 * @param int    $post_id Page ID.
 	 * @param string $key     Key for the unique ID.
-	 * @param string $file    File name in assets/images/home.
+	 * @param string $file    File name in the folder.
 	 * @param int    $width   Max width in px.
 	 * @param string $alt     Alternative text. Empty for decorative images.
+	 * @param string $class   Extra class, such as a block style.
+	 * @param string $folder  Folder under assets/images.
+	 * @param array  $extra   Extra block settings, such as a border radius.
 	 * @return string
 	 */
-	private static function image( $post_id, $key, $file, $width, $alt = '', $class = '' ) {
+	public static function image( $post_id, $key, $file, $width, $alt = '', $class = '', $folder = 'home', $extra = array() ) {
 		$uid   = Velocity_Seed::uid( $post_id, 'img-' . $key );
 		$attrs = array(
 			'imgMaxWidth'     => $width,
@@ -339,6 +429,7 @@ class Velocity_Home {
 		if ( $class ) {
 			$attrs['className'] = $class;
 		}
+		$attrs = array_merge( $attrs, $extra );
 
 		return Velocity_Seed::block(
 			'kadence/image',
@@ -347,7 +438,7 @@ class Velocity_Home {
 				'<figure class="wp-block-kadence-image kb-image%1$s%2$s"><img src="%3$s" alt="%4$s" class="kb-img"/></figure>',
 				$uid,
 				( '.svg' === substr( $file, -4 ) ? ' image-is-svg' : '' ) . ( $class ? ' ' . $class : '' ),
-				esc_url( get_stylesheet_directory_uri() . '/assets/images/home/' . $file ),
+				esc_url( get_stylesheet_directory_uri() . '/assets/images/' . $folder . '/' . $file ),
 				esc_attr( $alt )
 			)
 		);
@@ -359,7 +450,7 @@ class Velocity_Home {
 	 *
 	 * @return array
 	 */
-	private static function on_dark() {
+	public static function on_dark() {
 		$white = Velocity_Seed::color( 'palette9' );
 
 		return array(
@@ -378,9 +469,11 @@ class Velocity_Home {
 	 * @param string  $key     Key for the unique IDs.
 	 * @param array[] $buttons Each: label, URL, style (fill or outline), extra settings.
 	 * @param string  $align   left or center.
+	 * @param int[]   $gap     Space between two buttons in px, on desktop and on a phone.
+	 *                         Left out, Kadence's "md" and "sm".
 	 * @return string
 	 */
-	private static function buttons( $post_id, $key, $buttons, $align = 'center' ) {
+	public static function buttons( $post_id, $key, $buttons, $align = 'center', $gap = array() ) {
 		$wrap  = Velocity_Seed::uid( $post_id, $key . 'btns' );
 		$inner = array();
 
@@ -412,7 +505,7 @@ class Velocity_Home {
 		}
 
 		if ( count( $buttons ) > 1 ) {
-			$attrs['gap'] = array( 'md', '', 'sm' );
+			$attrs['gap'] = $gap ? array( $gap[0], '', $gap[1] ) : array( 'md', '', 'sm' );
 		}
 
 		return Velocity_Seed::block(
@@ -432,7 +525,7 @@ class Velocity_Home {
 	 * @param int    $width   Max width in px.
 	 * @return string
 	 */
-	private static function section_header( $post_id, $key, $title, $intro = '', $width = 846 ) {
+	public static function section_header( $post_id, $key, $title, $intro = '', $width = 846 ) {
 		$inner = self::title( $post_id, $key, $title );
 
 		if ( $intro ) {
@@ -461,7 +554,7 @@ class Velocity_Home {
 	 * @param array  $attrs   Extra row settings.
 	 * @return string
 	 */
-	private static function section( $post_id, $key, $inner, $name, $attrs = array() ) {
+	public static function section( $post_id, $key, $inner, $name, $attrs = array() ) {
 		return Velocity_Seed::row(
 			$post_id,
 			$key,
@@ -486,15 +579,18 @@ class Velocity_Home {
 	 * The outer row only provides the side gutters. The Section inside it
 	 * carries the background, the radius and the padding. On mobile the
 	 * gutters and the radius drop to zero, so the panel runs edge to edge.
+	 * On very wide screens the panel stops growing: with its gutters it
+	 * never takes more than 1920px, and stays centered.
 	 *
 	 * @param int    $post_id Page ID.
 	 * @param string $key     Key for the unique IDs.
 	 * @param string $inner   Panel content.
 	 * @param string $name    Name shown in the editor's list view.
 	 * @param array  $surface Background settings for the inner Section.
+	 * @param array  $row     Settings of the outer row that differ, such as a space under the panel.
 	 * @return string
 	 */
-	private static function panel( $post_id, $key, $inner, $name, $surface ) {
+	public static function panel( $post_id, $key, $inner, $name, $surface, $row = array() ) {
 		return Velocity_Seed::row(
 			$post_id,
 			$key,
@@ -515,11 +611,16 @@ class Velocity_Home {
 					)
 				),
 			),
-			array(
-				'align'         => 'full',
-				'padding'       => array( '0', '32', '0', '32' ),
-				'mobilePadding' => array( '0', '0', '0', '0' ),
-				'metadata'      => array( 'name' => $name ),
+			array_merge(
+				array(
+					'align'         => 'full',
+					// The panel and its two gutters.
+					'maxWidth'      => 1920,
+					'padding'       => array( '0', '32', '0', '32' ),
+					'mobilePadding' => array( '0', '0', '0', '0' ),
+					'metadata'      => array( 'name' => $name ),
+				),
+				$row
 			)
 		);
 	}
@@ -554,6 +655,9 @@ class Velocity_Home {
 			) . "\n\n" .
 			self::buttons( $post_id, 'hero', array( array( 'Become a Partner', home_url( '/become-a-partner/' ) ) ) );
 
+		// The video is a media library item, so an editor can replace it.
+		$video = Velocity_Seed::media( 'hero.mp4', 'Home hero video' );
+
 		return Velocity_Seed::row(
 			$post_id,
 			'hero',
@@ -568,8 +672,8 @@ class Velocity_Home {
 				'backgroundVideo'      => array(
 					array(
 						'youTube'  => '',
-						'local'    => get_stylesheet_directory_uri() . '/assets/video/hero.mp4',
-						'localID'  => '',
+						'local'    => $video['url'],
+						'localID'  => $video['id'] ? $video['id'] : '',
 						'vimeo'    => '',
 						'ratio'    => '16/9',
 						'btns'     => true,
@@ -594,17 +698,23 @@ class Velocity_Home {
 	}
 
 	/**
-	 * Trust strip: three numbers on the orange band.
+	 * Trust strip: three figures on the orange band.
 	 *
-	 * @param int $post_id Page ID.
+	 * @param int     $post_id Page ID.
+	 * @param array[] $stats   Each: the figure, then its label. The home
+	 *                         page's own when empty.
+	 * @param array   $row     Row settings that differ, such as a wider max width.
+	 * @param int     $size    Size of the figures in px.
 	 * @return string
 	 */
-	public static function stats( $post_id ) {
-		$stats = array(
-			array( '$2B+', 'Annual lending volume' ),
-			array( '$13.8B+', 'Funded since 2004' ),
-			array( '3,000+', 'Approved broker partners' ),
-		);
+	public static function stats( $post_id, $stats = array(), $row = array(), $size = 24 ) {
+		if ( ! $stats ) {
+			$stats = array(
+				array( '$2B+', 'Annual lending volume' ),
+				array( '$13.8B+', 'Funded since 2004' ),
+				array( '3,000+', 'Approved broker partners' ),
+			);
+		}
 
 		$columns = array();
 		foreach ( $stats as $index => $stat ) {
@@ -622,7 +732,7 @@ class Velocity_Home {
 					$stat[0],
 					array(
 						'family' => 'heading',
-						'size'   => array( 24, '', '' ),
+						'size'   => array( $size, '', '' ),
 						'weight' => '700',
 						'lh'     => 1.1,
 						'margin' => array( '0', '', '4', '' ),
@@ -647,16 +757,19 @@ class Velocity_Home {
 			$post_id,
 			'stats',
 			$columns,
-			array(
-				'align'        => 'full',
-				'bgColor'      => Velocity_Seed::color( 'palette10' ),
-				'textColor'    => Velocity_Seed::color( 'palette3' ),
-				'maxWidth'     => 1022,
-				'tabletLayout' => 'three-grid',
-				'mobileLayout' => 'two-grid',
-				'padding'      => array( '32', '', '32', '' ),
-				'className'    => 'vm-stats',
-				'metadata'     => array( 'name' => 'Trust strip' ),
+			array_merge(
+				array(
+					'align'        => 'full',
+					'bgColor'      => Velocity_Seed::color( 'palette10' ),
+					'textColor'    => Velocity_Seed::color( 'palette3' ),
+					'maxWidth'     => 1022,
+					'tabletLayout' => 'three-grid',
+					'mobileLayout' => 'two-grid',
+					'padding'      => array( '32', '', '32', '' ),
+					'className'    => 'vm-stats',
+					'metadata'     => array( 'name' => 'Trust strip' ),
+				),
+				$row
 			)
 		);
 	}
@@ -797,7 +910,7 @@ class Velocity_Home {
 					)
 				) . "\n\n" .
 				self::subtitle( $post_id, $key, $program[2], array( 'margin' => array( '0', '', '40', '' ) ) ) . "\n\n" .
-				self::buttons( $post_id, $key, array( array( $program[3], '#', 'outline' ) ), 'left' ),
+				self::buttons( $post_id, $key, array( array( $program[3], Velocity_Program::url( $pages[ $index ] ), 'outline' ) ), 'left' ),
 				array(
 					'id'                => $image_first ? 2 : 1,
 					'verticalAlignment' => 'middle',
@@ -863,7 +976,7 @@ class Velocity_Home {
 				'One Lender, <br>Four Programs to Grow',
 				'Long-term financing meets the flexibility of private lending, available on anything from single rentals to commercial buildings nationwide.'
 			) . "\n\n" . implode( "\n\n", $rows ) . "\n\n" .
-			self::buttons( $post_id, 'programs-all', array( array( 'See Programs Side by Side', home_url( '/mortgage-programs/' ) ) ) ) . "\n\n" .
+			self::buttons( $post_id, 'programs-all', array( array( 'See Programs Side by Side', home_url( '/loan-programs/' ) ) ) ) . "\n\n" .
 			self::subtitle(
 				$post_id,
 				'programs-note',
@@ -904,7 +1017,7 @@ class Velocity_Home {
 					'margin' => array( '0', '', '32', '' ),
 				)
 			) . "\n\n" .
-			self::buttons( $post_id, 'calculator', array( array( 'Bring Us Your Deal', home_url( '/contact-us/' ) ) ) );
+			self::buttons( $post_id, 'calculator', array( array( 'Bring Us Your Deal', home_url( '/contact/' ) ) ) );
 
 		return self::section( $post_id, 'calculator', $inner, 'Calculator' );
 	}
@@ -975,7 +1088,7 @@ class Velocity_Home {
 					'metadata'     => array( 'name' => 'Steps' ),
 				)
 			) . "\n\n" .
-			self::buttons( $post_id, 'steps', array( array( 'See It Step-by-Step', '#', 'outline', self::on_dark() ) ) );
+			self::buttons( $post_id, 'steps', array( array( 'See It Step-by-Step', home_url( '/process/' ), 'outline', self::on_dark() ) ) );
 
 		return self::panel(
 			$post_id,
@@ -991,62 +1104,166 @@ class Velocity_Home {
 	}
 
 	/**
-	 * Deals: the three latest funded properties, read from the properties.
+	 * The list of this page that reads existing content: a Kadence query
+	 * (Kadence, Queries) with its own card (Kadence, Query Cards).
 	 *
-	 * A Query Loop of core blocks. The card look comes from the classes
-	 * vm-deals and vm-deal-card, see components.md.
+	 * @return array[] As Velocity_Seed::query_meta() takes them.
+	 */
+	public static function queries() {
+		return array(
+			'deals' => array(
+				'title'      => 'Home: closed deals',
+				'post_type'  => 'velocity-property',
+				'order_by'   => 'date',
+				'order'      => 'desc',
+				'per_page'   => '3',
+				'columns'    => array( '3', '1', '1' ),
+				'column_gap' => array( '20', '20', '20' ),
+				'row_gap'    => array( '20', '20', '20' ),
+				'card'       => array( __CLASS__, 'deal_card' ),
+			),
+		);
+	}
+
+	/**
+	 * The card of a closed deal: photo, closing time, title, program and
+	 * account executive.
 	 *
-	 * @param int $post_id Page ID.
+	 * Every part reads the deal being listed, with Kadence's dynamic content.
+	 * The four texts are fields of the theme, under Velocity in the dynamic
+	 * content list. See inc/dynamic-content.php. A text with no value is left
+	 * out. vm-card-link stretches the title's link over the whole card.
+	 *
+	 * @param int $card_id Query card post ID.
 	 * @return string
 	 */
-	public static function deals( $post_id ) {
-		$card = Velocity_Seed::block(
-			'group',
-			array( 'className' => 'vm-deal-card' ),
-			'<div class="wp-block-group vm-deal-card">' .
-			// The photo: 160px tall, cropped to fill. Figma "deal-image-placeholder".
-			Velocity_Seed::block(
-				'post-featured-image',
-				array(
-					'height' => '160px',
-					'scale'  => 'cover',
-				)
-			) . "\n\n" .
-			// The text of the card. See vm_deal_info_shortcode() in inc/shortcodes.php.
-			Velocity_Seed::block( 'shortcode', array(), '[vm_deal_info]' ) .
-			'</div>'
-		);
+	public static function deal_card( $card_id ) {
+		$photo_uid = Velocity_Seed::uid( $card_id, 'photo' );
+		$rust      = Velocity_Seed::color( 'palette2' );
 
-		$query = Velocity_Seed::block(
-			'query',
+		$photo = Velocity_Seed::block(
+			'kadence/image',
 			array(
-				'queryId'   => 1,
-				'query'     => array(
-					'perPage'  => 3,
-					'pages'    => 0,
-					'offset'   => 0,
-					'postType' => 'velocity-property',
-					'order'    => 'desc',
-					'orderBy'  => 'date',
-					'author'   => '',
-					'search'   => '',
-					'exclude'  => array(),
-					'sticky'   => '',
-					'inherit'  => false,
-				),
-				'className' => 'vm-deals',
-			),
-			'<div class="wp-block-query vm-deals">' .
-			Velocity_Seed::block(
-				'post-template',
-				array(
-					'layout' => array(
-						'type'        => 'grid',
-						'columnCount' => 3,
+				// A fixed shape, two wide by one tall, whatever the photo's own.
+				'ratio'           => 'land21',
+				'useRatio'        => true,
+				'linkDestination' => 'none',
+				'uniqueID'        => $photo_uid,
+				'marginDesktop'   => array( '0', '', '20', '' ),
+				'borderRadius'    => array( 8, 8, 8, 8 ),
+				'inQueryBlock'    => true,
+				'kadenceDynamic'  => array(
+					'url' => array(
+						'enable'   => true,
+						'source'   => '',
+						'field'    => 'post|post_featured_image',
+						'custom'   => '',
+						'para'     => '',
+						// The image size.
+						'before'   => 'medium_large',
+						'after'    => '',
+						'fallback' => '',
 					),
 				),
-				$card
-			) . '</div>'
+			),
+			sprintf(
+				'<figure class="wp-block-kadence-image kb-image%1$s kb-image-is-ratio-size"><div class="kb-is-ratio-image kb-image-ratio-land21"><img src="%2$s" alt="" class="kb-img"/></div></figure>',
+				$photo_uid,
+				esc_url( includes_url( 'images/blank.gif' ) )
+			)
+		);
+
+		return Velocity_Seed::column(
+			$card_id,
+			'deal',
+			$photo . "\n\n" .
+			// The closing time, as a small label with the bolt.
+			self::t(
+				$card_id,
+				'deal-closed',
+				'',
+				array(
+					'size'       => array( 14, '', '' ),
+					'weight'     => '600',
+					'lh'         => 1.5,
+					'color'      => $rust,
+					'background' => '#ffcea1',
+					'padding'    => array( '4', '8', '4', '8' ),
+					'radius'     => array( 5, 5, 5, 5 ),
+					'icon'       => 'fe_zap',
+					'margin'     => array( '0', '', '8', '' ),
+					// As wide as its text, and hidden when the deal has no closing time.
+					'class'      => 'vm-tag',
+					'dynamic'    => 'post|vm_deal_closed',
+				)
+			) . "\n\n" .
+			self::card_title(
+				$card_id,
+				'deal',
+				'',
+				array(
+					'color'   => Velocity_Seed::color( 'palette3' ),
+					'margin'  => array( '0', '', '8', '' ),
+					'dynamic' => 'post|vm_deal_title',
+					'to_post' => true,
+				)
+			) . "\n\n" .
+			self::t(
+				$card_id,
+				'deal-program',
+				'',
+				array(
+					'size'    => array( 14, '', '' ),
+					'lh'      => 1.1,
+					'color'   => $rust,
+					'margin'  => array( '0', '', '8', '' ),
+					'dynamic' => 'post|vm_deal_program',
+				)
+			) . "\n\n" .
+			self::t(
+				$card_id,
+				'deal-ae',
+				'',
+				array(
+					'margin'  => array( '0', '', '0', '' ),
+					'dynamic' => 'post|vm_deal_ae',
+				)
+			),
+			array_merge(
+				self::card(
+					array(
+						'background'   => Velocity_Seed::color( 'palette8' ),
+						'borderRadius' => array( 12, 12, 12, 12 ),
+						'className'    => 'vm-card-link',
+						'metadata'     => array( 'name' => 'Deal' ),
+					)
+				),
+				array(
+					'inQueryBlock'   => true,
+					// The gaps are each text's own margin, so a text left out leaves no hole.
+					'rowGapVariable' => array( '', '', '' ),
+					'rowGap'         => array( '', '', '' ),
+				)
+			)
+		);
+	}
+
+	/**
+	 * Closed deals: section header, the three latest deals and the button.
+	 *
+	 * The list is the Kadence query "Home: closed deals".
+	 *
+	 * @param int $post_id  Page ID.
+	 * @param int $query_id ID of the deals query.
+	 * @return string
+	 */
+	public static function deals( $post_id, $query_id ) {
+		$list = Velocity_Seed::block(
+			'kadence/query',
+			array(
+				'uniqueID' => Velocity_Seed::uid( $post_id, 'deals-query' ),
+				'id'       => (int) $query_id,
+			)
 		);
 
 		$inner =
@@ -1055,8 +1272,16 @@ class Velocity_Home {
 				'deals',
 				'Deals Other Brokers Already Placed',
 				'See how Velocity has helped brokers close everything from fourplexes to mixed-use buildings to warehouses, and more.'
-			) . "\n\n" . $query . "\n\n" .
-			self::buttons( $post_id, 'deals', array( array( 'Explore More Closed Deals', home_url( '/featured-investment-property-loans/' ) ) ) );
+			) . "\n\n" . $list . "\n\n" .
+			Velocity_Seed::column(
+				$post_id,
+				'deals-action',
+				self::buttons( $post_id, 'deals', array( array( 'Explore More Closed Deals', home_url( '/featured-investment-property-loans/' ) ) ) ),
+				array(
+					'padding'  => array( '56', '', '0', '' ),
+					'metadata' => array( 'name' => 'Button' ),
+				)
+			);
 
 		return self::section(
 			$post_id,
@@ -1078,9 +1303,9 @@ class Velocity_Home {
 	 */
 	public static function resources( $post_id ) {
 		$cards = array(
-			array( 'Broker Toolkit', 'Forms, Flyers, and Marketing Tools', 'Everything you need to fund deals, educate borrowers, and win more clients.', home_url( '/broker-toolkit/' ) ),
+			array( 'Broker Toolkit', 'Forms, Flyers, and Marketing Tools', 'Everything you need to fund deals, educate borrowers, and win more clients.', home_url( '/broker-tools/' ) ),
 			array( 'Blog', 'News and Insights For Brokers', 'What’s trending in investor lending, from the people who make these loans every day.', home_url( '/insights/' ) ),
-			array( 'Case Studies', 'Case Studies and Success Stories', 'How brokers like you placed the hard deals, and what winning looked like.', '#' ),
+			array( 'Case Studies', 'Case Studies and Success Stories', 'How brokers like you placed the hard deals, and what winning looked like.', home_url( '/case-studies/' ) ),
 		);
 
 		$columns = array();
@@ -1161,53 +1386,94 @@ class Velocity_Home {
 	 * @return string
 	 */
 	public static function cta( $post_id ) {
+		return self::cta_band(
+			$post_id,
+			'Ready to Close More Deals?',
+			array(
+				array( 'Become a Partner', home_url( '/become-a-partner/' ) ),
+				array( 'Start a Conversation', home_url( '/contact/' ), 'outline', self::on_dark() ),
+			)
+		);
+	}
+
+	/**
+	 * The call to action band that closes a page. Pages change its title and
+	 * its buttons; the text and the note are the same everywhere.
+	 *
+	 * @param int     $post_id Page ID.
+	 * @param string  $title   Title.
+	 * @param array[] $buttons Buttons, as buttons() takes them.
+	 * @param int     $width   Max width of the band in px.
+	 * @param array   $section Settings of the section around the band that differ.
+	 * @param array   $copy    Optional. intro: the text under the title. note: false
+	 *                         leaves out the line about the approved partners.
+	 * @return string
+	 */
+	public static function cta_band( $post_id, $title, $buttons, $width = 1040, $section = array(), $copy = array() ) {
+		$copy = array_merge(
+			array(
+				'intro' => 'Register today and hear back within 48 hours. One signed package approves you for a year. Start closing the deals banks turn down.',
+				'note'  => true,
+			),
+			$copy
+		);
+
+		$inner =
+			self::title( $post_id, 'cta', $title ) . "\n\n" .
+			self::subtitle(
+				$post_id,
+				'cta',
+				$copy['intro'],
+				array(
+					'align'  => 'center',
+					'width'  => 800,
+					'margin' => array( '0', 'auto', '32', 'auto' ),
+				)
+			) . "\n\n" .
+			self::buttons( $post_id, 'cta', $buttons );
+
+		if ( $copy['note'] ) {
+			$inner .= "\n\n" .
+			// The faces and the line beside them, centered, in a row that wraps on phones.
+			Velocity_Seed::column(
+				$post_id,
+				'cta-proof',
+				self::image( $post_id, 'cta-avatars', 'cta-avatars.webp', 72 ) . "\n\n" .
+				self::t(
+					$post_id,
+					'cta-note',
+					'Join 3,000+ approved broker partners already placing deals with Velocity.',
+					array(
+						'align'  => 'center',
+						'size'   => array( 18, '', '' ),
+						'weight' => '600',
+						'lh'     => 1.31,
+						'margin' => array( '0', '', '0', '' ),
+					)
+				),
+				array(
+					'direction'         => array( 'horizontal', '', '' ),
+					'justifyContent'    => array( 'center', '', '' ),
+					'verticalAlignment' => 'middle',
+					'gutter'            => array( 8, '', '' ),
+					'gutterVariable'    => array( 'custom', 'custom', 'custom' ),
+					'margin'            => array( '48', '', '0', '' ),
+					'metadata'          => array( 'name' => 'Approved partners' ),
+				)
+			);
+		}
+
 		$band = Velocity_Seed::row(
 			$post_id,
 			'cta-band',
-			array(
-				Velocity_Seed::column(
-					$post_id,
-					'cta-band-col',
-					self::title( $post_id, 'cta', 'Ready to Close More Deals?' ) . "\n\n" .
-					self::subtitle(
-						$post_id,
-						'cta',
-						'Register today and hear back within 48 hours. One signed package approves you for a year. Start closing the deals banks turn down.',
-						array(
-							'align'  => 'center',
-							'width'  => 800,
-							'margin' => array( '0', 'auto', '32', 'auto' ),
-						)
-					) . "\n\n" .
-					self::buttons(
-						$post_id,
-						'cta',
-						array(
-							array( 'Become a Partner', home_url( '/become-a-partner/' ) ),
-							array( 'Start a Conversation', home_url( '/contact-us/' ), 'outline', self::on_dark() ),
-						)
-					) . "\n\n" .
-					self::t(
-						$post_id,
-						'cta-note',
-						'Join 3,000+ approved broker partners already placing deals with Velocity.',
-						array(
-							'align'  => 'center',
-							'size'   => array( 18, '', '' ),
-							'weight' => '600',
-							'lh'     => 1.31,
-							'margin' => array( '48', '', '0', '' ),
-						)
-					)
-				),
-			),
+			array( Velocity_Seed::column( $post_id, 'cta-band-col', $inner ) ),
 			array(
 				'bgColor'       => Velocity_Seed::color( 'palette3' ),
 				'bgImg'         => get_stylesheet_directory_uri() . '/assets/images/home/cta-background.jpg',
 				'bgImgSize'     => 'cover',
 				'bgImgPosition' => 'center center',
 				'borderRadius'  => array( 26, 26, 26, 26 ),
-				'maxWidth'      => 1040,
+				'maxWidth'      => $width,
 				'textColor'     => Velocity_Seed::color( 'palette9' ),
 				'padding'       => array( '112', '', '112', '' ),
 				'mobilePadding' => array( '64', '', '64', '' ),
@@ -1215,14 +1481,12 @@ class Velocity_Home {
 			)
 		);
 
-		return self::section( $post_id, 'cta', $band, 'Final call to action' );
+		return self::section( $post_id, 'cta', $band, 'Final call to action', $section );
 	}
 
 	/**
-	 * Frequently asked questions, as native Details blocks.
-	 *
-	 * The class vm-faq styles them and groups them: opening one closes the
-	 * others. Copy from the client-approved homepage copy doc (V1).
+	 * Frequently asked questions. Copy from the client-approved homepage
+	 * copy doc (V1).
 	 *
 	 * @param int $post_id Page ID.
 	 * @return string
@@ -1266,32 +1530,126 @@ class Velocity_Home {
 			),
 		);
 
-		$items = array();
+		return self::faq_section( $post_id, $faqs );
+	}
+
+	/**
+	 * The frequently asked questions section of a page: a Kadence Accordion.
+	 *
+	 * The look of a question at rest, on hover and open, the gap between
+	 * questions, the plus and minus icon and the answer's padding are all
+	 * settings of the Accordion block. Opening a question closes the others,
+	 * and the block prints the FAQ schema for search engines.
+	 *
+	 * @param int     $post_id Page ID.
+	 * @param array[] $faqs    Each: the question, then its answer as a list of
+	 *                         paragraphs. The first one starts open.
+	 * @return string
+	 */
+	public static function faq_section( $post_id, $faqs ) {
+		$uid   = Velocity_Seed::uid( $post_id, 'faq-accordion' );
+		$navy  = Velocity_Seed::color( 'palette3' );
+		$tint  = '#f2f4fc';
+		$panes = array();
+
 		foreach ( $faqs as $index => $faq ) {
-			$answers = array();
+			$pane_uid = Velocity_Seed::uid( $post_id, 'faq-pane-' . $index );
+			$answers  = array();
 			foreach ( $faq[1] as $paragraph ) {
 				$answers[] = Velocity_Seed::block( 'paragraph', array(), '<p>' . $paragraph . '</p>' );
 			}
 
-			$attrs = array( 'className' => 'vm-faq' );
-			if ( 0 === $index ) {
-				$attrs = array(
-					'showContent' => true,
-					'className'   => 'vm-faq',
-				);
+			$attrs = array(
+				'titleTag' => 'h3',
+				'uniqueID' => $pane_uid,
+			);
+			if ( $index ) {
+				$attrs = array( 'id' => $index + 1 ) + $attrs;
 			}
 
-			$items[] = Velocity_Seed::block(
-				'details',
+			$panes[] = Velocity_Seed::block(
+				'kadence/pane',
 				$attrs,
-				'<details class="wp-block-details vm-faq"' . ( 0 === $index ? ' open' : '' ) . '><summary>' . esc_html( $faq[0] ) . '</summary>' . implode( "\n\n", $answers ) . '</details>'
+				'<div class="wp-block-kadence-pane kt-accordion-pane kt-accordion-pane-' . ( $index + 1 ) . ' kt-pane' . $pane_uid . '"><h3 class="kt-accordion-header-wrap"><button class="kt-blocks-accordion-header kt-acccordion-button-label-show" type="button"><span class="kt-blocks-accordion-title-wrap"><span class="kt-blocks-accordion-title">' . esc_html( $faq[0] ) . '</span></span><span class="kt-blocks-accordion-icon-trigger"></span></button></h3><div class="kt-accordion-panel"><div class="kt-accordion-panel-inner">' . implode( "\n\n", $answers ) . '</div></div></div>'
 			);
 		}
+
+		$side      = static function ( $color ) {
+			return array( $color, $color, $color, $color );
+		};
+		$no_border = array( '', '', 0 );
+		$attrs     = array(
+			'uniqueID'            => $uid,
+			'paneCount'           => count( $faqs ),
+			'showPresets'         => false,
+			'faqSchema'           => true,
+			'iconColor'           => array(
+				'standard' => $navy,
+				'active'   => $navy,
+				'hover'    => $navy,
+			),
+			'contentBgColor'      => $tint,
+			'contentPadding'      => array( '0', '24', '24', '24' ),
+			'contentBorderStyle'  => array(
+				array(
+					'top'    => $no_border,
+					'right'  => $no_border,
+					'bottom' => $no_border,
+					'left'   => $no_border,
+					'unit'   => 'px',
+				),
+			),
+			'contentBorderRadius' => array( 0, 0, 8, 8 ),
+			'titleStyles'         => array(
+				array(
+					'size'             => array( 20, '', 18 ),
+					'sizeType'         => 'px',
+					'lineHeight'       => array( 1.31, '', '' ),
+					'lineType'         => '',
+					'letterSpacing'    => '',
+					'family'           => '',
+					'google'           => '',
+					'style'            => '',
+					'weight'           => '600',
+					'variant'          => '',
+					'subset'           => '',
+					'loadGoogle'       => true,
+					'padding'          => array( 24, 24, 24, 24 ),
+					'marginTop'        => 16,
+					'color'            => $navy,
+					'background'       => Velocity_Seed::color( 'palette9' ),
+					'border'           => $side( $tint ),
+					'borderRadius'     => array( 8, 8, 8, 8 ),
+					'borderWidth'      => array( 1, 1, 1, 1 ),
+					'colorHover'       => $navy,
+					'backgroundHover'  => Velocity_Seed::color( 'palette8' ),
+					'borderHover'      => $side( Velocity_Seed::color( 'palette7' ) ),
+					'colorActive'      => $navy,
+					'backgroundActive' => $tint,
+					'borderActive'     => $side( $tint ),
+					'textTransform'    => '',
+					'paddingTablet'    => array( '', '', '', '' ),
+					'paddingMobile'    => array( '', '', '', '' ),
+					'paddingType'      => 'px',
+				),
+			),
+		);
+
+		// Two panes is the block's default, so it is not saved then.
+		if ( 2 === count( $faqs ) ) {
+			unset( $attrs['paneCount'] );
+		}
+
+		$accordion = Velocity_Seed::block(
+			'kadence/accordion',
+			$attrs,
+			'<div class="wp-block-kadence-accordion alignnone"><div class="kt-accordion-wrap kt-accordion-id' . $uid . ' kt-accordion-has-' . count( $faqs ) . '-panes kt-active-pane-0 kt-accordion-block kt-pane-header-alignment-left kt-accodion-icon-style-basic kt-accodion-icon-side-right" style="max-width:none"><div class="kt-accordion-inner-wrap" data-allow-multiple-open="false" data-start-open="0">' . implode( "\n\n", $panes ) . '</div></div></div>'
+		);
 
 		return self::section(
 			$post_id,
 			'faq',
-			self::section_header( $post_id, 'faq', 'Frequently Asked Questions' ) . "\n\n" . implode( "\n\n", $items ),
+			self::section_header( $post_id, 'faq', 'Frequently Asked Questions' ) . "\n\n" . $accordion,
 			'Frequently asked questions',
 			array(
 				'padding'       => array( '48', '', '96', '' ),
@@ -1303,10 +1661,11 @@ class Velocity_Home {
 	/**
 	 * Every section, in page order.
 	 *
-	 * @param int $post_id Page ID.
+	 * @param int   $post_id Page ID.
+	 * @param int[] $queries IDs of the Kadence queries, by their key in queries().
 	 * @return string
 	 */
-	public static function content( $post_id ) {
+	public static function content( $post_id, $queries ) {
 		return implode(
 			"\n\n",
 			array(
@@ -1316,7 +1675,7 @@ class Velocity_Home {
 				self::programs( $post_id ),
 				self::calculator( $post_id ),
 				self::steps( $post_id ),
-				self::deals( $post_id ),
+				self::deals( $post_id, $queries['deals'] ),
 				self::resources( $post_id ),
 				self::cta( $post_id ),
 				self::faq( $post_id ),

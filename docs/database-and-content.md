@@ -76,7 +76,7 @@ They are block content, edited in the block editor like any page.
 | Menus | Kadence Blocks > Navigations. One for the header and the mobile drawer, one per footer column, one for the legal links |
 | Footer | Appearance > Elements, "Global Footer" |
 
-The logos and icons are files in the theme, under `assets/images`, not media library items. That keeps them identical on every environment.
+The logos and icons are files in the theme, under `assets/images`, not media library items. That keeps them identical on every environment. The home hero video is the exception: it is content an editor replaces, so the seed copies it from `inc/seed/media` to the media library. The photos still sit in `assets/images` and are due to move the same way.
 
 A few details cannot be expressed in block settings and live in the theme's `style.css`: the pill shape and size of every Kadence button, the rule above the footer disclosure, the featured menu item, and how the logo, buttons and mobile menu behave while the header is sticky. To feature an item in a dropdown, give its navigation link the CSS class `vm-menu-featured`. The sticky header is explained in [components.md](components.md), "Sticky header and mobile menu".
 
@@ -93,7 +93,13 @@ wp velocity seed-chrome --execute  # creates whatever is missing
 
 It never touches something that already exists, so it is safe to run again. The `--force` flag rebuilds everything from scratch and **discards every change made in the editor**. Use it only on a database you are willing to lose.
 
-Menu links to pages that do not exist yet are created as `#` placeholders. Replace them in the editor as the pages get built.
+Menu links to pages that do not exist yet are created as `#` placeholders. As the pages get built, either replace them in the editor, or set the link in `Velocity_Seed::menu()` and rebuild the menus only:
+
+```bash
+wp velocity seed-chrome --menus --force --execute
+```
+
+That rebuilds the header menu and the footer menus from the code and leaves the header and the footer layouts alone. Changes made to the menus in the editor are lost, so make sure the code has them first.
 
 ## Careers
 
@@ -109,7 +115,7 @@ The careers listing and the job pages are not part of the redesign. They are the
 
 The application form on the job page is Gravity Form 3, "Career Application". On production it notifies HR. On staging no email leaves the site (see "Staging does not send email or leads").
 
-`wp velocity cleanup` keeps all of these. The list is in `PROTECTED_POSTS` and `PAGE_SLUGS_TO_KEEP` in `inc/class-velocity-cli.php`.
+`wp velocity cleanup` keeps all of these. The list is in `PROTECTED_POSTS` and `PAGE_SLUGS_TO_KEEP` in `inc/seed/class-velocity-cli.php`.
 
 ## Deals and case studies
 
@@ -117,7 +123,7 @@ Both are defined in the must-use plugin: deals in `cpt-properties.php`, case stu
 
 ### Deals
 
-Deals are the posts under Properties. Featured Deals lists them.
+Deals are the posts under Properties. The Featured Deals page lists them, with filters and sorting (see [components.md](components.md), "The Featured Deals page"). That page has the address the automatic list of deals used to have: the plugin no longer makes that list.
 
 Their taxonomies are Program, Purpose, Type, AE and Region.
 
@@ -132,7 +138,7 @@ Loan amounts are typed as text, for example `1,120,000`, which does not sort as 
 | Sort | Field | Type |
 |---|---|---|
 | Amount, deals | `velocity_property_loan_amount_number` | Numeric |
-| Date, deals | `velocity_property_date_funded` | Text. Dates are saved as `2026-04-13`, which sorts correctly as text |
+| Date, deals | The date the deal was published | Kadence's Sort block takes one custom field, and the amount uses it. `velocity_property_date_funded` is saved as `2026-04-13`, which would sort correctly as text |
 | Amount, case studies | `velocity_case_study_loan_amount_number` | Numeric |
 | Date, case studies | `velocity_case_study_date` | Text |
 
@@ -186,23 +192,44 @@ The order on the page is the order in the admin list. Drag the rows there to cha
 
 Documents have no page of their own and stay out of search and the sitemap.
 
-### Building the page
+### The page
 
-One Kadence query loop per section: post type "Toolkit Documents", filtered by the section, ordered by "Menu Order", ascending. In the query card:
+`/broker-tools/` is built by `wp velocity seed-toolkit-page`, and edited in the block editor after that. It has no file typed into it. Each list is a Kadence query (Kadence > Queries, "Toolkit: ...") that reads one section, in the order of the admin list. The seven queries share two cards (Kadence > Query Cards):
+
+| Card | Used by | Shows |
+|---|---|---|
+| "Toolkit: form card" | The two forms libraries | Name, file type and a "Download" button, on one line |
+| "Toolkit: document card" | Matrices and the four groups of flyers | "New" tag, name and description on the left; the download buttons on the right |
+
+In the cards:
 
 | Element | Source |
 |---|---|
 | Button | Link: post custom field `velocity_toolkit_link`. Text: "Unlock to Download" |
-| White Label button | Link: post custom field `velocity_toolkit_link_wl`. Put it, with its "White Label" label, inside a block with the CSS class `vm-toolkit-wl`. That block hides itself when the document has no White Label file |
-| "New" tag | Post custom field `velocity_toolkit_new` |
+| White Label button | Link: post custom field `velocity_toolkit_link_wl`, in the Section with the class `vm-toolkit-wl`. That Section hides itself when the document has no White Label file, and so does the "Velocity Branded" label, which has the class `vm-toolkit-branded` |
+| "New" tag | "Toolkit: "New" tag", under Velocity in the dynamic content list |
+| File type | "Toolkit: file type", in the same list: the file's extension, such as PDF or XLSX |
+
+A text with the class `vm-hide-empty` is not printed when it has no value: the "New" tag of a document that is not new, the description of one with none.
 
 The buttons never carry the PDF's address. They point to the site's download address for that document, which sends the file as a download: the visitor stays on the page.
 
+A section with no documents shows its title and nothing under it. That is the state of the two forms libraries until their files are uploaded.
+
+The links under the title ("Forms", "Matrices", "Flyers", "Links") jump to the sections of the page. Each section's row has that anchor, under Advanced.
+
 ### Unlocking
 
-1. A visitor clicks a document that requires unlock. The "Unlock the Toolkit" form opens instead of the download. It is Gravity Form 14.
+The form is Gravity Form 14, and the site prints it once. On the Broker Tools page it shows in the "Unlock the Toolkit" panel: the empty Section with the class `vm-toolkit-inline` is where it lands. When a button opens the form in a window, the same form moves into the window, and back when the window closes.
+
+1. A visitor fills the form on the page, or clicks a document that requires unlock: then the form opens in a window instead of the download.
 2. On sending it, a cookie remembers the unlock on that browser for a year, and the file they asked for downloads.
 3. From then on every button says "Download" and downloads straight away, on this visit and the next ones. The page also gets the class `vm-toolkit-unlocked`.
+4. On the next visits the "Unlock the Toolkit" panel is not shown: the panel has the class `vm-toolkit-form`, which hides for a visitor who already unlocked.
+
+A document with "Requires unlock" unticked always says "Download".
+
+**Testing the form.** On staging the Salesforce webhook is off and email is in test mode (see below). A Local database is only safe after the same two settings are checked: a Local copy made from production sends the lead to Salesforce for real.
 
 The cookie is per browser. Another device, a private window or cleared cookies ask for the form again.
 
@@ -232,7 +259,46 @@ Staging started as a copy of production, so its forms pointed at real inboxes an
 
 To check what a form would have sent, open the Email Log.
 
+A Local database has its own state of the two: see "Launch", "The toolkit form: what to switch on, and what to check", before sending a form on Local.
+
 Both are database settings. They travel with any copy of the staging database, including a LocalWP pull. If staging content is ever moved to production, these two must be on again in production, or production stops sending email and leads.
+
+## State of the pages
+
+As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its code committed on a branch that is not pushed yet. Nothing in this table is on production.
+
+| Page | Address | Command that creates it | Local | Staging |
+|---|---|---|---|---|
+| Home | `/` | `seed-home` | Built | An earlier version. Its deals, FAQ and panel changes, and the links to the program pages, are not there |
+| Programs Overview | `/loan-programs/` | `seed-programs-page` | Built | Not yet |
+| 30-Year Fixed, Fast50, Flex I/O, Super Jumbo | `/loan-programs/30-year-fixed/`, `/fast50/`, `/flex-i-o/`, `/jumbo/` | `seed-program-pages` | Built | Not yet |
+| Process | `/process/` | `seed-process` | Built | Not yet |
+| About Us | `/about/` | `seed-company` | Built | Not yet |
+| Contact | `/contact/` | `seed-contact` | Built | Not yet |
+| Broker Tools | `/broker-tools/` | `seed-toolkit-page` | Built | Empty page |
+| Careers, and each job | `/careers/` | None: posts of the database | Copied from staging | The production version on the new theme. Not part of the redesign |
+| Become a Partner, Broker Login | Velocity's portal | None | Not ours to build: Figma marks them "client will develop, CSTMR to QA" | |
+| News and Insights, and an article | `/insights/` | None yet | Not built: default template | |
+| Featured Deals | `/featured-investment-property-loans/` | `seed-deals-page` | Built | The automatic list, on the default template |
+| Terms of Use | `/terms-of-use/` | `seed-legal-pages` | Built | The old site's builder content |
+| Privacy (Privacy Notice for California Residents) | `/privacy/` | `seed-legal-pages` | Built | The old site's builder content: a text about cookies and the 2020 version of the notice |
+| 404 | Any address that does not exist | `seed-404` | Built, as a Kadence Element | The theme's own message |
+| A deal | `/property/...` | None yet | Not built: default template | |
+| Case Studies, and a case study | `/case-studies/` | None yet | Not built: default template | |
+| Contact thank-you | `/contact/thank-you/` | None yet | Does not exist | |
+| Licenses, Forms Library (footer) | | None yet | Do not exist. Their links point to "#" | |
+
+Branches, each on top of the one before, none pushed: `feature/contact-page`, `feature/company-page`, `feature/process-page`, `feature/program-pages`.
+
+To bring a page to staging: deploy the code, then run its command with `--execute`, then `wp velocity seed-chrome --menus --force --execute` if the menus should point to it. The commands are listed under "Theme commands", and the order for a new environment under "Launch".
+
+Waiting on someone else:
+
+- The address of "Become a Partner" in Velocity's portal.
+- The files of the two forms libraries of Broker Tools.
+- Case studies: none is published, so "A Deal That Fits" shows on no program page. The three boxes of that section are not defined in the design.
+- The new addresses for News and Insights (`/news-insights/`) and Featured Deals (`/featured-deals/`), which need a change in the plugins.
+- Copy: the open points listed under "What is still open" of each page in [components.md](components.md).
 
 ## Theme commands
 
@@ -241,11 +307,21 @@ All of them are dry runs unless called with `--execute`.
 | Command | What it does |
 |---|---|
 | `wp velocity cleanup` | Removes the old Kadence and Beaver Builder front end. Keeps all content, the header, menus and footer made by `seed-chrome`, and the careers pages (see "Careers") |
-| `wp velocity seed-chrome` | Creates the header, the menus and the footer |
-| `wp velocity seed-home` | Fills the home page, if it is empty. `--force` rebuilds it and discards every change made in the editor |
+| `wp velocity seed-chrome` | Creates the header, the menus and the footer. `--menus` limits it to the menus |
+| `wp velocity seed-home` | Fills the home page, if it is empty, and creates the Kadence query of its deal cards. `--force` rebuilds it and discards every change made in the editor |
 | `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. Never overwrites a filled field |
 | `wp velocity seed-toolkit` | Creates the Broker Toolkit documents from the old toolkit form and page. Skips the ones that exist (see "Broker Toolkit") |
+| `wp velocity seed-toolkit-page` | Fills the Broker Tools page, if it is empty, and creates its seven Kadence queries and their two cards. `--force` rebuilds them and discards every change made in the editor (see "Broker Toolkit", "The page") |
+| `wp velocity seed-deals-page` | Creates the Featured Deals page if it is missing and fills it, if it is empty, with its two Kadence queries and their cards. `--force` rebuilds them and discards every change made in the editor (see [components.md](components.md), "The Featured Deals page") |
+| `wp velocity seed-legal-pages` | Fills Terms of Use and Privacy with the layout and the text of the design, creating a page that is missing. A page with content is left alone without `--force`: both have the old site's text, so they need it. `--page=terms` or `--page=privacy` does one page (see [components.md](components.md), "The legal pages") |
+| `wp velocity seed-404` | Creates the Kadence Element that replaces the theme's 404 content. `--force` rebuilds it (see [components.md](components.md), "The 404 page") |
 | `wp velocity seed-forms` | Updates the contact form to the design and adds its consent checkbox, and creates the newsletter form. Leaves them alone once done (see [components.md](components.md), "Forms") |
+| `wp velocity seed-contact` | Fills the Contact page, if it is empty: heading, ways to reach Velocity, the contact form and the offices map. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "Offices map") |
+| `wp velocity seed-company` | Creates the About Us page if it is missing and fills it, if it is empty. Its people and careers sections are Kadence queries, which it creates with their cards (Kadence > Queries and Query Cards); they read Staff and Careers, so the people and the positions need no seeding. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The About Us page") |
+| `wp velocity seed-process` | Creates the Process page if it is missing and fills it, if it is empty. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "The Process page") |
+| `wp velocity seed-program-pages` | Creates the four program pages under Programs Overview, their Kadence queries and the card they share, and fills the pages that are empty. Needs the programs in Properties, Programs (`seed-programs`). `--force` rebuilds them and discards every change made in the editor (see [components.md](components.md), "The program pages") |
+| `wp velocity seed-programs-page` | Fills the Programs Overview page, if it is empty. Not the same as `seed-programs`, which fills in each program's details. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The Programs Overview page") |
+| `wp velocity rename-pages` | Moves the Contact, Loan Programs and Broker Tools pages to their addresses in the new site (`/contact/`, `/loan-programs/`, `/broker-tools/`), updates the links to them in pages, menus, header and footer, and adds a 301 redirect from each old address in Yoast SEO Premium. Safe to run again |
 
 On staging they run through the SSH Gateway. The gateway may run an older PHP than the website, so the theme's command code stays compatible with PHP 7.4.
 
@@ -256,4 +332,56 @@ Production keeps receiving form entries and content edits while the rebuild happ
 Whatever the plan, production needs these once the code is there:
 
 - `wp velocity seed-programs --execute`, `wp velocity seed-toolkit --execute` and `wp velocity seed-forms --execute`. They read production's own data, so they do not depend on the staging database.
+- `wp velocity rename-pages --execute`, before the menus are rebuilt. The list of pages is `PAGE_SLUG_CHANGES` in `inc/seed/class-velocity-cli.php`.
+- The Process page: copy its blocks from staging, or run `wp velocity seed-process --execute`, which also creates the page.
+- The Programs Overview page: copy its blocks from staging, or run `wp velocity seed-programs-page --execute` after `rename-pages`.
+- The Broker Tools page: run `wp velocity seed-toolkit-page --execute`, after `rename-pages` and `seed-toolkit`. Its queries are posts of their own, so copying the blocks alone is not enough.
+- The Featured Deals page: run `wp velocity seed-deals-page --execute`. It creates the page at the address the list of deals had, and its two Kadence queries. Open the page once afterwards, so Kadence builds the index its filters read, and check that the filters list their choices.
+- The legal pages and the 404: run `wp velocity seed-legal-pages --force --execute` and `wp velocity seed-404 --execute`. `--force` is needed because both pages already have the old site's content, which it replaces (WordPress keeps it as a revision). The old Privacy page had a text about cookies that the new one does not: the cookie banner has to be in place.
+- The four program pages: run `wp velocity seed-program-pages --execute`, after `rename-pages` and `seed-programs`. It creates the pages and their Kadence queries, which are posts of their own, so copying the blocks alone is not enough. Then `wp velocity seed-chrome --menus --force --execute`, so the menus point to them. The "Explore ..." buttons of a home page and a Programs Overview page built before these pages existed still point to "#": set their links in the editor.
+- The About Us page: run `wp velocity seed-company --execute`, which also creates the page and its two Kadence queries. Copying the page's blocks alone is not enough: the queries are posts of their own, and their IDs differ between environments. Then `wp velocity seed-chrome --menus --force --execute`, so "About Us" and "Our Team" in the menus point to it.
+- The Contact page: copy its blocks from staging, or run `wp velocity seed-contact --execute` after `seed-forms`, which it needs for the form.
 - The loan amounts of existing deals saved as numbers, so Featured Deals sorts by amount. Saving each deal once does it, or a script can.
+- Super Jumbo is not in the menus, as in the design. To confirm with design whether that is on purpose.
+- The careers listing and job pages exist on staging as posts of the database (page, query, card and two Elements). They are not created by any command: they travel with the database.
+
+### The toolkit form: what to switch on, and what to check
+
+The Broker Toolkit form (Gravity Form 14) sends each request to Salesforce through a webhook, and an email to the site's admin address. Both are settings of the database, not of the code, so each environment has its own state:
+
+| Environment | Salesforce webhook | Gravity SMTP test mode | A test submission |
+|---|---|---|---|
+| Production | Must be on | Must be off | Is a real lead and a real email |
+| Staging | Off | On | Stays on staging |
+| Local, as set on 2026-11-17 | Off | On | Stays on the machine |
+| Local, after a database copied from production | On | Off | **Is a real lead.** Set both before testing |
+
+Where they are: Forms > Broker Toolkit Item Request > Settings > Webhooks, "Salesforce Lead Integration"; and Gravity SMTP > Settings, "Test mode".
+
+**Before launch, on production.** After the code and the pages are there:
+
+1. The webhook is active and Gravity SMTP test mode is off. If production's database was replaced or merged with staging's, both will be in staging's state: wrong for production.
+2. Velocity confirms a test request reaches Salesforce with its Request ID. This is the open question to Anand about the webhook.
+3. The "Admin Notification" of Form 14 reaches the inbox it should.
+
+**On staging and on production, after each deploy that touches the toolkit.** In a private window, so no cookie is left from an earlier test:
+
+1. `/broker-tools/` shows the "Unlock the Toolkit" form on the page, and every locked document says "Unlock to Download".
+2. A click on a locked document opens the form in a window, with no scrollbar on a laptop or on a phone.
+3. Sending the form shows the confirmation, downloads the file that was asked for, turns every button into "Download" and hides the form on the page.
+4. A document with a White Label file downloads the right file from each of its two buttons.
+5. On a phone: two buttons side by side under their labels, reading "Unlock" before unlocking.
+6. Reloading keeps the page unlocked. Deleting the cookie `velocity_toolkit_unlocked` brings the form back.
+7. An old link, `/broker-tools/#pdfrequest&resource_id=matricesrs`, opens the form, or downloads the file once unlocked.
+8. On staging only: the entry is under Forms > Entries, the email is under Gravity SMTP > Email Log as not sent, and nothing reached Salesforce.
+
+Tested this way on Local on 2026-11-17, from the window and from the page. Not tested on staging yet: the page is not there.
+
+**Still open on this page:**
+
+- The two forms libraries are empty until Velocity sends the files. Their titles show with nothing under them.
+- "Become a Partner" links, here and on every page, point to `/become-a-partner/`, which does not exist. Figma marks that page and Broker Login as built by Velocity in their portal (generatevelocity.com). The links need the portal's address, and `/become-a-partner/` a redirect to it.
+- The "Broker Resources" card links to `/broker-resources/`, an empty page.
+- Form 14 asks for the name as first and last, in one column. The design shows one name field and two columns. Changing the fields may change what reaches Salesforce, so it waits for Velocity.
+- Google Tag Manager loads on every environment: the check that limits it to production is commented out in `global-scripts.php`. A test on staging or Local can show up in Analytics.
+

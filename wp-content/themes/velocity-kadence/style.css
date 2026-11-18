@@ -419,14 +419,25 @@ html.vm-js .is-style-vm-reveal-lines:not(.vm-reveal-ready) {
 	transition: transform 0.3s ease;
 }
 
+/*
+ * The side each one grows from and shrinks towards is set at rest too.
+ * Set only while stuck, it would jump back to the center the moment the
+ * header lets go, and the way back up would start from the middle.
+ */
+.wp-block-kadence-header .vm-logo img {
+	transform-origin: left center;
+}
+
+.wp-block-kadence-header .kb-buttons-wrap {
+	transform-origin: right center;
+}
+
 .wp-block-kadence-header .item-is-stuck .vm-logo img {
 	transform: scale(0.8);
-	transform-origin: left center;
 }
 
 .wp-block-kadence-header .item-is-stuck .kb-buttons-wrap {
 	transform: scale(0.85);
-	transform-origin: right center;
 }
 
 /*
@@ -474,251 +485,19 @@ body .wp-block-kadence-header .wp-block-kadence-off-canvas .kb-off-canvas-inner-
 	color: var(--global-palette9);
 }
 
+/*
+ * On a touch screen the hover stays on the last thing tapped, so the closed
+ * hamburger kept its orange hover color after the menu was closed.
+ */
+@media (hover: none) {
+	.wp-block-kadence-header .wp-block-kadence-off-canvas-trigger[aria-expanded="false"]:hover {
+		color: var(--global-palette9);
+	}
+}
+
 .wp-block-kadence-header .wp-block-kadence-off-canvas-trigger:focus-visible {
 	outline: 2px solid var(--global-palette9);
 	outline-offset: 2px;
-}
-
-/*
- * vm-deals: a Query Loop of properties shown as deal cards.
- * The Query Loop is made of core blocks, which have no card settings in this
- * theme, and the whole card has to be clickable, which no block offers.
- * Measures are from Figma, component "deal-card".
- */
-.wp-block-query.vm-deals {
-	margin-bottom: 56px;
-}
-
-.vm-deals .wp-block-post-template.wp-block-post-template {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 20px;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.vm-deals .wp-block-post-template > li {
-	margin: 0;
-}
-
-.vm-deals .vm-deal-card {
-	position: relative;
-	height: 100%;
-	padding: 32px;
-	border: 1px solid var(--vm-border);
-	border-radius: 12px;
-	background: var(--global-palette8);
-	box-shadow: var(--vm-shadow-medium);
-	transition: box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-.vm-deals .vm-deal-card:hover,
-.vm-deals .vm-deal-card:focus-within {
-	border-color: rgba(43, 53, 120, 0.24);
-	box-shadow: 0 24px 32px -8px rgba(1, 7, 57, 0.18);
-}
-
-/*
- * On a classic theme WordPress wraps a Group's content in an inner
- * container. That wrapper is the one that stacks the photo and the text.
- */
-.vm-deals .vm-deal-card > .wp-block-group__inner-container {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-}
-
-.vm-deals .vm-deal-card .wp-block-post-featured-image {
-	margin: 0;
-	line-height: 0;
-}
-
-.vm-deals .vm-deal-card .wp-block-post-featured-image img {
-	width: 100%;
-	height: 160px;
-	border-radius: 8px;
-	object-fit: cover;
-}
-
-/* The text, printed by the [vm_deal_info] shortcode. */
-.vm-deal-info {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	align-items: flex-start;
-}
-
-/* Two classes, to outrank the theme paragraph margins. */
-.vm-deal-card .vm-deal-info > * {
-	margin: 0;
-}
-
-.vm-deal-info .vm-deal-tag {
-	display: inline-flex;
-	gap: 8px;
-	align-items: center;
-	padding: 4px 8px;
-	border-radius: 5px;
-	background: #ffcea1;
-	font-size: 14px;
-	font-weight: 600;
-	line-height: 1.5;
-	color: var(--global-palette2);
-}
-
-.vm-deal-info .vm-deal-tag img {
-	flex: none;
-	width: 16px;
-	height: 16px;
-}
-
-.vm-deal-info :is(h2, h3).vm-deal-title {
-	margin: 0;
-	font-size: 22px;
-	font-weight: 700;
-	line-height: 1.1;
-	letter-spacing: 0;
-}
-
-.vm-deal-info .vm-deal-title a {
-	color: var(--global-palette3);
-	text-decoration: none;
-}
-
-.vm-deal-info .vm-deal-program {
-	font-size: 14px;
-	line-height: 1.1;
-	color: var(--global-palette2);
-}
-
-.vm-deal-info .vm-deal-ae {
-	font-size: 16px;
-	line-height: 1.47;
-}
-
-/* The title link is stretched over the card: one link, whole card. */
-.vm-deals .vm-deal-title a::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	z-index: 1;
-	border-radius: 12px;
-}
-
-.vm-deals .vm-deal-title a:focus-visible {
-	outline: none;
-}
-
-.vm-deals .vm-deal-title a:focus-visible::after {
-	outline: 2px solid var(--global-palette5);
-	outline-offset: 2px;
-}
-
-.vm-deals .vm-deal-card:hover .vm-deal-title a {
-	color: var(--global-palette2);
-}
-
-@media (max-width: 1024px) {
-	.vm-deals .wp-block-post-template.wp-block-post-template {
-		grid-template-columns: 1fr;
-	}
-}
-
-/*
- * vm-faq: a Details block styled as a frequently asked question.
- * The Details block has no styling settings. assets/js/faq.js makes a run of
- * them behave as a group: opening one closes the others.
- */
-.wp-block-details.vm-faq {
-	margin: 0 0 16px;
-	padding: 0;
-	border: 1px solid #f2f4fc;
-	border-radius: 8px;
-	background: var(--global-palette9);
-	transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.wp-block-details.vm-faq[open] {
-	border-color: var(--global-palette9);
-	background: #f2f4fc;
-}
-
-.wp-block-details.vm-faq:not([open]):hover {
-	border-color: var(--global-palette7);
-	background: var(--global-palette8);
-}
-
-/* The padding is on the question, so the whole box is clickable. */
-.wp-block-details.vm-faq > summary {
-	display: flex;
-	gap: 24px;
-	align-items: center;
-	justify-content: space-between;
-	padding: 24px;
-	border-radius: 8px;
-	font-size: 20px;
-	font-weight: 600;
-	line-height: 1.31;
-	cursor: pointer;
-	list-style: none;
-}
-
-.wp-block-details.vm-faq > summary::-webkit-details-marker {
-	display: none;
-}
-
-.wp-block-details.vm-faq > summary::after {
-	content: "+";
-	flex: none;
-	font-family: var(--global-heading-font-family);
-	font-size: 24px;
-	font-weight: 700;
-	line-height: 1.1;
-}
-
-.wp-block-details.vm-faq[open] > summary::after {
-	content: "\2212";
-}
-
-/* The open one cannot be closed by clicking it, so it does not look clickable. */
-.wp-block-details.vm-faq[open] > summary {
-	cursor: default;
-}
-
-.wp-block-details.vm-faq > summary:focus-visible {
-	outline: 2px solid var(--global-palette5);
-	outline-offset: 2px;
-}
-
-.wp-block-details.vm-faq > :not(summary) {
-	margin: 0;
-	padding: 0 24px 16px;
-}
-
-.wp-block-details.vm-faq > :not(summary):last-child {
-	padding-bottom: 24px;
-}
-
-@media (max-width: 767px) {
-	.wp-block-details.vm-faq > summary {
-		font-size: 18px;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.vm-deals .vm-deal-card,
-	.wp-block-details.vm-faq {
-		transition: none;
-	}
-}
-
-/*
- * A deal without a closing time still reserves the tag's line, invisibly,
- * so the titles sit at the same height on every card.
- */
-.vm-deal-info .vm-deal-tag.vm-deal-tag--empty {
-	visibility: hidden;
 }
 
 /*
@@ -996,4 +775,746 @@ body .gform_wrapper.gravity-theme form.vm-form-inline .gfield input[type="email"
 .wp-block-kadence-singlebtn .kt-button.kt-button.kb-btn-global-outline {
 	padding: 15px 23px;
 	border-width: 1px;
+}
+
+/*
+ * A line break typed into a title is for wide screens. On a phone the title
+ * wraps on its own, and the break would leave a word alone on a line.
+ */
+@media (max-width: 767px) {
+	:is(h1, h2).wp-block-kadence-advancedheading br {
+		display: none;
+	}
+}
+
+/*
+ * Timeline: two block styles, picked in the Styles panel.
+ * "Timeline" on a Section draws the line down its left side. "Timeline point"
+ * on a text inside it draws a dot on the line, level with its first line.
+ * The Section needs 26px of left padding, set in its block settings.
+ */
+.wp-block-kadence-column.is-style-vm-timeline > .kt-inside-inner-col {
+	position: relative;
+}
+
+.wp-block-kadence-column.is-style-vm-timeline > .kt-inside-inner-col::before {
+	content: "";
+	position: absolute;
+	top: -12px;
+	bottom: 0;
+	left: 5px;
+	width: 1px;
+	background: var(--global-palette1);
+}
+
+.is-style-vm-timeline .is-style-vm-timeline-point {
+	position: relative;
+}
+
+.is-style-vm-timeline .is-style-vm-timeline-point::before {
+	content: "";
+	position: absolute;
+	top: 0.735em;
+	left: -26px;
+	width: 11px;
+	height: 11px;
+	border-radius: 50%;
+	background: var(--global-palette1);
+	transform: translateY(-50%);
+}
+
+/*
+ * vm-story-media: a photo with three figures laid over it.
+ * The Section holds a Kadence Image and three Sections with the class
+ * vm-story-stat, plus vm-story-stat--volume (top left), --years (bottom
+ * right) or --offices (the wide one, bottom left). Their colors, sizes and
+ * texts are block settings. Only the positions are here.
+ * Measures are from Figma, frame "Our story", "Group 3".
+ */
+body .vm-story-media {
+	width: 100%;
+	max-width: 430px;
+	margin-inline: auto;
+}
+
+body .vm-story-media > .kt-inside-inner-col {
+	position: relative;
+	display: block;
+	padding: 23px 37px 43px 54px;
+}
+
+.vm-story-media .wp-block-kadence-image {
+	margin: 0;
+}
+
+.vm-story-media .wp-block-kadence-image img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 339 / 349;
+	object-fit: cover;
+}
+
+body .vm-story-media .vm-story-stat {
+	position: absolute;
+	width: 150px;
+	margin: 0;
+}
+
+body .vm-story-media .vm-story-stat--volume {
+	top: 0;
+	left: 0;
+}
+
+body .vm-story-media .vm-story-stat--years {
+	right: 0;
+	bottom: 0;
+}
+
+body .vm-story-media .vm-story-stat--offices {
+	bottom: 20px;
+	left: 0;
+	width: auto;
+	white-space: nowrap;
+}
+
+/* No room to overlap: the figures line up under the photo. */
+@media (max-width: 520px) {
+	body .vm-story-media > .kt-inside-inner-col {
+		display: flex;
+		flex-flow: row wrap;
+		gap: 12px;
+		padding: 0;
+	}
+
+	.vm-story-media .wp-block-kadence-image {
+		flex: 0 0 100%;
+	}
+
+	body .vm-story-media .vm-story-stat {
+		position: static;
+		flex: 1 1 calc(50% - 6px);
+		width: auto;
+	}
+
+	body .vm-story-media .vm-story-stat--offices {
+		flex-basis: 100%;
+		white-space: normal;
+	}
+}
+
+/*
+ * vm-card-link: a Section whose title link covers the whole card.
+ * Put it on a card that holds a Text (Adv) linked to a page. The card gets one
+ * link, named by its title, instead of an empty link laid over it. Icons
+ * inside the card, such as a LinkedIn link, stay clickable.
+ */
+.vm-card-link .kb-advanced-heading-link {
+	text-decoration: none;
+}
+
+.vm-card-link .kb-advanced-heading-link::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	border-radius: inherit;
+}
+
+/* In a Kadence query, every card in a line is as tall as the tallest. */
+.kb-query-item > .vm-card-link {
+	height: 100%;
+}
+
+.kb-query-item > .vm-card-link > .kt-inside-inner-col {
+	flex: 1;
+}
+
+.vm-card-link .wp-block-kadence-icon {
+	position: relative;
+	z-index: 2;
+}
+
+.vm-card-link .kb-advanced-heading-link:focus-visible {
+	outline: none;
+}
+
+.vm-card-link .kb-advanced-heading-link:focus-visible::after {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+/*
+ * vm-tag: a Text (Adv) used as a small filled label, such as a deal's closing
+ * time. Its color, padding, radius and icon are block settings. The class
+ * makes it as wide as its text instead of the card, and hides it, keeping
+ * its space, when its dynamic content has no value (inc/dynamic-content.php).
+ */
+.wp-block-kadence-advancedheading.vm-tag {
+	width: fit-content;
+}
+
+.wp-block-kadence-advancedheading.vm-tag--empty {
+	visibility: hidden;
+}
+
+/*
+ * vm-people: a row whose Kadence query centers a last line that is not full.
+ * The query's grid would leave those cards on the left. The cards per line and
+ * the gaps repeat the query card's settings: 4, 3 and 2, with 48, 24 and 16px.
+ * The card's own class is in the selectors to outrank Kadence's grid.
+ */
+.vm-people .wp-block-kadence-query-card .kb-query-grid-wrap {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.vm-people .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
+	flex: 0 0 calc((100% - 144px) / 4);
+	min-width: 0;
+}
+
+@media (max-width: 1024px) {
+	.vm-people .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
+		flex-basis: calc((100% - 48px) / 3);
+	}
+}
+
+@media (max-width: 767px) {
+	.vm-people .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
+		flex-basis: calc((100% - 16px) / 2);
+	}
+}
+
+/*
+ * vm-carousel: a Section whose Kadence query scrolls sideways.
+ * The list scrolls by touch, trackpad or keyboard on its own. When the
+ * items do not fit, assets/js/carousel.js adds the two arrows, at the right
+ * of the Section's last block. With few items there are no arrows.
+ * How many cards show at once repeats the query card's columns: 3, 2 and 1.
+ */
+.vm-carousel > .kt-inside-inner-col {
+	position: relative;
+}
+
+.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap {
+	display: flex;
+	/* Room for the cards' shadow, which the scrolling would cut off. */
+	margin: -8px -12px -12px;
+	padding: 8px 12px 28px;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scroll-padding-inline: 12px;
+	scrollbar-width: none;
+}
+
+.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap::-webkit-scrollbar {
+	display: none;
+}
+
+.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
+	flex: 0 0 calc((100% - 48px) / 3);
+	min-width: 0;
+	scroll-snap-align: start;
+}
+
+/* Cards in a line are as tall as the tallest. */
+.vm-carousel .kb-query-item {
+	display: flex;
+}
+
+.vm-carousel .kb-query-item > .wp-block-kadence-column,
+.vm-carousel .kb-query-item > .wp-block-kadence-column > .kt-inside-inner-col {
+	flex: 1;
+}
+
+.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+.vm-carousel__arrows {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	gap: 8px;
+}
+
+.vm-carousel__arrow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	padding: 0;
+	border: 1px solid var(--global-palette2);
+	border-radius: 50%;
+	background: var(--global-palette9);
+	box-shadow: none;
+	cursor: pointer;
+}
+
+.vm-carousel__arrow:hover:not(:disabled),
+.vm-carousel__arrow:focus:not(:disabled) {
+	border-color: var(--global-palette2);
+	background: #f8e8de;
+	box-shadow: none;
+}
+
+.vm-carousel__arrow:focus-visible {
+	outline: 2px solid var(--global-palette5);
+	outline-offset: 2px;
+}
+
+.vm-carousel__arrow:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+.vm-carousel__arrow--next img {
+	transform: rotate(180deg);
+}
+
+/*
+ * vm-carousel-track: a horizontal Section of cards inside a vm-carousel.
+ * The cards keep the width set in their own block settings and scroll
+ * sideways. With vm-carousel--below on the carousel, the arrows sit under
+ * the cards instead of beside the carousel's last block.
+ */
+body .vm-carousel-track > .kt-inside-inner-col {
+	flex-wrap: nowrap;
+	align-items: stretch;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+}
+
+.vm-carousel-track > .kt-inside-inner-col::-webkit-scrollbar {
+	display: none;
+}
+
+/* The classes are repeated to outrank the rule Kadence writes for each card. */
+.wp-block-kadence-column.vm-carousel-track.kb-section-dir-horizontal > .kt-inside-inner-col > .wp-block-kadence-column.wp-block-kadence-column {
+	flex-shrink: 0;
+	max-width: 86%;
+	scroll-snap-align: start;
+}
+
+/* Every card is as tall as the tallest: the card's box fills its place in the line. */
+.vm-carousel-track > .kt-inside-inner-col > .wp-block-kadence-column > .kt-inside-inner-col {
+	flex: 1;
+}
+
+.vm-carousel--below .vm-carousel__arrows {
+	position: static;
+	margin-top: 23px;
+}
+
+@media (max-width: 1024px) {
+	.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
+		flex-basis: calc((100% - 24px) / 2);
+	}
+}
+
+@media (max-width: 767px) {
+	.vm-carousel .wp-block-kadence-query-card .kb-query-grid-wrap > .kb-query-item {
+		flex-basis: 86%;
+	}
+
+	/* The arrows move under the button instead of beside it. */
+	.vm-carousel__arrows {
+		position: static;
+	}
+}
+
+/*
+ * vm-compare: a Kadence Table that keeps its columns on small screens.
+ * Everything about the table's look is a block setting. Kadence has no
+ * setting for a minimum width, so without this the five columns would be
+ * squeezed into a phone's width. Here the table keeps a readable width and
+ * scrolls sideways inside its container.
+ */
+@media (max-width: 1024px) {
+	.kb-table-container.vm-compare {
+		overflow-x: auto;
+	}
+
+	.kb-table-container.vm-compare > table {
+		min-width: 880px;
+	}
+}
+
+/*
+ * A menu item that only opens its submenu ("Open dropdown on click"). Kadence
+ * prints it as a link with no address, which the browser treats as plain
+ * text: a text cursor over it, and a click that can select its letters.
+ */
+.wp-block-kadence-navigation .kb-nav-link-sub-click > .kb-link-wrap > .kb-nav-link-content {
+	cursor: pointer;
+	user-select: none;
+}
+
+/*
+ * vm-toggle: a Kadence Tabs block drawn as one control. The tabs touch,
+ * share the line between them, and only the two ends are rounded. The
+ * block has one radius setting for every tab, so the ends are set here.
+ */
+.wp-block-kadence-tabs.vm-toggle .kt-tabs-title-list .kt-title-item:first-child .kt-tab-title {
+	border-radius: 23px 0 0 23px;
+}
+
+.wp-block-kadence-tabs.vm-toggle .kt-tabs-title-list .kt-title-item:last-child .kt-tab-title {
+	border-radius: 0 23px 23px 0;
+}
+
+.wp-block-kadence-tabs.vm-toggle .kt-tabs-title-list .kt-title-item + .kt-title-item .kt-tab-title {
+	margin-left: -1px;
+}
+
+/*
+ * vm-needs-items: a section built around a Kadence query hides while the
+ * query lists nothing, title and button included. vm-after-items is the
+ * section after it, which then loses the colored top it shares with it.
+ */
+.vm-needs-items:has(.kb-query-grid-wrap:empty) {
+	display: none;
+}
+
+.vm-needs-items:has(.kb-query-grid-wrap:empty) + .vm-after-items {
+	background-image: none;
+}
+
+/*
+ * Pages of a Kadence query: plain numbers, and the previous and next arrows
+ * in a circle. The size and colors of the numbers are settings of the
+ * Pagination block, which has none for a shape around the arrows alone, and
+ * the theme frames every page number by default.
+ */
+body .wp-block-kadence-query-pagination .navigation .nav-links {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 40px;
+	height: 48px;
+	margin: 0;
+	border: 0;
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers.prev,
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers.next {
+	width: 48px;
+	padding: 0;
+	border: 1px solid var(--global-palette2);
+	border-radius: 50%;
+	color: var(--global-palette2);
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers.prev {
+	margin-right: 12px;
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers.next {
+	margin-left: 12px;
+}
+
+body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers svg {
+	width: 20px;
+	height: 20px;
+	fill: none;
+	stroke-width: 2;
+}
+
+/*
+ * vm-filters: the panel with the Filter, Sort and Filter Reset blocks of a
+ * Kadence query. The label of the fields is a setting of the query. These
+ * rules cover what those blocks have no setting for: every dropdown gets a
+ * menu drawn by the theme (vm-select) in place of the browser's own list,
+ * the sort is a pill, and the reset is underlined.
+ *
+ * The menus are added by assets/js/filters.js, over Kadence's dropdowns,
+ * which stay in the page, hidden. On phones the panel folds into one
+ * button, added by the same script. See inc/filters.php.
+ */
+.vm-filters .wp-block-kadence-query-filter {
+	flex: 0 1 192px;
+}
+
+body .vm-filters .kb-query-label {
+	margin-bottom: 8px;
+	line-height: 1.1;
+}
+
+.vm-select {
+	position: relative;
+}
+
+.vm-select > select {
+	display: none;
+}
+
+/* A filter: the look of a field, with its arrow. */
+.vm-select__button,
+.vm-select__button:hover,
+.vm-select__button:focus {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	width: 100%;
+	height: 44px;
+	padding: 0 12px;
+	border: 1px solid rgba(211, 112, 49, 0.38);
+	border-radius: 10px;
+	background: var(--global-palette9);
+	box-shadow: none;
+	color: var(--global-palette3);
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.1;
+	text-align: left;
+	cursor: pointer;
+}
+
+.vm-select__button[aria-expanded="true"] {
+	border-color: var(--global-palette1);
+}
+
+.vm-select__button::after {
+	content: "";
+	flex: none;
+	width: 12px;
+	height: 6px;
+	background: currentColor;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 6' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M.6.6 6 5.4 11.4.6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* The sort: a pill, with two arrows in the color of its text. */
+.vm-select--sort .vm-select__button {
+	justify-content: center;
+	width: auto;
+	min-width: 123px;
+	padding: 0 20px;
+	border-color: var(--global-palette1);
+	border-radius: 9999px;
+	background: transparent;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.vm-select--sort .vm-select__button::after {
+	width: 16px;
+	height: 16px;
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4'/%3E%3C/svg%3E");
+}
+
+.vm-select--sort .vm-select__button:hover,
+.vm-select--sort .vm-select__button:focus,
+.vm-select--sort .vm-select__button[aria-expanded="true"] {
+	background: var(--global-palette1);
+	color: var(--global-palette9);
+}
+
+/* The menu: white under a filter, peach under the sort. */
+.vm-select .vm-select__menu {
+	position: absolute;
+	z-index: 20;
+	top: calc(100% + 8px);
+	left: 0;
+	box-sizing: border-box;
+	min-width: 100%;
+	margin: 0;
+	padding: 8px 16px 16px;
+	border: 1px solid var(--global-palette1);
+	border-radius: 12px;
+	background: var(--global-palette9);
+	list-style: none;
+}
+
+.vm-select--sort .vm-select__menu {
+	left: -28px;
+	width: 184px;
+	background: #f7e7dd;
+}
+
+.vm-select .vm-select__menu[hidden] {
+	display: none;
+}
+
+.vm-select__option {
+	padding: 10px 8px;
+	border-bottom: 1px solid rgba(211, 112, 49, 0.5);
+	color: var(--global-palette3);
+	font-size: 14px;
+	line-height: 1.1;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.vm-select__option:hover,
+.vm-select__option:focus {
+	outline: none;
+	color: var(--global-palette2);
+}
+
+.vm-select__option[aria-selected="true"] {
+	font-weight: 600;
+}
+
+/* The reset, in the panel and in the message for no results. */
+body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
+	padding: 8px 20px;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.1;
+	text-decoration: underline;
+}
+
+.vm-filters__toggle {
+	display: none;
+}
+
+@media (max-width: 767px) {
+	.vm-filters .wp-block-kadence-query-filter {
+		flex-basis: auto;
+	}
+
+	.vm-select--sort .vm-select__button {
+		width: 100%;
+	}
+
+	.vm-select .vm-select__menu {
+		position: static;
+		width: auto;
+		margin-top: 8px;
+	}
+
+	.vm-filters--folds > .vm-filters__toggle {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: 14px 20px;
+		border: 1px solid var(--global-palette1);
+		border-radius: 16px;
+		background: #f8e8de;
+		box-shadow: none;
+		color: var(--global-palette3);
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 1.3;
+		cursor: pointer;
+	}
+
+	/* The arrow at the end of the button, pointing up while the panel is open. */
+	.vm-filters--folds > .vm-filters__toggle::after {
+		content: "";
+		width: 10px;
+		height: 10px;
+		margin-top: -4px;
+		border-right: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		transform: rotate(45deg);
+		transition: transform 0.2s ease;
+	}
+
+	.vm-filters--folds.is-open > .vm-filters__toggle::after {
+		margin-top: 4px;
+		transform: rotate(-135deg);
+	}
+
+	.vm-filters--folds:not(.is-open) > .kt-inside-inner-col {
+		display: none;
+	}
+
+	.vm-filters--folds.is-open > .kt-inside-inner-col {
+		margin-top: 8px;
+	}
+}
+
+/*
+ * The legal pages (inc/seed/class-velocity-legal.php).
+ *
+ * vm-legal-toc: the list of sections, Kadence's Table of Contents. Its card,
+ * sizes and colors are settings of the block. It has none for the line
+ * between two links, nor for the weight of the section in view.
+ */
+.vm-legal-toc .kb-table-of-content-list li + li {
+	padding-top: 15px;
+	border-top: 1px solid #e5e5e5;
+}
+
+.vm-legal-toc .kb-table-of-content-list .active > .kb-table-of-contents__entry {
+	font-weight: 600;
+}
+
+/*
+ * vm-legal-toc--bar: the same list on a phone and a tablet, a bar that opens
+ * on a press. A long list scrolls inside the bar instead of leaving the screen.
+ */
+.vm-legal-toc--bar .kb-table-of-content-list {
+	max-height: calc(100vh - 200px);
+	overflow-y: auto;
+}
+
+/*
+ * vm-legal-table: the table of a legal page. Its lines, widths and sizes are
+ * block settings. The block has no setting to start every cell at the top
+ * of its row. On a phone, as with vm-compare, it keeps a readable width and
+ * scrolls sideways inside its container instead of squeezing its columns.
+ */
+/* The table takes the keyboard focus so it can be scrolled (inc/legal.php). */
+.kb-table-container.vm-legal-table:focus-visible,
+.kb-table-container.vm-compare:focus-visible {
+	outline: 2px solid var(--global-palette2);
+	outline-offset: 4px;
+}
+
+.kb-table-container.vm-legal-table th,
+.kb-table-container.vm-legal-table td {
+	vertical-align: top;
+}
+
+@media (max-width: 767px) {
+	.kb-table-container.vm-legal-table {
+		overflow-x: auto;
+	}
+
+	.kb-table-container.vm-legal-table > table {
+		min-width: 640px;
+	}
+}
+
+/* A list in the text, and one that belongs under the item before it. */
+.single-content .vm-legal-list {
+	margin: 0 0 24px;
+	padding-left: 1em;
+	line-height: 1.5;
+}
+
+.vm-legal-list li {
+	margin: 0;
+}
+
+/* It follows the list before it with no space between them. */
+.single-content .vm-legal-list--sub {
+	margin-top: -24px;
+	padding-left: 1.9em;
+	list-style-type: "– ";
+}
+
+/*
+ * The 404 screen (Kadence > Elements, "404 page"): the theme leaves a space
+ * around the content of a 404, which showed as a white band above the footer.
+ */
+.error404 .content-area {
+	margin-top: 0;
+	margin-bottom: 0;
 }

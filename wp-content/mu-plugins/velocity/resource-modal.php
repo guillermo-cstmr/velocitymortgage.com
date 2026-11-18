@@ -11,6 +11,11 @@
  * document on this browser for a year (cookie), turns the buttons into
  * plain downloads, and starts the download that was asked for.
  *
+ * The Broker Tools page also shows the form on the page itself. The form is
+ * printed once: it sits in the block with the class vm-toolkit-inline while
+ * the window is closed, and moves into the window when a button opens it.
+ * A visitor who already unlocked the toolkit does not see it on the page.
+ *
  * Older links of the form #pdfrequest&resource_id=N still open the form.
  * The hidden Request ID field records which file was asked for.
  *
@@ -73,7 +78,8 @@ class Velocity_Resource_Modal {
 	}
 
 	/**
-	 * Inline CSS – mirrors _main-form-modal.scss conventions.
+	 * Inline CSS: the window, and the parts of the form the window and the
+	 * page share. Sizes and colors are the ones in the design.
 	 */
 	private static function get_inline_css() {
 		return '
@@ -88,7 +94,7 @@ class Velocity_Resource_Modal {
 }
 
 .velocity-resource-modal .dimmer {
-	background: rgba(0,0,0,0.8);
+	background: rgba(1,7,57,0.72);
 	height: 100vh;
 	left: 0;
 	top: 0;
@@ -96,96 +102,261 @@ class Velocity_Resource_Modal {
 	cursor: pointer;
 }
 
+/* The window: 640px wide, as tall as its content, scrolling only when the
+   screen is too short for it. */
 .velocity-resource-modal .inner {
 	background-color: #ffffff;
+	border: 1px solid #d4d4d4;
+	border-radius: 16px;
+	box-sizing: border-box;
 	left: 50%;
-	max-height: 96vh;
-	max-width: 900px;
+	max-height: 94vh;
+	max-width: 640px;
 	overflow: auto;
-	padding: 60px 20px 20px;
+	padding: 48px;
 	top: 50%;
 	transform: translate(-50%, -50%);
-	width: 90%;
-}
-
-@media (min-width: 992px) {
-	.velocity-resource-modal .inner {
-		padding: 80px 115px 60px;
-		width: 80%;
-	}
+	width: calc(100% - 32px);
 }
 
 .velocity-resource-modal button.modal-close {
 	background: transparent;
 	border: none;
+	box-shadow: none;
 	cursor: pointer;
-	height: 24px;
+	height: 34px;
 	padding: 0;
 	position: absolute;
 	right: 20px;
 	top: 20px;
-	width: 24px;
+	width: 34px;
 }
 
 .velocity-resource-modal button.modal-close svg {
-	stroke: #21275a;
-	stroke-width: 0.6;
-	transition: stroke 400ms ease-in-out;
+	stroke: #bb5013;
+	stroke-width: 1.5;
+	transition: stroke 200ms ease-in-out;
 }
 
 .velocity-resource-modal button.modal-close:focus svg,
 .velocity-resource-modal button.modal-close:hover svg {
-	stroke: #f28520;
+	stroke: #010739;
 }
 
-.velocity-resource-modal .form-container {
-	height: 100%;
-	padding-bottom: 20px;
+.velocity-resource-modal .form-container h2 {
+	color: #010739;
+	font-size: 56px;
+	line-height: 1.1;
+	margin: 0 0 20px;
 }
 
-.velocity-resource-modal .form-container h1,
-.velocity-resource-modal .form-container h2,
-.velocity-resource-modal .form-container h3,
-.velocity-resource-modal .form-container h4,
-.velocity-resource-modal .form-container h5,
-.velocity-resource-modal .form-container h6 {
-	color: #21275a;
-	margin-bottom: 20px;
-}
-
-.velocity-resource-modal .form-container p,
-.velocity-resource-modal .form-container p span,
-.velocity-resource-modal .form-container legend,
-.velocity-resource-modal .form-container label,
-.velocity-resource-modal .form-container label span {
-	color: #333333;
-}
-
-.velocity-resource-modal .form-container p,
-.velocity-resource-modal .form-container label,
-.velocity-resource-modal .form-container legend {
-	font-size: 1.4rem;
+.velocity-resource-modal .form-container > p {
+	color: #010739;
+	font-size: 16px;
+	line-height: 1.47;
+	margin: 0 0 32px;
 }
 
 .velocity-resource-modal .form-container legend {
 	border-bottom: none;
-	margin-bottom: 4px;
 }
 
-.velocity-resource-modal .vm-toolkit-partner {
-	margin-top: 24px;
+/* A shorter screen, or a phone: smaller title and less space around. */
+@media (max-height: 900px), (max-width: 600px) {
+	.velocity-resource-modal .inner {
+		padding: 32px 32px 28px;
+	}
+
+	.velocity-resource-modal .form-container h2 {
+		font-size: 36px;
+		margin-bottom: 12px;
+	}
+
+	.velocity-resource-modal .form-container > p {
+		margin-bottom: 20px;
+	}
+
+	body .velocity-resource-modal .gform_wrapper.gravity-theme .gform_fields {
+		row-gap: 12px;
+	}
 }
 
-.velocity-resource-modal .vm-toolkit-partner a {
-	color: #21275a;
+/* Phones: everything a size smaller, and first and last name side by side,
+   so the whole form fits on the screen without scrolling. */
+@media (max-width: 600px) {
+	.velocity-resource-modal .inner {
+		padding: 20px 20px 20px;
+	}
+
+	.velocity-resource-modal button.modal-close {
+		height: 28px;
+		right: 14px;
+		top: 16px;
+		width: 28px;
+	}
+
+	.velocity-resource-modal .form-container h2 {
+		font-size: 26px;
+		margin-bottom: 8px;
+		padding-right: 36px;
+	}
+
+	.velocity-resource-modal .form-container > p {
+		font-size: 14px;
+		line-height: 1.35;
+		margin-bottom: 12px;
+	}
+
+	body .velocity-resource-modal .gform_wrapper.gravity-theme .gform_fields {
+		row-gap: 8px;
+	}
+
+	body .velocity-resource-modal .gform_wrapper.gravity-theme .gfield_label,
+	body .velocity-resource-modal .gform_wrapper.gravity-theme legend.gfield_label {
+		font-size: 14px;
+		margin-bottom: 4px;
+	}
+
+	body .velocity-resource-modal .gform_wrapper.gravity-theme input[type="text"],
+	body .velocity-resource-modal .gform_wrapper.gravity-theme input[type="email"],
+	body .velocity-resource-modal .gform_wrapper.gravity-theme input[type="tel"] {
+		height: 42px;
+		min-height: 0;
+		padding-bottom: 8px;
+		padding-top: 8px;
+	}
+
+	body .velocity-resource-modal .gform_wrapper.gravity-theme .ginput_complex {
+		flex-wrap: nowrap;
+		gap: 8px;
+	}
+
+	body .velocity-resource-modal .gform_wrapper.gravity-theme .ginput_complex > span {
+		flex: 1 1 0;
+		margin: 0;
+		padding: 0;
+	}
+
+	body .velocity-resource-modal .gform_wrapper.gravity-theme .ginput_complex label {
+		font-size: 12px;
+		margin: 2px 0 0;
+		padding: 0;
+	}
+
+	body .velocity-resource-modal .gform_wrapper.gravity-theme .gform_footer {
+		gap: 12px;
+		margin-top: 12px;
+	}
+
+	.velocity-resource-modal .vm-toolkit-fields .vm-toolkit-follow-up {
+		font-size: 14px;
+		line-height: 1.35;
+	}
+
+	body .velocity-resource-modal .gform_wrapper.gravity-theme .gform_footer .gform_button {
+		min-height: 46px;
+		padding-bottom: 12px;
+		padding-top: 12px;
+	}
+
+	body .velocity-resource-modal .vm-toolkit-fields .vm-toolkit-partner {
+		font-size: 14px;
+		margin-top: 16px;
+	}
+}
+
+/* The last part of the form, in the window and on the page: the line about the
+   follow-up, the button at its own width, and the link to become a partner. */
+body .vm-toolkit-fields .gform_wrapper.gravity-theme .gform_footer {
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 24px;
+}
+
+body .vm-toolkit-fields .gform_wrapper.gravity-theme .gform_footer .gform_button {
+	width: 240px;
+	max-width: 100%;
+	min-height: 54px;
+	font-size: 16px;
+	align-self: flex-start;
+}
+
+.vm-toolkit-fields .vm-toolkit-follow-up {
+	color: #010739;
+	font-size: 16px;
+	line-height: 1.47;
+	margin: 0;
+}
+
+body .vm-toolkit-fields .vm-toolkit-partner {
+	font-size: 16px;
+	line-height: 1.1;
+	margin: 32px 0 0;
+}
+
+.vm-toolkit-partner a {
+	color: #bb5013;
 	font-weight: 600;
 	text-decoration: underline;
+}
+
+.vm-toolkit-partner a:hover,
+.vm-toolkit-partner a:focus {
+	color: #010739;
+}
+
+/* On the page all of it is centered. */
+body .vm-toolkit-inline .gform_wrapper.gravity-theme .gform_footer {
+	align-items: center;
+	text-align: center;
+}
+
+body .vm-toolkit-inline .gform_wrapper.gravity-theme .gform_footer .gform_button {
+	align-self: center;
+}
+
+.vm-toolkit-inline .vm-toolkit-partner {
+	text-align: center;
 }
 
 .vm-toolkit-wl:not(:has(a[href*="action=velocity_toolkit"])) {
 	display: none;
 }
-		';
+
+/* "Velocity Branded" only makes sense beside a White Label button. */
+.vm-toolkit-doc:not(:has(.vm-toolkit-wl a[href*="action=velocity_toolkit"])) .vm-toolkit-branded {
+	display: none;
+}
+
+/* Phones: the buttons of a document fill the row, two side by side when it
+   has a White Label file. Two do not fit with the whole label, so until the
+   toolkit is unlocked they read "Unlock". Screen readers still get it all. */
+@media (max-width: 767px) {
+	.vm-toolkit-doc .kb-buttons-wrap,
+	body .vm-toolkit-doc .kb-buttons-wrap .kb-button {
+		width: 100%;
+	}
+
+	body .vm-toolkit-doc .kb-buttons-wrap .kb-button {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+
+	body:not(.vm-toolkit-unlocked) .vm-toolkit-doc:has(.vm-toolkit-wl a[href*="action=velocity_toolkit"]) a[href*="locked=1"] .kt-btn-inner-text {
+		font-size: 0;
+	}
+
+	body:not(.vm-toolkit-unlocked) .vm-toolkit-doc:has(.vm-toolkit-wl a[href*="action=velocity_toolkit"]) a[href*="locked=1"] .kt-btn-inner-text::before {
+		content: "Unlock";
+		font-size: 0.9rem;
+	}
+}
+
+/* The form on the page, for a visitor who already unlocked the toolkit. */
+.vm-toolkit-returning .vm-toolkit-form {
+	display: none;
+}
+';
 	}
 
 	/**
@@ -202,6 +373,8 @@ class Velocity_Resource_Modal {
 	var cookieName    = '{$cookie}';
 	var ajaxUrl       = '{$ajax_url}';
 	var pending       = null;
+	var fields        = modal.find('.vm-toolkit-fields');
+	var slot          = $('.vm-toolkit-inline > .kt-inside-inner-col').first();
 
 	// Cache the form HTML before an AJAX submission replaces it.
 	var originalContent  = formContainer.html();
@@ -232,12 +405,23 @@ class Velocity_Resource_Modal {
 		}
 	}
 
+	// The form lives on the page, when the page has a place for it, and
+	// moves into the window while the window is open.
+	function toPage() {
+		if ( slot.length ) {
+			slot.append( fields );
+		}
+	}
+
 	function openForm(requestId) {
 		if ( formWasSubmitted ) {
+			slot.empty();
 			formContainer.html( originalContent );
+			fields = modal.find('.vm-toolkit-fields');
 			formWasSubmitted = false;
 			$(document).trigger('gform_post_render', [ {$form_id}, 1 ]);
 		}
+		formContainer.append( fields );
 		$('#input_{$form_id}_{$field_id}').val( requestId || '' );
 		modal.show();
 		$('body').addClass('velocity-modal-open');
@@ -246,6 +430,10 @@ class Velocity_Resource_Modal {
 	function closeModal() {
 		modal.hide();
 		$('body').removeClass('velocity-modal-open');
+		if ( ! formWasSubmitted ) {
+			$('#input_{$form_id}_{$field_id}').val('');
+			toPage();
+		}
 		if ( window.location.hash.indexOf('pdfrequest') !== -1 ) {
 			history.replaceState( null, '', window.location.pathname + window.location.search );
 		}
@@ -286,6 +474,10 @@ class Velocity_Resource_Modal {
 			return;
 		}
 		formWasSubmitted = true;
+		// Sent from the window: the form on the page has nothing left to show.
+		if ( slot.length && ! slot.find('.vm-toolkit-fields').length ) {
+			$('body').addClass('vm-toolkit-returning');
+		}
 		var secure = window.location.protocol === 'https:' ? '; secure' : '';
 		document.cookie = cookieName + '=1; max-age=31536000; path=/; samesite=lax' + secure;
 		markUnlocked();
@@ -295,8 +487,22 @@ class Velocity_Resource_Modal {
 		}
 	});
 
+	// A document anyone can download never says Unlock.
+	$('a[href*=\"action=velocity_toolkit\"]').each(function() {
+		if ( param(this.href, 'locked') === '1' ) {
+			return;
+		}
+		var walker = document.createTreeWalker(this, NodeFilter.SHOW_TEXT);
+		while (walker.nextNode()) {
+			walker.currentNode.nodeValue = walker.currentNode.nodeValue.replace(/Unlock to Download/g, 'Download');
+		}
+	});
+
 	if ( isUnlocked() ) {
 		markUnlocked();
+		$('body').addClass('vm-toolkit-returning');
+	} else {
+		toPage();
 	}
 	openFromHash();
 	$(window).on('hashchange', openFromHash);
@@ -334,8 +540,10 @@ class Velocity_Resource_Modal {
 				<div class="form-container">
 					<h2><?php esc_html_e( 'Unlock the Toolkit', 'velocitymu' ); ?></h2>
 					<p><?php esc_html_e( 'Fill this out once. Every file on this page becomes a one-click download, now and on your next visit.', 'velocitymu' ); ?></p>
+					<div class="vm-toolkit-fields">
 					<?php gravity_form( self::FORM_ID, false, false, false, array(), true, 1 ); ?>
-					<p class="vm-toolkit-partner"><a href="<?php echo esc_url( home_url( '/become-a-partner/' ) ); ?>"><?php esc_html_e( 'Not a partner yet? Become a Partner', 'velocitymu' ); ?></a></p>
+					<p class="vm-toolkit-partner"><a href="<?php echo esc_url( home_url( '/become-a-partner/' ) ); ?>"><?php esc_html_e( 'Not a Partner Yet? Become a Partner', 'velocitymu' ); ?></a></p>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -1,0 +1,28 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "velocity/offices-map",
+	"title": "Offices Map",
+	"category": "widgets",
+	"icon": "location-alt",
+	"description": "The map of the United States with a pin for each office. The offices are listed in the block's settings; each pin is placed from its address.",
+	"keywords": [ "map", "offices", "locations", "contact" ],
+	"textdomain": "velocity-kadence",
+	"attributes": {
+		"offices": {
+			"type": "array",
+			"default": [],
+			"items": {
+				"type": "object"
+			}
+		}
+	},
+	"supports": {
+		"html": false,
+		"reusable": false
+	},
+	"editorScript": "file:./editor.js",
+	"viewScript": "file:./view.js",
+	"style": "file:./style.css",
+	"render": "file:./render.php"
+}

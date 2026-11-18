@@ -33,8 +33,9 @@ class Velocity_Seed {
 	 * The site menu. Label, target, optional CSS class, optional children.
 	 *
 	 * A target starting with "/" is a path on this site. If a page lives there
-	 * the link is tied to that page. "#" is a placeholder for a page that does
-	 * not exist yet.
+	 * the link is tied to that page. A path may end in "#section" to land on a
+	 * part of the page. "#" alone is a placeholder for a page that does not
+	 * exist yet.
 	 *
 	 * @return array[]
 	 */
@@ -45,11 +46,11 @@ class Velocity_Seed {
 				'#',
 				'',
 				array(
-					array( 'Programs Overview', '/mortgage-programs/' ),
-					array( '30-Year-Fixed', '#' ),
-					array( 'Flex I/O', '#' ),
-					array( 'Fast50', '#' ),
-					array( 'Process', '#', 'vm-menu-featured' ),
+					array( 'Programs Overview', '/loan-programs/' ),
+					array( '30-Year-Fixed', Velocity_Program::path( '30-year-fixed' ) ),
+					array( 'Flex I/O', Velocity_Program::path( 'flex-io' ) ),
+					array( 'Fast50', Velocity_Program::path( 'fast50' ) ),
+					array( 'Process', '/process/', 'vm-menu-featured' ),
 				),
 			),
 			array(
@@ -59,8 +60,8 @@ class Velocity_Seed {
 				array(
 					array( 'News and Insights', '/insights/' ),
 					array( 'Featured Deals', '/featured-investment-property-loans/' ),
-					array( 'Case Studies', '#' ),
-					array( 'Broker Tools', '/broker-toolkit/' ),
+					array( 'Case Studies', '/case-studies/' ),
+					array( 'Broker Tools', '/broker-tools/' ),
 				),
 			),
 			array(
@@ -68,12 +69,13 @@ class Velocity_Seed {
 				'#',
 				'',
 				array(
-					array( 'About Us', '#' ),
-					array( 'Our Team', '/team/' ),
+					array( 'About Us', '/about/' ),
+					// The design sends "Our Team" to the people section of About Us.
+					array( 'Our Team', '/about/#team' ),
 					array( 'Careers', '/careers/' ),
 				),
 			),
-			array( 'Contact', '/contact-us/' ),
+			array( 'Contact', '/contact/' ),
 		);
 	}
 
@@ -264,6 +266,74 @@ class Velocity_Seed {
 	}
 
 	/**
+	 * A file of inc/seed/media as a media library item.
+	 *
+	 * Videos and photos are content, so they live in the media library, where an
+	 * editor can replace them. The file is copied to uploads the first time and
+	 * found again after that, so seeding twice does not add it twice.
+	 *
+	 * @param string $file  File name inside inc/seed/media.
+	 * @param string $title Title of the media library item.
+	 * @return array { id: int, url: string } Empty id and url when it fails.
+	 */
+	public static function media( $file, $title = '' ) {
+		$found = get_posts(
+			array(
+				'post_type'      => 'attachment',
+				'post_status'    => 'inherit',
+				'meta_key'       => '_vm_seed_media', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'     => $file, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+			)
+		);
+		if ( $found && file_exists( (string) get_attached_file( $found[0] ) ) ) {
+			return array(
+				'id'  => (int) $found[0],
+				'url' => (string) wp_get_attachment_url( $found[0] ),
+			);
+		}
+
+		$none   = array(
+			'id'  => 0,
+			'url' => '',
+		);
+		$source = __DIR__ . '/media/' . $file;
+		if ( ! is_readable( $source ) ) {
+			return $none;
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- A local file of the theme.
+		$upload = wp_upload_bits( basename( $file ), null, file_get_contents( $source ) );
+		if ( ! empty( $upload['error'] ) ) {
+			return $none;
+		}
+
+		$type = wp_check_filetype( $upload['file'] );
+		$id   = wp_insert_attachment(
+			array(
+				'post_title'     => $title ? $title : pathinfo( $file, PATHINFO_FILENAME ),
+				'post_mime_type' => $type['type'],
+				'post_status'    => 'inherit',
+			),
+			$upload['file']
+		);
+		if ( ! $id || is_wp_error( $id ) ) {
+			return $none;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $upload['file'] ) );
+		update_post_meta( $id, '_vm_seed_media', $file );
+
+		return array(
+			'id'  => (int) $id,
+			'url' => (string) $upload['url'],
+		);
+	}
+
+	/**
 	 * Serialize one block.
 	 *
 	 * @param string      $name  Block name without the "wp:" prefix.
@@ -295,18 +365,32 @@ class Velocity_Seed {
 		foreach ( $items as $index => $item ) {
 			$key    = $prefix . $index;
 			$target = $item[1];
-			$page   = '#' === $target ? null : get_page_by_path( trim( $target, '/' ) );
+			$anchor = '';
+
+			// "/about/#team": the page, then the section to land on.
+			if ( '#' !== $target && false !== strpos( $target, '#' ) ) {
+				list( $target, $anchor ) = explode( '#', $target, 2 );
+			}
+
+			$page = '#' === $target ? null : get_page_by_path( trim( $target, '/' ) );
 
 			$attrs = array(
 				'uniqueID' => self::uid( $post_id, 'link' . $key ),
 				'label'    => $item[0],
 			);
 
-			if ( $page ) {
+			if ( $page && '' !== $anchor ) {
+				// A link to a section is a custom link: a page link has no room for one.
+				$attrs['url']  = get_permalink( $page ) . '#' . $anchor;
+				$attrs['kind'] = 'custom';
+			} elseif ( $page ) {
 				$attrs['type'] = 'page';
 				$attrs['id']   = (int) $page->ID;
 				$attrs['url']  = get_permalink( $page );
 				$attrs['kind'] = 'post-type';
+			} elseif ( '' !== $anchor ) {
+				$attrs['url']  = home_url( $target ) . '#' . $anchor;
+				$attrs['kind'] = 'custom';
 			} else {
 				$attrs['url']  = '#' === $target ? '#' : home_url( $target );
 				$attrs['kind'] = 'custom';
@@ -317,6 +401,16 @@ class Velocity_Seed {
 			}
 
 			$children = empty( $item[3] ) ? null : self::navigation_links( $post_id, $item[3], $key . '-' );
+
+			// A parent with no page of its own only opens its submenu: "Disable
+			// link" and "Open dropdown on click" in the link's settings. As a
+			// link to "#" it would reload the page's address, close the mobile
+			// menu and mark every such parent as the current page.
+			if ( $children && '#' === $target ) {
+				unset( $attrs['url'] );
+				$attrs['disableLink']   = true;
+				$attrs['dropdownClick'] = true;
+			}
 
 			$out[] = self::block( 'kadence/navigation-link', $attrs, $children );
 		}
@@ -636,7 +730,10 @@ class Velocity_Seed {
 				),
 				$attrs
 			),
-			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
+			// Kadence adds a class when the Section is hidden on a screen size, is sticky
+			// or has an overlay, and
+			// one for a direction other than the default, vertical, on each screen size.
+			'<div class="wp-block-kadence-column kadence-column' . $uid . ( empty( $attrs['vsdesk'] ) ? '' : ' kvs-lg-false' ) . ( empty( $attrs['vstablet'] ) ? '' : ' kvs-md-false' ) . ( empty( $attrs['vsmobile'] ) ? '' : ' kvs-sm-false' ) . ( empty( $attrs['sticky'] ) ? '' : ' kb-section-is-sticky' ) . ( empty( $attrs['overlay'] ) && empty( $attrs['overlayGradient'] ) ? '' : ' kb-section-has-overlay' ) . ( empty( $attrs['direction'][0] ) ? '' : ' kb-section-dir-' . esc_attr( $attrs['direction'][0] ) ) . ( empty( $attrs['direction'][1] ) ? '' : ' kb-section-md-dir-' . esc_attr( $attrs['direction'][1] ) ) . ( empty( $attrs['direction'][2] ) ? '' : ' kb-section-sm-dir-' . esc_attr( $attrs['direction'][2] ) ) . ( empty( $attrs['className'] ) ? '' : ' ' . esc_attr( $attrs['className'] ) ) . '"' . self::aos_markup( $attrs ) . '><div class="kt-inside-inner-col">' . $inner . '</div></div>'
 		);
 	}
 
@@ -687,6 +784,130 @@ class Velocity_Seed {
 				$attrs
 			),
 			implode( "\n\n", $columns )
+		);
+	}
+
+	/**
+	 * Settings of a Kadence query post: what it lists.
+	 *
+	 * @param array $query   Title, post_type, order_by, order, per_page, columns
+	 *                       and gaps [desktop, tablet, mobile], and card, the
+	 *                       callable that builds the card. Optional: term, as
+	 *                       [taxonomy, term slug], or term_name, as [taxonomy,
+	 *                       term name], to list only the posts filed under
+	 *                       that term.
+	 * @param int   $term_id For staff: ID of the staff type to list, or 0 for all.
+	 * @return array Post meta.
+	 */
+	public static function query_meta( $query, $term_id = 0 ) {
+		$taxonomy = array();
+
+		if ( $term_id && 'velocity-staff' === $query['post_type'] ) {
+			$term       = get_term( $term_id, 'velocity-staff-type' );
+			$taxonomy[] = array(
+				'value' => 'velocity-staff-type|' . (int) $term_id,
+				'label' => $term && ! is_wp_error( $term ) ? $term->name : '',
+			);
+		}
+
+		if ( ! empty( $query['term'] ) ) {
+			$term = get_term_by( 'slug', $query['term'][1], $query['term'][0] );
+
+			if ( $term ) {
+				$taxonomy[] = array(
+					'value' => $query['term'][0] . '|' . (int) $term->term_id,
+					'label' => $term->name,
+				);
+			}
+		}
+
+		// The same, by the term's name.
+		if ( ! empty( $query['term_name'] ) ) {
+			$term = get_term_by( 'name', $query['term_name'][1], $query['term_name'][0] );
+
+			if ( $term ) {
+				$taxonomy[] = array(
+					'value' => $query['term_name'][0] . '|' . (int) $term->term_id,
+					'label' => $term->name,
+				);
+			}
+		}
+
+		return array(
+			'_kad_query_query' => array(
+				'perPage'          => $query['per_page'],
+				'pages'            => 0,
+				'offset'           => 0,
+				'postType'         => array( $query['post_type'] ),
+				'taxonomy'         => $taxonomy,
+				'order'            => $query['order'],
+				'orderBy'          => $query['order_by'],
+				'orderMetaKey'     => '',
+				'orderMetaKeyType' => '',
+				'author'           => '',
+				'search'           => '',
+				'exclude'          => array(),
+				'sticky'           => '',
+				'inherit'          => false,
+				'taxQuery'         => '',
+				'parents'          => array(),
+				'limit'            => 0,
+				'comparisonLogic'  => 'AND',
+				'infiniteScroll'   => false,
+			),
+		);
+	}
+
+	/**
+	 * Settings of a Kadence query card post: how many cards per row, and the gaps.
+	 *
+	 * @param array $query As query_meta() takes it.
+	 * @return array Post meta.
+	 */
+	public static function card_meta( $query ) {
+		return array(
+			'_kad_query_card_columns'           => $query['columns'],
+			'_kad_query_card_columnGap'         => $query['column_gap'],
+			'_kad_query_card_columnGapUnit'     => 'px',
+			'_kad_query_card_rowGap'            => $query['row_gap'],
+			'_kad_query_card_rowGapUnit'        => 'px',
+			'_kad_query_card_preview_post_type' => $query['post_type'],
+		);
+	}
+
+	/**
+	 * Content of a Kadence query post: the query block around its card.
+	 *
+	 * @param int $query_id Query post ID.
+	 * @param int $card_id  Query card post ID.
+	 * @return string
+	 */
+	public static function query_content( $query_id, $card_id ) {
+		return self::block(
+			'kadence/query',
+			array( 'uniqueID' => self::uid( $query_id, 'query' ) ),
+			self::block(
+				'kadence/query-card',
+				array(
+					'uniqueID' => self::uid( $query_id, 'card' ),
+					'id'       => (int) $card_id,
+				)
+			)
+		);
+	}
+
+	/**
+	 * Content of a Kadence query card post.
+	 *
+	 * @param int      $card_id Query card post ID.
+	 * @param callable $builder Builds the card's blocks from the card's post ID.
+	 * @return string
+	 */
+	public static function card_content( $card_id, $builder ) {
+		return self::block(
+			'kadence/query-card',
+			array( 'uniqueID' => self::uid( $card_id, 'card' ) ),
+			call_user_func( $builder, $card_id )
 		);
 	}
 

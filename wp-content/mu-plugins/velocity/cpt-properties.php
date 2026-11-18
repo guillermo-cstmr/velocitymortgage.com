@@ -34,7 +34,9 @@ class Velocity_Properties {
 				'menu_icon'    => 'dashicons-building',
 				'supports'     => array( 'title', 'thumbnail', 'editor' ),
 				'show_in_rest' => true,
-				'has_archive'  => 'featured-investment-property-loans',
+				// The list of deals is a page, Featured Deals, built in the block
+				// editor. It has the address this archive used to have.
+				'has_archive'  => false,
 			),
 			array(
 				'singular' => __( 'Property', 'velocitymu' ),

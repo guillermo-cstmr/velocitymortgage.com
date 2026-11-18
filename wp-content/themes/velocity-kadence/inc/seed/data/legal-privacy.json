@@ -1,0 +1,492 @@
+{
+  "title": "Privacy Notice for California Residents",
+  "subtitle": "Effective Date: January 1, 2025",
+  "toc": [
+    "Information We Collect",
+    "Retention",
+    "Sharing Personal Information",
+    "Sales of Personal Information",
+    "Your Rights and Choices",
+    "Exercising Your Rights",
+    "Other Privacy Rights",
+    "Contact Information"
+  ],
+  "toc_headings": [
+    "Information We Collect",
+    "Retention",
+    "Sharing Personal Information",
+    "Sales of Personal Information",
+    "Your Rights and Choices",
+    "Exercising Rights to Know/Access, Data Portability, Correction, and Deletion",
+    "Other California Privacy Rights",
+    "Contact Information"
+  ],
+  "intro": [
+    {
+      "type": "p",
+      "html": "This Privacy Notice for California Residents applies solely to all visitors, users, and others who reside in the State of California (“consumers” or “you”).  We provide this notice in compliance with the California Consumer Privacy Act (“CCPA”) and the California Privacy Rights Act (“CPRA”). This Notice applies to California residents’ Personal Information, as defined below, we collect to provide them with certain products and services (collectively, “Services”)."
+    },
+    {
+      "type": "p",
+      "html": "In addition, updated CCPA/CPRA requirements went into effect on January 1, 2023, for applicable Services related to employee and business-to-business Personal Information. As a result, this Notice also applies to employees, applicants for employment, and independent contractors, who are California residents."
+    },
+    {
+      "type": "p",
+      "html": "By using any of our Services, you acknowledge the privacy practices we describe in this Privacy Notice. You also acknowledge that you have read this policy and other policies described."
+    }
+  ],
+  "sections": [
+    {
+      "heading": "Information We Collect",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "The www.velocitymortgage.com and the related secure loan portal www.generatevelocity.com websites collect information that identifies, relates to, describes, references, is capable of being associated with, or could reasonably be linked, directly or indirectly, with a particular consumer or device (“personal information”).  In particular, the sites have collected the following categories of information from its consumers within the past 12 months:"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Category",
+            "Example",
+            "Collected?"
+          ],
+          "rows": [
+            [
+              "A. Identifiers",
+              "A real name, alias, postal address, unique personal identifier, Internet Protocol address, email address, account name, or other similar identifiers.",
+              "YES"
+            ],
+            [
+              "B. Personal information categories listed in the California Customer Records statute (Cal. Civ. Code 1798.80(e))",
+              "Identifiers listed in the preceding category A and subsequent category I, and a name, signature, Social Security Number, physical characteristics or description, address, telephone number, passport number, driver license or state issued identification card number, insurance policy number, education, employment, employment history, bank account number, credit card number, debit card number, or any other financial information, medical information, or health insurance information.<br><br>Some personal information included in this category may overlap with other categories.",
+              "YES"
+            ],
+            [
+              "C. Protected classification characteristics under California or federal law",
+              "Age, race, color, ancestry, national origin, citizenship, religion or creed, marital status, medical condition, physical or mental disability, sex (including gender, gender identity, gender expression, pregnancy or childbirth and related medical conditions), sexual orientation, veteran or military status, genetic information (including familial genetic information).",
+              "YES"
+            ],
+            [
+              "D. Commercial Information",
+              "Records of personal property, products or services purchased, obtained, or considered, or other purchasing consuming histories or tendencies.",
+              "YES"
+            ],
+            [
+              "E. Biometric Information",
+              "Genetic, physiological, behavioral, and biological characteristics, or activity patterns used to extract a template or other identifier or identifying information, such as, fingerprints, and voiceprints, iris or retina scans, keystroke, gait, or other physical patterns, and sleep, health, or exercise data.",
+              "NO"
+            ],
+            [
+              "F. Internet or other similar network activity",
+              "Browsing history, search history, information on a consumer’s interaction with a website, application, or advertisement.",
+              "YES"
+            ],
+            [
+              "G. Geolocation Data",
+              "Physical location or movements.",
+              "YES"
+            ],
+            [
+              "H. Sensory Data",
+              "Audio, electronic, visual, thermal, olfactory, or similar information.",
+              "NO"
+            ],
+            [
+              "I. Professional or employment-related information.",
+              "Current or past job history or performance evaluations.",
+              "YES"
+            ],
+            [
+              "J. Non-public education information (per the Family Educational Rights and Privacy Act (20 U.S.C. Section 1232g, 34 C.F.R. Part 99))).",
+              "Education records directly related to a student maintained by an educational institution or party acting on its behalf, such as grades, transcripts, class lists, student schedules, student identification codes, student financial information, or student disciplinary records.",
+              "NO"
+            ],
+            [
+              "K. Inferences drawn from other personal information.",
+              "Inferences drawn from (1) the information we collect when you visit our website or interact with our tools, widgets or plug-ins, (2) information we collect from mortgage applications, and (3) information about user preferences and behavior that we collect on our website to create a profile about a user reflecting the user’s preferences, characteristics, psychological trends, predispositions, behavior, attitudes, intelligence, abilities, and aptitudes.",
+              "NO"
+            ],
+            [
+              "L. Sensitive personal information",
+              "Identifiers listed in the preceding category B and precise geolocation, racial and ethnic origin, or the contents of communications where Velocity Mortgage Capital is not an intended recipient.",
+              "YES"
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "html": "Personal Information does not include:"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Publicly available information from government records.",
+            "Deidentified or aggregated consumer information.",
+            "Information excluded from CCPA/CPRA’s scope, like:"
+          ]
+        },
+        {
+          "type": "ul",
+          "level": 2,
+          "items": [
+            "health or medical information covered by the Health Insurance Portability and Accountability Act of 1996 (HIPAA) and the California Confidentiality of Medical Information Act (CMIA) or clinical trial data;",
+            "personal information covered by certain sector-specific privacy laws, including the Fair Credit Reporting Act (FRCA), the Gramm-Leach-Bliley Act (GLBA) or California Financial Information Privacy Act (FIPA), and the Driver’s Privacy Protection Act of 1994."
+          ]
+        },
+        {
+          "type": "p",
+          "html": "The company obtains the categories of personal information listed above from the following categories of sources:"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Directly from you.  For example, documentation required to complete a mortgage broker approval or device information when you access our website and other online services.",
+            "Indirectly from you.  For example, Loan Applications submitted by Mortgage Brokers/Bankers and not directly by you."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Retention",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "The company will retain Personal Information about you necessary to fulfill the purpose for which that information was collected, consistent with applicable laws. The company generally retains information for at least seven years from the date of last interaction (e.g., account closure), in compliance with our obligations under applicable laws, or for longer if required to do so according to our regulatory obligations or where we believe necessary to establish, defend, or protect our legal rights or those of others."
+        },
+        {
+          "type": "p",
+          "html": "When the company destroys your Personal Information, it is done in a way that prevents that information from being restored or reconstructed."
+        }
+      ]
+    },
+    {
+      "heading": "Sharing Personal Information",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "The company may disclose your personal information to a third party for a business purpose.  When we disclose personal information for a business purpose, we enter a contract describes the purpose and requires the recipient to both keep that personal information confidential and not use it for any purpose except performing the contract."
+        },
+        {
+          "type": "p",
+          "html": "We share your personal information with the following categories of third parties:"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Subsidiaries and affiliates.",
+            "Contractors and service providers.",
+            "Data aggregators.",
+            "Third parties with whom we partner to offer products and services to you (for example, appraisers, mortgage brokers, title companies, closing agents, etc.)"
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Disclosures of Personal Information For A Business Purpose",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "In the preceding 12 months, the company has disclosed the following categories of personal information for a business purpose to the parties identified above:"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Category A: Identifiers",
+            "Category B: California Customer Records personal information categories.",
+            "Category C: Protected classification characteristics under California or Federal Law.",
+            "Category D: Commercial Information.",
+            "Category F: Internet or other similar network activity.",
+            "Category G: Geolocation data.",
+            "Category L: Sensitive personal information."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Sales of Personal Information",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "The company shares personal information with third party non-affiliates (For example: mortgage brokers or loan servicers) in order to complete loan requests."
+        },
+        {
+          "type": "p",
+          "html": "California Residents: The California Consumer Privacy Act (CCPA) and California Privacy Rights Act (CPRA) sets forth certain obligations for businesses that “sell” or “share” personal information. The company shares personal information with third party non-affiliates (For example: mortgage brokers or loan servicers) in order to complete a real property appraisal.  If you wish to opt out of such sharing, you may click here:  Opt-Out"
+        },
+        {
+          "type": "p",
+          "html": "By Opting-Out of sharing your personal information, any appraisals you have requested cannot be completed.  By nature of the company’s business, third party service non-affiliates (mortgage brokers, loan servicers) receive your information in order to complete your loan request."
+        },
+        {
+          "type": "p",
+          "html": "By clicking the Opt-Out link, you will generate an email to the company.  Please provide your Opt-Out request in the body of the email."
+        },
+        {
+          "type": "p",
+          "html": "Please note we will take reasonable steps to verify your identity and the authenticity of the request. Once verified, we will maintain your request in the event our practices change."
+        },
+        {
+          "type": "p",
+          "html": "Nevada Residents: Under Nevada law, certain Nevada consumers may opt out of the sale of “personally identifiable information” for monetary consideration to a person for that person to license or sell such information to additional persons. If you are a Nevada resident who has obtained services from us, you may submit a request to opt out of any potential future sales under Nevada law by clicking here:  Opt-Out"
+        },
+        {
+          "type": "p",
+          "html": "By Opting-Out of sharing your personal information, any appraisals you have requested cannot be completed.  By nature of the company’s business, third party service non-affiliates (mortgage brokers, loan servicers) receive your information in order to complete your loan request."
+        },
+        {
+          "type": "p",
+          "html": "By clicking the Opt-Out link, you will generate an email to the company.  Please provide your Opt-Out request in the body of the email."
+        },
+        {
+          "type": "p",
+          "html": "Please note we will take reasonable steps to verify your identity and the authenticity of the request. Once verified, we will maintain your request in the event our practices change."
+        },
+        {
+          "type": "p",
+          "html": "Opt-In: By submitting your email, you opt-in to the sharing of your personal information with our third-party non- affiliates. A confirmation email will be sent to the email address provided requiring you to confirm your choice.  To Opt-In to the sharing of your personal information please submit your email address here: Opt-In"
+        }
+      ]
+    },
+    {
+      "heading": "Your Rights and Choices",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "The CCPA/CPRA provides consumers (California residents) with specific rights regarding their personal information.  This section describes your CCPA/CPRA rights and explains how to exercise those rights. Please note, there may be situations where the company cannot grant your request, for example, if you ask us to delete your Personal Information that is governed by a Federal privacy regulation that is exempted from CCPA/CPRA, or where the company is legally obligated to keep a record of our interactions with you to comply with law. We may also decline your request in order to maintain our legitimate use of data for anti-fraud and security purposes, such as when you request deletion of an account that is being investigated for security concerns. Other reasons your privacy request may be denied are if it jeopardizes the privacy of others, is frivolous, or would require disproportionate effort."
+        }
+      ]
+    },
+    {
+      "heading": "The Right to Know/Access & Data Portability",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "You have the right to request that the company disclose certain information to you about our collection and use of your personal information over the past 12 months.  Once we receive and confirm your verifiable consumer request (see Exercising Access, Data Portability, and Deletion Rights), we will disclose to you:"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "The categories of personal information we collected about you.",
+            "The categories of sources for the personal information we collected about you.",
+            "Our business or commercial purpose for collection or selling that personal information.",
+            "The categories of third parties with whom we share that personal information.",
+            "The specific pieces of personal information we collected about you (also called a data portability request).",
+            "If we sold or disclosed your personal information for a business purpose, two separate lists disclosing:"
+          ]
+        },
+        {
+          "type": "ul",
+          "level": 2,
+          "items": [
+            "Sales, identifying the personal information categories that each category of recipient purchased; and",
+            "Disclosures for a business purpose, identifying the personal information categories that each category of recipient obtained."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "The Right to Correct",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "You may update your Personal Information by contacting us as set forth above to request the change."
+        }
+      ]
+    },
+    {
+      "heading": "The Right to Delete",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "You have the right to request that the company delete any of your personal information that we collected for you and retained, subject to certain exceptions.  Once we receive and confirm your verifiable consumer request (see ‘Exercising Rights to Know/Access, Data Portability, Correction, and Deletion’), we will delete (and direct our service providers to delete) your personal information from our records, unless an exception applies."
+        },
+        {
+          "type": "p",
+          "html": "We may deny your deletion request is retaining the information is necessary for us or our service provider(s) to:"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Complete the transaction for which we collected the personal information, provide a good or service that you requested, take actions reasonably anticipated within the context of our ongoing business relationship with you, or otherwise perform our contract with you.",
+            "Detect security incidents, protect against malicious, deceptive, fraudulent, or illegal activity, or prosecute those responsible for such activities.",
+            "Debug products to identify and repair errors that impair existing intended functionality.",
+            "Exercise free speech, ensure the right of another consumer to exercise their free speech, or exercise another right provided for by law.",
+            "Comply with the California Electronic Communications Privacy Act (Cal. Penal Code 1546 et. seq.)",
+            "Engage in public or peer-reviewed scientific, historical, or statistical research in the public interest that adheres to all other applicable ethics and privacy laws, when the information’s deletion may likely render impossible or seriously impair the research’s achievement, if you previously provided informed consent.",
+            "Enable solely internal uses that are reasonably aligned with consumer expectations based on your relationship with us.",
+            "Comply with a legal obligation.",
+            "Make other internal and lawful uses of that information that are compatible with the context in which you provided it."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "Exercising Rights to Know/Access, Data Portability, Correction, and Deletion",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "To exercise the access, data portability, correction, and deletion rights described above, please submit a verifiable consumer request to us by contacting us at:"
+        },
+        {
+          "type": "p",
+          "html": "Velocity Mortgage Capital<br>Attn: Compliance<br>2945 Townsgate Road Suite 110, Westlake Village, CA 91361<br>Or<br><a href=\"mailto:compliance@velocitymortgage.com\">Compliance@velocitymortgage.com</a>"
+        },
+        {
+          "type": "p",
+          "html": "Only you, or a person registered with the California Secretary of State that you authorize to act on your behalf, may make a verifiable consumer request related to your personal information. You may also make a verifiable consumer request on behalf of your minor child."
+        },
+        {
+          "type": "p",
+          "html": "As required or permitted under applicable law, we may take steps to verify your request before providing Personal Information to you, deleting Personal Information, or otherwise processing your request. You may only make a verifiable consumer request for access or data portability twice within a 12-month period. The verifiable consumer request must:"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Provide sufficient information (full name, product/service, email address, phone number, state of residence) that allows us to reasonably verify you are the person about whom we collected personal information or an authorized representative.",
+            "Describe your request with sufficient detail that allows us to properly understand, evaluate, and respond to it."
+          ]
+        },
+        {
+          "type": "p",
+          "html": "We cannot respond to your request or provide you with personal information if we cannot verify your identity or authority to make the request and confirm the personal information relates to you. You may also be asked to verify your ability to control the email address or phone number you have provided to us. If we believe we need further information to verify your request as required by law, we may ask you to provide additional information to us. We will review each request carefully and respond accordingly within the timeframe established by the CCPA/CPRA."
+        },
+        {
+          "type": "p",
+          "html": "Making a verifiable consumer request does not require you to create an account with us. We will only use personal information provided in a verifiable consumer request to verify the requestor’s identity or authority to make the request."
+        }
+      ]
+    },
+    {
+      "heading": "Response Timing and Format",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "The company will provide confirmation of the request to know and/or delete within ten (10) business days. We endeavor to respond to a verifiable consumer request within forty-five (45) days of its receipt. If we require more time (up to 90 days), we will inform you of the reason and extension period in writing."
+        },
+        {
+          "type": "p",
+          "html": "If you have an account with us, we will deliver our written response to that account. If you do not have an account with us, we will deliver our written response by mail or electronically, at your option."
+        },
+        {
+          "type": "p",
+          "html": "Any disclosures we provide will only cover the 12-month period preceding the verifiable consumer request’s receipt. The response we provide will also explain the reasons we cannot comply with a request, if applicable. For data portability requests, we will select a format to provide your personal information that is readily useable and should allow you to transmit the information from one entity to another entity without hindrance."
+        },
+        {
+          "type": "p",
+          "html": "We do not charge a fee to process or respond to your verifiable consumer request unless it is excessive, repetitive, or manifestly unfounded. If we determine that the request warrants a fee, we will tell you why we made that decision and provide you with a cost estimate before completing your request."
+        }
+      ]
+    },
+    {
+      "heading": "Accessibility Design Guidelines",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "Our website has been designed with the following accessibility guidelines in mind:"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "The standard font used throughout the site has been chosen to be easily legible.",
+            "Wherever possible, we use live text instead of graphics to reduce the download time of pages and increase your control.",
+            "Our pages are designed to display without horizontal scrollbars when they are viewed at a screen resolution of 1024x768 pixels.",
+            "No information is exclusively conveyed using color. This doesn't mean that colors are not used to organize information; instead it means there are also other, non-color dependent ways of doing this.",
+            "All images and hyperlinks, where appropriate, have an alternative text attribute. This means when an image or hyperlink is conveying important information its content is described with an alternative text."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "The Right to Limit the Use of Sensitive Personal Information",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "We limit our use of Sensitive Personal Information to only the purposes necessary to perform covered Services, and for certain business and commercial purposes described above."
+        }
+      ]
+    },
+    {
+      "heading": "The Right to Non-Discrimination",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "We will not discriminate against you for exercising any of your CCPA/CPRA rights. Unless permitted by the CCPA/CPRA, we will not:"
+        },
+        {
+          "type": "ul",
+          "items": [
+            "Deny you goods or services.",
+            "Charge you different prices or rates for goods or services, including through granting discounts or other benefits, or imposing penalties.",
+            "Provide you a different level or quality of goods or services.",
+            "Suggest that you may receive a different price or rate for goods or services or a different level or quality of goods or services."
+          ]
+        },
+        {
+          "type": "p",
+          "html": "However, we may offer you certain financial incentives permitted by the CCPA/CPRA that can result in different prices, rates, or quality levels. Any CCPA/CPRA-permitted financial incentive we offer will reasonably relate to your personal information’s value and contain written terms that describe the program’s material aspects. Participation in a financial incentive program requires your prior opt-in consent, which you may revoke at any time."
+        }
+      ]
+    },
+    {
+      "heading": "Children Under the Age of 16",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "Our Website is not intended for children under 16 years of age. No one under age 16 may provide any personal information on the Website. We do not knowingly collect personal information from children under 16. If you are under 16, do not use or provide any information on this Website. If we learn we have collected or received personal information from a child under 16 without verification of parental consent, we will delete that information. If you believe we might have any information from or about a child under 16, please contact us at the email address below."
+        }
+      ]
+    },
+    {
+      "heading": "Changes to Our Privacy Notice",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "The company reserves the right to amend this privacy notice at our discretion and at any time.  When we make changes to this privacy notice, we will post the updated notice on this Site and update the notice’s effective date.  Your continued use of our Site following the posting of changes constitutes your acceptance of such changes."
+        }
+      ]
+    },
+    {
+      "heading": "Other California Privacy Rights",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "California’s “Shine the Light” law (Civil Code Section § 1798.83) permits users of our Site that are California residents to request certain information regarding our disclosure of personal information to third parties for their direct marketing purposes. To make such a request, please write or email to us at:"
+        },
+        {
+          "type": "p",
+          "html": "Velocity Mortgage Capital<br>Attn: Compliance Department<br>2945 Townsgate Road Suite 110,  Westlake Village, CA 91361<br>OR<br><a href=\"mailto:compliance@velocitymortgage.com\">Compliance@velocitymortgage.com</a>"
+        }
+      ]
+    },
+    {
+      "heading": "California Do-Not-Track Disclosure",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "The company is committed to providing you with meaningful choices about the information collected on our Platform for third party purposes. That is why we have provided links (above) to the NAI \"Consumer Opt-Out\" link, the DAA opt-out link, and a Google opt-out link. However, the company does not currently recognize or respond to browser-initiated Do-Not-Track signals, as the Internet industry is currently still working on Do-Not-Track standards, implementations, and solutions."
+        },
+        {
+          "type": "p",
+          "html": "Nevada residents: We are providing you this notice pursuant to state law. You may be placed on our internal Do Not Call List by following the directions in the To limit direct marketing section."
+        },
+        {
+          "type": "p",
+          "html": "For more information, contact us at 1-818-532-3700, <a href=\"mailto:compliance@velocitymortgage.com\">compliance@velocitymortgage.com</a>, or Velocity Mortgage Capital 2945 Townsgate Road, Suite 110 Westlake Village, CA 91361. Or, contact the Bureau of Consumer Protection, Office of the Nevada Attorney General, 555 E. Washington St., Suite 3900, Las Vegas, NV 89101; 702-486-3132; aginfo@ag.nv.gov."
+        }
+      ]
+    },
+    {
+      "heading": "Contact Information",
+      "blocks": [
+        {
+          "type": "p",
+          "html": "If you have any questions or comments about this notice, the ways in which the company collects and uses your information described below and in the Privacy Policy, your choices and rights regarding such use, or wish to exercise your rights under California law, please do not hesitate to contact us at:"
+        },
+        {
+          "type": "p",
+          "html": "Velocity Mortgage Capital<br>Attn: Compliance Department<br>2945 Townsgate Road Suite 110 Westlake Village, CA 91361<br>Or<br><a href=\"mailto:compliance@velocitymortgage.com\">Compliance@velocitymortgage.com</a>"
+        }
+      ]
+    }
+  ]
+}
