@@ -270,11 +270,12 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 | Page | Address | Command that creates it | Local | Staging |
 |---|---|---|---|---|
 | Home | `/` | `seed-home` | Built | Built, 2026-11-18 |
-| Programs Overview | `/loan-programs/` | `seed-programs-page` | Built | Not yet |
-| 30-Year Fixed, Fast50, Flex I/O, Super Jumbo | `/loan-programs/30-year-fixed/`, `/fast50/`, `/flex-i-o/`, `/jumbo/` | `seed-program-pages` | Built | Not yet |
+| Programs Overview | `/loan-programs/` | `seed-programs-page` | Built | The old page, moved to this address on 2026-11-19 (`rename-pages`) |
+| 30-Year Fixed | `/loan-programs/30-year-fixed/` | `seed-program-pages --page=30-year-fixed` | Built | Built, 2026-11-19 |
+| Fast50, Flex I/O, Super Jumbo | `/loan-programs/fast50/`, `/flex-i-o/`, `/jumbo/` | `seed-program-pages` | Built | Not yet. The menu and the cards of 30-Year Fixed already link to them |
 | Process | `/process/` | `seed-process` | Built | Not yet |
-| About Us | `/about/` | `seed-company` | Built | Not yet |
-| Contact | `/contact/` | `seed-contact` | Built | Not yet |
+| About Us | `/about/` | `seed-company` | Built | Built, 2026-11-19 |
+| Contact | `/contact/` | `seed-contact` | Built | The old page, moved to this address on 2026-11-19 |
 | Broker Tools | `/broker-tools/` | `seed-toolkit-page` | Built | Empty page |
 | Careers, and each job | `/careers/` | None: posts of the database | Copied from staging | The production version on the new theme. Not part of the redesign |
 | Become a Partner, Broker Login | Velocity's portal | None | Not ours to build: Figma marks them "client will develop, CSTMR to QA" | |
@@ -319,7 +320,7 @@ All of them are dry runs unless called with `--execute`.
 | `wp velocity seed-contact` | Fills the Contact page, if it is empty: heading, ways to reach Velocity, the contact form and the offices map. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "Offices map") |
 | `wp velocity seed-company` | Creates the About Us page if it is missing and fills it, if it is empty. Its people and careers sections are Kadence queries, which it creates with their cards (Kadence > Queries and Query Cards); they read Staff and Careers, so the people and the positions need no seeding. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The About Us page") |
 | `wp velocity seed-process` | Creates the Process page if it is missing and fills it, if it is empty. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "The Process page") |
-| `wp velocity seed-program-pages` | Creates the four program pages under Programs Overview, their Kadence queries and the card they share, and fills the pages that are empty. Needs the programs in Properties, Programs (`seed-programs`). `--force` rebuilds them and discards every change made in the editor (see [components.md](components.md), "The program pages") |
+| `wp velocity seed-program-pages` | Creates the four program pages under Programs Overview, their Kadence queries and the card they share, and fills the pages that are empty. Needs the programs in Properties, Programs (`seed-programs`). `--force` rebuilds them and discards every change made in the editor. `--page=30-year-fixed` (or `fast50`, `flex-io`, `super-jumbo`) does one program and leaves the other three alone (see [components.md](components.md), "The program pages") |
 | `wp velocity seed-programs-page` | Fills the Programs Overview page, if it is empty. Not the same as `seed-programs`, which fills in each program's details. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The Programs Overview page") |
 | `wp velocity rename-pages` | Moves the Contact, Loan Programs and Broker Tools pages to their addresses in the new site (`/contact/`, `/loan-programs/`, `/broker-tools/`), updates the links to them in pages, menus, header and footer, and adds a 301 redirect from each old address in Yoast SEO Premium. Safe to run again |
 

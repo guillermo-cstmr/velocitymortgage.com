@@ -70,3 +70,67 @@
 
 	window.addEventListener( 'resize', measure );
 } )();
+
+/**
+ * Desktop menu: a dropdown opens under the mouse as well as on a click.
+ *
+ * "Broker Programs", "Resources" and "Company" open on a click ("Open
+ * dropdown on click", in the link's settings), which is what a finger and the
+ * keyboard need. Kadence offers a click or the mouse, not both. This adds the
+ * mouse: the pointer over the item opens its dropdown, and leaving it closes
+ * it. Both go through Kadence's own toggle button, so the dropdown is the
+ * same one and its state is announced the same way.
+ *
+ * While the mouse holds a dropdown open, a click on its name leaves it open:
+ * without this, the click of someone used to clicking would close it.
+ *
+ * Only a mouse counts (not a finger or a pen), and only the horizontal menu:
+ * the mobile and tablet menu is vertical and stays click only.
+ */
+( function () {
+	const items = document.querySelectorAll( '.wp-block-kadence-header .wp-block-kadence-navigation .kb-nav-link-sub-click' );
+
+	items.forEach( ( item ) => {
+		const toggle = item.querySelector( ':scope > .kb-link-wrap > .kb-nav-dropdown-toggle-btn' );
+		const name = item.querySelector( ':scope > .kb-link-wrap > .kb-nav-link-content' );
+		if ( ! toggle || ! name ) {
+			return;
+		}
+
+		let held = false;
+		const horizontal = () => ! item.closest( '.is-vertical' ) && ! item.closest( '.kb-off-canvas-inner' );
+		const open = () => item.classList.contains( 'menu-item--toggled-on' );
+
+		item.addEventListener( 'pointerenter', ( event ) => {
+			if ( 'mouse' !== event.pointerType || ! horizontal() ) {
+				return;
+			}
+			held = true;
+			if ( ! open() ) {
+				toggle.click();
+			}
+		} );
+
+		item.addEventListener( 'pointerleave', ( event ) => {
+			if ( 'mouse' !== event.pointerType || ! held ) {
+				return;
+			}
+			held = false;
+			if ( open() ) {
+				toggle.click();
+			}
+		} );
+
+		// Capture phase: runs before Kadence's own click handler.
+		name.addEventListener(
+			'click',
+			( event ) => {
+				if ( held && open() ) {
+					event.preventDefault();
+					event.stopImmediatePropagation();
+				}
+			},
+			true
+		);
+	} );
+} )();

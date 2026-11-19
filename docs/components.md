@@ -157,8 +157,9 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-eyebrow` | Text (Adv) | Adds the orange dot before a small label. Text has no setting for that |
 | `vm-stats` | Row Layout | On tablet and mobile the items wrap centered, so an odd one out sits in the middle. A row's grid leaves it on the left |
 | `vm-tag` | Text (Adv) used as a small filled label | Makes it as wide as its text, and hides it, keeping its space, when its dynamic content is empty |
-| `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule, bold text and an arrow. Navigation has no per-item styling |
+| `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule above it. Under the pointer it turns bold and shows an arrow. Navigation has no per-item styling |
 | `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
+| `vm-card-grow` | Section that is a card | The card grows a little under the pointer (mouse only, and not with "reduce motion"). Used with `vm-card-link` on the cards of "Other Ways We’ll Get You to Yes", as the design notes |
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
 | `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
@@ -623,6 +624,10 @@ The mobile and tablet menu (Off Canvas) opens **under** the header, which stays 
 ### Menu items that only open a submenu
 
 "Broker Programs", "Resources" and "Company" have no page of their own. In the menu (Kadence > Navigation) each has "Disable link" and "Open dropdown on click" on, in the link's settings: a click on the name opens its submenu, on desktop and in the mobile menu. Without them the item is a link to "#", and a click on it closes the mobile menu and marks the three items as the current page.
+
+**On desktop the dropdown also opens under the mouse.** Kadence offers a click or the mouse, not both, so `assets/js/header.js` adds the mouse to the click: the pointer over the item opens its dropdown and leaving it closes it, through Kadence's own toggle. A click on the name while the mouse holds the dropdown open leaves it open. A finger and the keyboard keep the click, and the mobile and tablet menu is click only. `style.css` keeps the item in its hover color while its dropdown is open.
+
+**"Process" is set apart in its dropdown** with the class `vm-menu-featured`, in the link's Advanced settings: a rule above it, and bold with an arrow under the pointer. Any dropdown item can take the class.
 
 ## Where block styles live in the sidebar
 

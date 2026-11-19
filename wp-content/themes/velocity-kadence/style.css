@@ -135,9 +135,11 @@ h2 strong {
 }
 
 /*
- * vm-menu-featured: a dropdown item set apart from the rest, with a rule
- * above it, bold Deep Rust text and an arrow on the right. The navigation
- * block has no setting to style one item differently.
+ * vm-menu-featured: a dropdown item set apart from the rest by a rule above
+ * it. At rest it reads like the other items. Under the pointer, or with the
+ * keyboard's focus, it turns bold and shows an arrow on the right; its color
+ * is the dropdown's hover color, set on the navigation. The navigation block
+ * has no setting to style one item differently.
  */
 .kb-nav-sub-menu > .vm-menu-featured {
 	margin-top: 12px;
@@ -150,10 +152,9 @@ h2 strong {
 	justify-content: space-between;
 	align-items: center;
 	width: 100%;
-	font-weight: 700;
-	color: var(--global-palette2);
 }
 
+/* The arrow keeps its place while hidden, so the label does not move. */
 .kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content::after {
 	content: "";
 	flex: none;
@@ -162,6 +163,28 @@ h2 strong {
 	background-color: currentColor;
 	-webkit-mask: url("assets/images/icon-arrow-right.svg") center / contain no-repeat;
 	mask: url("assets/images/icon-arrow-right.svg") center / contain no-repeat;
+	opacity: 0;
+}
+
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:hover,
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:focus-visible {
+	font-weight: 700;
+}
+
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:hover::after,
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:focus-visible::after {
+	opacity: 1;
+}
+
+/*
+ * A top item keeps its hover color while its dropdown is open, as in the
+ * design. Kadence colors it only while the pointer is on the name itself.
+ * Desktop only: the mobile and tablet menu is left as it is.
+ */
+@media (min-width: 1025px) {
+	.wp-block-kadence-header .wp-block-kadence-navigation .menu-container > .menu > .menu-item.menu-item--toggled-on > .kb-link-wrap {
+		--kb-nav-link-color: var(--kb-nav-link-color-hover);
+	}
 }
 
 /*
@@ -918,6 +941,41 @@ body .vm-story-media .vm-story-stat--offices {
 	inset: 0;
 	z-index: 1;
 	border-radius: inherit;
+}
+
+/*
+ * Its button stays on one line where the section is at its full width. The
+ * longest, "Explore Super Jumbo", is wider than the card's text, as in the
+ * design, and runs into the card's right padding.
+ */
+@media (min-width: 1400px) {
+	.vm-card-grow .kb-button {
+		flex: none;
+		max-width: none;
+		white-space: nowrap;
+	}
+}
+
+/* Its title sits inside a Section of the card, and still covers the whole card. */
+.vm-card-link.vm-card-grow .wp-block-kadence-column > .kt-inside-inner-col {
+	position: static;
+}
+
+/*
+ * vm-card-grow: a card that grows a little under the pointer, as the design
+ * notes for the cards of the other programs (304px to 321px wide). The inner
+ * part grows, so the block's own entrance animation is left alone. Only with
+ * a mouse, and not for visitors who ask for less motion.
+ */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+	.vm-card-grow > .kt-inside-inner-col {
+		transition: transform 0.25s ease, box-shadow 0.25s ease;
+	}
+
+	.vm-card-grow:hover > .kt-inside-inner-col,
+	.vm-card-grow:focus-within > .kt-inside-inner-col {
+		transform: scale(1.058);
+	}
 }
 
 /* In a Kadence query, every card in a line is as tall as the tallest. */

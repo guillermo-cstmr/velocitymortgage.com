@@ -311,6 +311,12 @@ class Velocity_Home {
 			$html            = '<a href="' . $attrs['link'] . '" class="kb-advanced-heading-link kt-adv-heading-link' . $uid . '">' . $html . '</a>';
 		}
 
+		// The whole text links to a fixed address.
+		if ( ! empty( $o['href'] ) ) {
+			$attrs['link'] = $o['href'];
+			$html          = '<a href="' . esc_url( $o['href'] ) . '" class="kb-advanced-heading-link kt-adv-heading-link' . $uid . '">' . $html . '</a>';
+		}
+
 		if ( $dynamic ) {
 			$attrs['inQueryBlock']   = true;
 			$attrs['kadenceDynamic'] = $dynamic;
