@@ -1184,6 +1184,68 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Builds News and Insights: the list of articles at /insights/.
+	 *
+	 * That address is the list of a post type, not a page, so its content is
+	 * a Kadence Element, "News and Insights" (Kadence > Elements), that takes
+	 * the place of the theme's own list, there and on the address of each
+	 * topic. The command creates the element, its two Kadence queries (the
+	 * featured article and the list) and their cards.
+	 *
+	 * Needs the plugin Velocity Insights. An element, a query or a card that
+	 * already exists is left alone unless --force is given.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * [--force]
+	 * : Rebuild the element, the queries and the cards. This DISCARDS what
+	 * was changed in the editor.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-insights
+	 *     wp velocity seed-insights --execute
+	 *
+	 * @subcommand seed-insights
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_insights( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		if ( ! post_type_exists( Velocity_Insights::POST_TYPE ) ) {
+			WP_CLI::error( 'The post type "insight" does not exist. Activate the plugin Velocity Insights.' );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		$queries = $this->seed_queries( 'insights', Velocity_Insights::queries() );
+
+		$this->seed_post(
+			'insights-archive',
+			'kadence_element',
+			'News and Insights',
+			static function ( $post_id ) use ( $queries ) {
+				return Velocity_Insights::archive( $post_id, $queries );
+			},
+			array(
+				'_kad_element_type'              => 'template',
+				'_kad_element_hook'              => 'replace_archive_content',
+				'_kad_element_hook_priority'     => 10,
+				// The list of articles, and the address of each topic.
+				'_kad_element_show_conditionals' => '[{"rule":"post_type_archive|insight","select":"all","ids":[],"subRule":"","subSelection":[],"mustMatch":false},{"rule":"tax_archive|insight_topic","select":"all","ids":[],"subRule":"","subSelection":[],"mustMatch":false}]',
+			)
+		);
+
+		WP_CLI::success( $this->execute ? 'News and Insights is in place. Edit it in the block editor from now on.' : 'Dry run finished.' );
+	}
+
+	/**
 	 * Moves pages to their addresses in the new site's URL list.
 	 *
 	 * For each page in PAGE_SLUG_CHANGES that still has its old slug, it

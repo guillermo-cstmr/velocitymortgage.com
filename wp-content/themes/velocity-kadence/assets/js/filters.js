@@ -13,6 +13,10 @@
  *    again. The button shows how many filters are in use, so a closed panel
  *    does not hide that the list is filtered.
  *
+ * vm-filters--bar, beside vm-filters, is the lighter version of News and
+ * Insights: one filter drawn as a pill and the sort as plain text. There the
+ * sort reads its choice, as a filter does, and nothing folds on phones.
+ *
  * The rules are in style.css, "vm-filters".
  */
 ( function () {
@@ -30,6 +34,7 @@
 	const menuFor = ( select ) => {
 		const wrap = select.parentNode;
 		const isSort = select.classList.contains( 'kb-sort' );
+		const isBar = !! select.closest( '.vm-filters--bar' );
 		const first = select.options[ 0 ];
 
 		const button = document.createElement( 'button' );
@@ -38,8 +43,9 @@
 		button.setAttribute( 'aria-haspopup', 'listbox' );
 		button.setAttribute( 'aria-expanded', 'false' );
 
-		// The pill always reads "Sort By". A filter reads its choice.
-		const text = () => ( isSort ? first : select.options[ select.selectedIndex ] || first ).text;
+		// The pill always reads "Sort By". A filter reads its choice, and so
+		// does the sort of a bar.
+		const text = () => ( isSort && ! isBar ? first : select.options[ select.selectedIndex ] || first ).text;
 		button.textContent = text();
 
 		const menu = document.createElement( 'ul' );
@@ -51,7 +57,9 @@
 		button.setAttribute( 'aria-controls', menu.id );
 
 		const items = [ ...select.options ]
-			.filter( ( option ) => ! isSort || '' !== option.value )
+			// The sort of a bar lists its empty choice too: it is the way back to
+			// the order the list starts in.
+			.filter( ( option ) => ! isSort || isBar || '' !== option.value )
 			.map( ( option ) => {
 				const item = document.createElement( 'li' );
 				item.className = 'vm-select__option';
@@ -160,7 +168,8 @@
 			text.textContent = used ? label + ' (' + used + ')' : label;
 
 			// The reset empties the dropdowns: the fields read their choice again.
-			panel.querySelectorAll( '.vm-select:not(.vm-select--sort) > select' ).forEach( ( select ) => {
+			const fields = panel.classList.contains( 'vm-filters--bar' ) ? '.vm-select > select' : '.vm-select:not(.vm-select--sort) > select';
+			panel.querySelectorAll( fields ).forEach( ( select ) => {
 				const option = select.options[ select.selectedIndex ] || select.options[ 0 ];
 				select.nextElementSibling.textContent = option.text;
 			} );
@@ -187,7 +196,9 @@
 			}
 		} );
 
-		panel.classList.add( 'vm-filters--folds' );
+		if ( ! panel.classList.contains( 'vm-filters--bar' ) ) {
+			panel.classList.add( 'vm-filters--folds' );
+		}
 		update();
 
 		// A link that is already filtered: Kadence sets the dropdowns from the

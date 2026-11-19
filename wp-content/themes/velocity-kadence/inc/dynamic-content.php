@@ -34,6 +34,7 @@ function vm_dynamic_fields() {
 		'vm_case_date'         => array( __( 'Case study: date', 'velocity-kadence' ), 'vm_dynamic_case_date' ),
 		'vm_toolkit_new'       => array( __( 'Toolkit: "New" tag', 'velocity-kadence' ), 'vm_dynamic_toolkit_new' ),
 		'vm_toolkit_file_type' => array( __( 'Toolkit: file type', 'velocity-kadence' ), 'vm_dynamic_toolkit_file_type' ),
+		'vm_insight_topic'     => array( __( 'Insight: topic', 'velocity-kadence' ), 'vm_dynamic_insight_topic' ),
 	);
 }
 
@@ -318,3 +319,23 @@ function vm_hide_empty_text( $html ) {
 }
 // Before vm_mark_empty_tag, which would fill the empty text with a space.
 add_filter( 'render_block_kadence/advancedheading', 'vm_hide_empty_text', 9 );
+
+/**
+ * The topic of an article of News and Insights. An article filed under
+ * several topics shows the first one, in alphabetical order.
+ *
+ * @param int $post_id Insight ID.
+ * @return string
+ */
+function vm_dynamic_insight_topic( $post_id ) {
+	$terms = get_the_terms( $post_id, 'insight_topic' );
+
+	if ( ! $terms || is_wp_error( $terms ) ) {
+		return '';
+	}
+
+	$names = wp_list_pluck( $terms, 'name' );
+	sort( $names, SORT_NATURAL | SORT_FLAG_CASE );
+
+	return (string) $names[0];
+}

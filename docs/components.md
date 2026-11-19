@@ -167,6 +167,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-toggle` | Kadence Tabs | Joins the tabs into one control and rounds only its two ends. The block has one radius setting for every tab. See "The program pages" |
 | `vm-hide-empty` | Text (Adv) with dynamic content | The text is not printed when it has no value. Kadence would print it empty, with its background and margins |
 | `vm-filters` | Section holding the Filter, Sort and Filter Reset blocks of a query | Size of the filters, the sort as a pill with its menu, the underline of the reset, and the fold into one button on phones. See "The Featured Deals page" |
+| `vm-filters--bar` | With `vm-filters`, on the same Section | The lighter version, of News and Insights: the filter as a filled pill, the sort as plain text that reads its choice, nothing folds on phones |
 | `vm-legal-toc` | Table of Contents of a legal page | The line between two links and the weight of the section in view. `vm-legal-toc--bar` is the one of a phone and a tablet, which opens and closes. See "The legal pages" |
 | `vm-legal-list` | List (core) in a legal page | Spacing of the list. `vm-legal-list--sub` is a list that belongs under the item before it |
 | `vm-back` | A link | Goes one step back in the browser's history. Only on the 404 page. See "The 404 page" |
@@ -513,6 +514,34 @@ The section has the class `vm-needs-items`: while no case study is published, th
 - **The programs on the deals are the old ones.** Fifteen deals are filed under FlexTerm and two under Fast50, so those are the choices of the Loan Program filter. None is filed under 30-Year Fixed, Flex I/O or Super Jumbo.
 - **A deal with no photo shows an empty frame.**
 - **The new address, `/featured-deals/`,** in Velocity's list of addresses, is not applied. It is now a matter of renaming the page and adding the redirect.
+
+## News and Insights
+
+The list of articles, at `/insights/`. The articles are the posts under **Insights**, a post type of the plugin Velocity Insights. That address is the list of a post type, not a page, so there is no page to open in Pages: its content is a **Kadence Element**, "News and Insights" (Kadence > Elements), built by `wp velocity seed-insights` and edited with blocks after that. Its placement is "Replace archive content", for the Insights list.
+
+| Part | Block | Where it is edited |
+|---|---|---|
+| Hero | Text (Adv) | The element |
+| Featured article | Kadence query "News and Insights: featured article" | Kadence > Queries, and its card under Query Cards |
+| Topics, sort, the cards and the pages | Kadence query "News and Insights: articles" | Kadence > Queries. The card is "News and Insights: articles card" |
+| Newsletter | Text (Adv) and the shortcode `[vm_form name="newsletter"]` | The element. The form is "Newsletter Signup" in Gravity Forms |
+
+**The featured article is chosen in the article itself**: the box "Featured article" in its editor, from the plugin. Ticking it takes the tick off the article featured before. While no article has it, the featured section does not show. The featured article is left out of the list under it, since it is already on the page.
+
+**A card reads the article**: its featured image, its topic, its title and its excerpt. An article with no excerpt shows no summary, and one with no topic shows no label. An article filed under several topics shows the first, in alphabetical order.
+
+**Choosing a topic lists its articles on the same page**, as the design notes. The address of a topic (`/insights/topic/...`) goes to the list with that topic chosen, so there is one page that lists articles and not one per topic.
+
+**The sort reads "Newest first"**, the order the list starts in, and offers "Oldest first".
+
+Two things a Kadence query has no setting for are in `inc/insights.php`: which article is the featured one, and leaving it out of the list. Each query has a role for that, kept beside it in the field `_vm_query_role` ("insights-featured", "insights-index"). A query made by hand has no role and behaves as Kadence's own. The row of topics and sort is a Section with the classes `vm-filters vm-filters--bar`: the same menus as Featured Deals, drawn as a pill and plain text.
+
+### What is still open
+
+- The page of an article is not built yet: it shows on the theme's default template.
+- The press releases still live under Press. They move to Insights, under the topic "Press Release", with a command to be written.
+- The list of topics is not defined. The design says "Category".
+- The newsletter form saves the address in Gravity Forms and sends it nowhere yet.
 
 ## The legal pages
 

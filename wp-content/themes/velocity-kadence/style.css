@@ -1380,6 +1380,79 @@ body .vm-filters .kb-query-label {
 	color: var(--global-palette9);
 }
 
+/*
+ * vm-filters--bar: the lighter version, of News and Insights. The filter is
+ * a filled pill that reads "Topics" or the topic chosen, with no label above
+ * it. The sort is plain text at the other end of the line.
+ */
+.vm-filters--bar .wp-block-kadence-query-filter {
+	flex: 0 0 auto;
+}
+
+body .vm-filters--bar .kb-query-label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__button {
+	justify-content: center;
+	gap: 8px;
+	width: auto;
+	padding: 0 24px;
+	border-color: var(--global-palette1);
+	border-radius: 9999px;
+	background: var(--global-palette1);
+	color: var(--global-palette9);
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__button:hover,
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__button:focus,
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__button[aria-expanded="true"] {
+	border-color: var(--global-palette2);
+	background: var(--global-palette2);
+}
+
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__menu {
+	min-width: 220px;
+}
+
+.vm-filters--bar .vm-select--sort .vm-select__button,
+.vm-filters--bar .vm-select--sort .vm-select__button:hover,
+.vm-filters--bar .vm-select--sort .vm-select__button:focus,
+.vm-filters--bar .vm-select--sort .vm-select__button[aria-expanded="true"] {
+	min-width: 0;
+	padding: 0;
+	border-color: transparent;
+	border-radius: 4px;
+	background: transparent;
+	color: #606060;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.vm-filters--bar .vm-select--sort .vm-select__button:hover,
+.vm-filters--bar .vm-select--sort .vm-select__button[aria-expanded="true"] {
+	color: var(--global-palette3);
+}
+
+.vm-filters--bar .vm-select--sort .vm-select__button::after {
+	width: 12px;
+	height: 6px;
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 6' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M.6.6 6 5.4 11.4.6'/%3E%3C/svg%3E");
+}
+
+.vm-filters--bar .vm-select--sort .vm-select__menu {
+	right: 0;
+	left: auto;
+}
+
 /* The menu: white under a filter, peach under the sort. */
 .vm-select .vm-select__menu {
 	position: absolute;
