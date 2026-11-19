@@ -1321,6 +1321,8 @@ class Velocity_Program {
 					'verticalAlignment' => 'space-between',
 					'rowGapVariable'    => array( 'custom', '', '' ),
 					'rowGap'            => array( 32, '', '' ),
+					// The whole card is the title's link, and it grows under the pointer.
+					'className'         => 'vm-card-link vm-card-grow',
 					'metadata'          => array( 'name' => $card[1] ),
 				),
 				Velocity_Home::card_animation( $index )
@@ -1346,6 +1348,7 @@ class Velocity_Program {
 							'weight' => '600',
 							'lh'     => 1.1,
 							'margin' => array( '0', '', '12', '' ),
+							'href'   => self::url( $key ),
 						)
 					) . "\n\n" .
 					Velocity_Home::t( $post_id, $card_key . '-body', $card[2], array( 'margin' => array( '0', '', '26', '' ) ) ) . "\n\n" .

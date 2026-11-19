@@ -159,6 +159,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-tag` | Text (Adv) used as a small filled label | Makes it as wide as its text, and hides it, keeping its space, when its dynamic content is empty |
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule above it. Under the pointer it turns bold and shows an arrow. Navigation has no per-item styling |
 | `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
+| `vm-card-grow` | Section that is a card | The card grows a little under the pointer (mouse only, and not with "reduce motion"). Used with `vm-card-link` on the cards of "Other Ways We’ll Get You to Yes", as the design notes |
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
 | `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |

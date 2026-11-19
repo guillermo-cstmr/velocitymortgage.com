@@ -943,6 +943,28 @@ body .vm-story-media .vm-story-stat--offices {
 	border-radius: inherit;
 }
 
+/* Its title sits inside a Section of the card, and still covers the whole card. */
+.vm-card-link.vm-card-grow .wp-block-kadence-column > .kt-inside-inner-col {
+	position: static;
+}
+
+/*
+ * vm-card-grow: a card that grows a little under the pointer, as the design
+ * notes for the cards of the other programs (304px to 321px wide). The inner
+ * part grows, so the block's own entrance animation is left alone. Only with
+ * a mouse, and not for visitors who ask for less motion.
+ */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+	.vm-card-grow > .kt-inside-inner-col {
+		transition: transform 0.25s ease, box-shadow 0.25s ease;
+	}
+
+	.vm-card-grow:hover > .kt-inside-inner-col,
+	.vm-card-grow:focus-within > .kt-inside-inner-col {
+		transform: scale(1.058);
+	}
+}
+
 /* In a Kadence query, every card in a line is as tall as the tallest. */
 .kb-query-item > .vm-card-link {
 	height: 100%;
