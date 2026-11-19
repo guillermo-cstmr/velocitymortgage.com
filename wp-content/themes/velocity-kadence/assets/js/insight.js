@@ -4,7 +4,8 @@
  * 1. The newsletter bar (inc/insights.php prints it, hidden) comes up from
  *    the bottom of the screen once half of the article has been read. It
  *    shows once per visit: after it showed, or was closed, it stays away
- *    until the browser is closed. It also stays away after a sign-up.
+ *    until the browser is closed. At the end of the page it stops above
+ *    the footer instead of covering it.
  *
  * 2. The "copy the link" icon of the share links copies the article's
  *    address and says so. Without this script it is a plain link.
@@ -55,7 +56,17 @@
 			window.requestAnimationFrame( () => bar.classList.add( 'is-open' ) );
 		};
 
+		// The bar rests on the footer once the footer is in view.
+		const footer = document.querySelector( 'footer' );
+		const dock = () => {
+			const over = footer ? window.innerHeight - footer.getBoundingClientRect().top : 0;
+			bar.style.bottom = Math.max( 0, Math.round( over ) ) + 'px';
+		};
+
 		window.addEventListener( 'scroll', check, { passive: true } );
+		window.addEventListener( 'scroll', dock, { passive: true } );
+		window.addEventListener( 'resize', dock );
+		dock();
 		bar.querySelector( '.vm-news-bar__close' ).addEventListener( 'click', close );
 		document.addEventListener( 'keydown', ( event ) => {
 			if ( 'Escape' === event.key && bar.classList.contains( 'is-open' ) && bar.contains( document.activeElement ) ) {
