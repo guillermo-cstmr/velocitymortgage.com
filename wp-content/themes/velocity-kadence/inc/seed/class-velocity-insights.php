@@ -228,6 +228,8 @@ class Velocity_Insights {
 					'margin'  => array( '0', '', '16', '' ),
 					'dynamic' => 'post|post_title',
 					'to_post' => true,
+					// A long title is cut after three lines. See style.css.
+					'class'   => 'vm-lines-3',
 				)
 			) . "\n\n" .
 			Velocity_Home::t(
@@ -238,7 +240,7 @@ class Velocity_Insights {
 					'color'   => Velocity_Seed::color( 'palette5' ),
 					'margin'  => array( '0', '', '16', '' ),
 					'dynamic' => 'post|post_excerpt',
-					'class'   => 'vm-hide-empty',
+					'class'   => 'vm-hide-empty vm-lines-3',
 				)
 			) . "\n\n" .
 			// Looks like a link. The card's title already links the whole card.
@@ -314,6 +316,7 @@ class Velocity_Insights {
 				'',
 				array(
 					'tag'     => 'h2',
+					'class'   => 'vm-lines-4',
 					'size'    => array( 46, 36, 30 ),
 					'lh'      => 1.1,
 					'color'   => Velocity_Seed::color( 'palette3' ),
@@ -329,7 +332,7 @@ class Velocity_Insights {
 					'color'   => $gray,
 					'margin'  => array( '0', '', '20', '' ),
 					'dynamic' => 'post|post_excerpt',
-					'class'   => 'vm-hide-empty',
+					'class'   => 'vm-hide-empty vm-lines-3',
 				)
 			) . "\n\n" .
 			self::post_button( $card_id, 'featured', 'Read the Full Post' );

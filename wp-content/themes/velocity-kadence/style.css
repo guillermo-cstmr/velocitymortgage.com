@@ -1672,6 +1672,32 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 }
 
 /*
+ * vm-lines-2, vm-lines-3, vm-lines-4: a text that is cut after that many
+ * lines, with "..." at the end. For the titles and summaries of cards, so a
+ * long one does not stretch its card. The whole text stays in the page for
+ * screen readers and search engines. Text (Adv) has no setting for it.
+ */
+.vm-lines-2,
+.vm-lines-3,
+.vm-lines-4 {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+}
+
+.vm-lines-2 {
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+
+.vm-lines-4 {
+	-webkit-line-clamp: 4;
+	line-clamp: 4;
+}
+
+/*
  * The page of an article (Kadence > Elements, "News and Insights: article").
  *
  * vm-article is the column that holds what the author wrote. The article is
