@@ -1314,7 +1314,9 @@ class Velocity_Program {
 					'background'        => Velocity_Seed::color( 'palette9' ),
 					'borderStyle'       => Velocity_Home::border( Velocity_Seed::color( 'palette1' ) ),
 					'borderRadius'      => array( 8, 8, 8, 8 ),
-					'padding'           => array( '32', '18', '32', '18' ),
+					// 12px on the sides: the longest button, "Explore Super Jumbo", is 271px
+					// wide with the design's own padding and has to stay on one line.
+					'padding'           => array( '32', '12', '32', '12' ),
 					// As tall as the design's on desktop, as tall as its content below.
 					'height'            => array( 475, 0, 0 ),
 					// The icon at the top, the text and the button at the bottom.
@@ -1352,8 +1354,7 @@ class Velocity_Program {
 						)
 					) . "\n\n" .
 					Velocity_Home::t( $post_id, $card_key . '-body', $card[2], array( 'margin' => array( '0', '', '26', '' ) ) ) . "\n\n" .
-					// Less padding on the sides, so the longest label stays on one line.
-					Velocity_Home::buttons( $post_id, $card_key, array( array( $card[3], self::url( $key ), 'fill', array( 'padding' => array( '', '12', '', '12' ) ) ) ), 'left' ),
+					Velocity_Home::buttons( $post_id, $card_key, array( array( $card[3], self::url( $key ) ) ), 'left' ),
 					array( 'metadata' => array( 'name' => 'Text and button' ) )
 				),
 				$attrs
