@@ -50,6 +50,7 @@ class Velocity_Seed {
 					array( '30-Year-Fixed', Velocity_Program::path( '30-year-fixed' ) ),
 					array( 'Flex I/O', Velocity_Program::path( 'flex-io' ) ),
 					array( 'Fast50', Velocity_Program::path( 'fast50' ) ),
+					array( 'Super Jumbo', Velocity_Program::path( 'super-jumbo' ) ),
 					array( 'Process', '/process/', 'vm-menu-featured' ),
 				),
 			),

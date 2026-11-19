@@ -112,7 +112,7 @@ class Velocity_Company {
 			Velocity_Home::t(
 				$post_id,
 				'hero-title',
-				'We Believe in Opportunities for Every Borrower',
+				'We Believe Every Borrower Deserves an Opportunity',
 				array(
 					'tag'    => 'h1',
 					'align'  => 'center',
@@ -299,7 +299,7 @@ class Velocity_Company {
 			array( 'icon-forum.svg', 'Straight Talk', 'We tell you up front what we can do and what we can’t, so nothing comes as a surprise.' ),
 			array( 'icon-long-term.svg', 'Here Long Term', 'Holding our own loans lets us offer 30-year terms so your clients can keep planning.' ),
 			array( 'icon-book.svg', 'Education First', 'We make sure you understand how each loan works so you can place them successfully.' ),
-			array( 'icon-check.svg', 'Find the Win', 'When other lenders say no, we keep on working until we can get you to “yes.”' ),
+			array( 'icon-check.svg', 'Find the Win', 'When other lenders say no, we keep working to find a path to “yes.”' ),
 		);
 
 		$columns = array();
@@ -475,7 +475,7 @@ class Velocity_Company {
 		// Text, and whether it is a point on the timeline.
 		$entries = array(
 			array( '<strong>In 2004,</strong> a group of mortgage and finance veterans got together to answer a question: why was it so hard for some investors to get funding and move forward with their plans? Even if they had equity, many borrowers still couldn’t get long-term loans. Was there a better way?', true ),
-			array( 'Their answer was Velocity Mortgage Capital. Instead of judging investors on their personal income, this new company would qualify them only on their property. This way, they could open up opportunities to the kinds of clients other lenders have long turned down.', false ),
+			array( 'Their answer was Velocity Mortgage Capital—a lender built for real estate investors, with a simple documentation process designed for how investors actually operate. This way, they could open up opportunities to the kinds of clients other lenders have long turned down.', false ),
 			array( 'The idea caught on. By combining the flexibility of private lending with the stability of permanent financing, Velocity soon grew nationwide.', false ),
 			array( '<strong>In January 2020,</strong> they became part of a publicly traded company.', true ),
 			array( '<strong>And in 2025,</strong> Velocity was <strong>funding more than $2 billion in loans annually.</strong>', true ),

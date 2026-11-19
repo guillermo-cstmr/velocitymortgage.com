@@ -502,6 +502,43 @@ class Velocity_Programs {
 	}
 
 	/**
+	 * The List block of a table cell, with no space around it.
+	 *
+	 * An item is a string. An item with items of its own, such as
+	 * "Refinances:" and its three limits, is array( text, items ).
+	 *
+	 * @param array $items Items.
+	 * @return string
+	 */
+	private static function cell_list( $items ) {
+		$out = '';
+
+		foreach ( $items as $item ) {
+			if ( is_array( $item ) ) {
+				$out .= Velocity_Seed::block( 'list-item', array(), '<li>' . $item[0] . self::cell_list( $item[1] ) . '</li>' );
+			} else {
+				$out .= Velocity_Seed::block( 'list-item', array(), '<li>' . $item . '</li>' );
+			}
+		}
+
+		return Velocity_Seed::block(
+			'list',
+			array(
+				'style' => array(
+					'spacing' => array(
+						'margin'  => array(
+							'top'    => '0',
+							'bottom' => '0',
+						),
+						'padding' => array( 'left' => '18px' ),
+					),
+				),
+			),
+			'<ul style="margin-top:0;margin-bottom:0;padding-left:18px" class="wp-block-list">' . $out . '</ul>'
+		);
+	}
+
+	/**
 	 * A Kadence Table block.
 	 *
 	 * The striped rows, the cell padding, the column widths and the text
@@ -561,25 +598,7 @@ class Velocity_Programs {
 
 				if ( is_array( $cell ) ) {
 					// Several items: a List block, with no space around it.
-					$items = '';
-					foreach ( $cell as $item ) {
-						$items .= Velocity_Seed::block( 'list-item', array(), '<li>' . $item . '</li>' );
-					}
-					$inner = Velocity_Seed::block(
-						'list',
-						array(
-							'style' => array(
-								'spacing' => array(
-									'margin'  => array(
-										'top'    => '0',
-										'bottom' => '0',
-									),
-									'padding' => array( 'left' => '18px' ),
-								),
-							),
-						),
-						'<ul style="margin-top:0;margin-bottom:0;padding-left:18px" class="wp-block-list">' . $items . '</ul>'
-					);
+					$inner = self::cell_list( $cell );
 				} elseif ( 0 === $r && $c ) {
 					// A program's name, in the header's own size and weight.
 					$inner = Velocity_Home::t(

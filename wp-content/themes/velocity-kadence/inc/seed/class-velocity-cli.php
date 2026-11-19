@@ -760,10 +760,15 @@ class Velocity_CLI {
 	 * and their card. This DISCARDS what is there. WordPress keeps the old
 	 * version of a page as a revision.
 	 *
+	 * [--page=<key>]
+	 * : Only this program: 30-year-fixed, fast50, flex-io or super-jumbo.
+	 * The other three pages and their queries are not created nor touched.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     wp velocity seed-program-pages
 	 *     wp velocity seed-program-pages --execute
+	 *     wp velocity seed-program-pages --page=30-year-fixed --execute
 	 *
 	 * @subcommand seed-program-pages
 	 *
@@ -781,6 +786,17 @@ class Velocity_CLI {
 		}
 
 		$programs = Velocity_Program::programs();
+		$queries  = Velocity_Program::queries();
+		$only     = (string) WP_CLI\Utils\get_flag_value( $assoc_args, 'page', '' );
+
+		if ( '' !== $only ) {
+			if ( ! isset( $programs[ $only ] ) ) {
+				WP_CLI::error( sprintf( 'There is no program "%s". Use one of: %s.', $only, implode( ', ', array_keys( $programs ) ) ) );
+			}
+
+			$programs = array( $only => $programs[ $only ] );
+			$queries  = array( $only => $queries[ $only ] );
+		}
 
 		// Without its term a query would list the case studies of every program.
 		foreach ( $programs as $program ) {
@@ -791,7 +807,7 @@ class Velocity_CLI {
 
 		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
 
-		$queries = $this->seed_queries( 'program', Velocity_Program::queries() );
+		$queries = $this->seed_queries( 'program', $queries );
 		$written = 0;
 
 		foreach ( $programs as $key => $program ) {

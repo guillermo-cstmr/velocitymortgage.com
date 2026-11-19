@@ -135,9 +135,11 @@ h2 strong {
 }
 
 /*
- * vm-menu-featured: a dropdown item set apart from the rest, with a rule
- * above it, bold Deep Rust text and an arrow on the right. The navigation
- * block has no setting to style one item differently.
+ * vm-menu-featured: a dropdown item set apart from the rest by a rule above
+ * it. At rest it reads like the other items. Under the pointer, or with the
+ * keyboard's focus, it turns bold and shows an arrow on the right; its color
+ * is the dropdown's hover color, set on the navigation. The navigation block
+ * has no setting to style one item differently.
  */
 .kb-nav-sub-menu > .vm-menu-featured {
 	margin-top: 12px;
@@ -150,10 +152,9 @@ h2 strong {
 	justify-content: space-between;
 	align-items: center;
 	width: 100%;
-	font-weight: 700;
-	color: var(--global-palette2);
 }
 
+/* The arrow keeps its place while hidden, so the label does not move. */
 .kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content::after {
 	content: "";
 	flex: none;
@@ -162,6 +163,28 @@ h2 strong {
 	background-color: currentColor;
 	-webkit-mask: url("assets/images/icon-arrow-right.svg") center / contain no-repeat;
 	mask: url("assets/images/icon-arrow-right.svg") center / contain no-repeat;
+	opacity: 0;
+}
+
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:hover,
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:focus-visible {
+	font-weight: 700;
+}
+
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:hover::after,
+.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:focus-visible::after {
+	opacity: 1;
+}
+
+/*
+ * A top item keeps its hover color while its dropdown is open, as in the
+ * design. Kadence colors it only while the pointer is on the name itself.
+ * Desktop only: the mobile and tablet menu is left as it is.
+ */
+@media (min-width: 1025px) {
+	.wp-block-kadence-header .wp-block-kadence-navigation .menu-container > .menu > .menu-item.menu-item--toggled-on > .kb-link-wrap {
+		--kb-nav-link-color: var(--kb-nav-link-color-hover);
+	}
 }
 
 /*

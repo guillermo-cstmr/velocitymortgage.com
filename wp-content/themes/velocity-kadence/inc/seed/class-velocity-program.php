@@ -70,7 +70,7 @@ class Velocity_Program {
 	private static function invitations() {
 		return array(
 			'30-year-fixed' => array( 'icon-calendar-clock.svg', 'When the Client Is Keeping the Property', 'The 30-Year Fixed offers a payment that never changes with no lump sum at the end.', 'Explore 30-Year Fixed' ),
-			'fast50'        => array( 'icon-acute.svg', 'When Credit Is the Problem', 'Need looser credit rules? Fast50 offers loans for up to half a property’s value.', 'Explore Fast50' ),
+			'fast50'        => array( 'icon-acute.svg', 'Equity Does the Talking', 'Like the 30-Year Fixed, with the weight on property equity—up to 50% of the property’s value.', 'Explore Fast50' ),
 			'super-jumbo'   => array( 'icon-diamond.svg', 'When the Loan is Over $2MM', 'Deal over $2MM? Super Jumbo carries the same 30-year loan up to $10MM.', 'Explore Super Jumbo' ),
 			'flex-io'       => array( 'icon-gesture.svg', 'When the Client Needs a Bridge', 'Flex I/O frees up cash between projects with two years of interest-only payments.', 'Explore Flex I/O' ),
 		);
@@ -114,7 +114,7 @@ class Velocity_Program {
 					'With one 30-year loan for both residential and commercial properties, we help you both build your book and keep your clients for the long-term.',
 					array(
 						array( 'icon-filter-1.svg', '30 Years, One Monthly Payment', 'A predictable plan that takes the loan down to zero. No need to refinance after a year.' ),
-						array( 'icon-home-work.svg', 'Judged on the Property, Not the Paycheck', 'Meet the needs of self-employed clients with eligibility based on the value of the property.' ),
+						array( 'icon-home-work.svg', 'Property-First Underwriting', 'Simple documentation, with eligibility focused on the value of the property.' ),
 						array( 'icon-linear-scale.svg', 'One Loan, Multiple Uses', 'Fund everything from rentals to mixed-use to commercial—all with a single lender.' ),
 					),
 				),
@@ -125,24 +125,24 @@ class Velocity_Program {
 						array( 'What It’s For', 'Long-term financing to buy, keep, or cash out of investment property' ),
 						array( 'Property Types', array( 'Single-family, condo, 2-4 units', 'Assisted living homes included' ), $commercial ),
 						array( 'Loan Amounts', array( '$75K to $2MM' ), array( '$100K minimum' ) ),
-						array( 'Maximum LTV', array( '70% with a credit score of 650-674', '65% with a credit score of 600-649', '60% with a credit score below 600' ), array( 'Up to 75% (refinance limits step down at lower credit scores)' ) ),
-						array( 'Combined Financing', array( 'Up to 90% of value with a second loan on the property, such as a seller carryback or a second already in place' ) ),
+						array( 'Maximum LTV', array( 'Purchases: up to 75%', array( 'Refinances:', array( '70% with a credit score of 650-674', '65% with a credit score of 600-649', '60% with a credit score below 600' ) ) ) ),
+						array( 'Combined Financing', array( 'On purchases, up to 90% of value combining Velocity’s first loan with a seller carryback or other second lien' ) ),
 						array( 'Term and Payments', $fixed_term ),
 						array( 'Credit Minimum', array( 'Ask your account executive' ) ),
 						array( 'Loan Purpose', array( 'Purchase', 'Rate-and-term refinance', 'Cash-out refinance' ) ),
 						array( 'Several Rentals on One Loan', array( 'Two or more 1-4 unit properties in the same county on one loan with one payment' ), array( 'Not applicable' ) ),
-						array( 'Borrower Experience', array( 'First-time buyers not eligible', 'A first-time investor’s maximum LTV is 5 percentage points lower' ), array( 'A first-time investor’s maximum LTV is 5 percentage points lower' ) ),
-						array( 'Qualifies On', $on_value ),
+						array( 'Borrower Experience', array( 'First-time investors: maximum LTV is 5 percentage points lower' ) ),
+						array( 'Qualifies On', array( 'The property’s value and investments characteristics, with simple documentation' ) ),
 						array(
 							'Paying It Off Early',
 							array(
 								'For most states, a fee that steps down over five years, 5% of the balance in year one to 1% in year five, then none',
-								'PA, NM, KS, and AK not eligible for prepay on non-entity loans when a rate or fee add-on applies',
-								'NJ (1-6 units) not eligible for prepay on non-entity loans',
+								'NJ (1-6 units) and PA (1-4 units): no prepay fee on non-entity loans',
+								'NM, KS, and AK (1-4 units): no prepay fee on non-entity loans, with a 1% rate or 1.5% fee add-on',
 							),
 							array(
 								'For most states, a fee that steps down over five years, 5% of the balance in year one to 1% in year five, then none',
-								'NJ (1-6 units) not eligible for prepay on non-entity loans',
+								'NJ (1-6 units) and PA (1-4 units): no prepay fee on non-entity loans',
 							),
 						),
 						array(
@@ -153,13 +153,13 @@ class Velocity_Program {
 								$itin,
 							),
 							array(
-								'A foreign national (lives in the U.S. part of the year, has U.S. credit) up to 75% on multifamily and mixed-use, 70% on office, retail, and the rest',
-								'A foreign investor (lives abroad, no U.S. credit) up to 65%',
+								'A foreign national (lives in the U.S. part of the year, has U.S. credit): up to 75% on multifamily and mixed-use, 70% on office, retail, and the rest',
+								'A foreign investor (lives abroad, no U.S. credit): up to 65%',
 								$itin,
 							),
 						),
 						array( 'Where Velocity Lends', array( 'Nationwide' ) ),
-						array( 'Time to Close', array( 'Two weeks to 45 days' ) ),
+						array( 'Time to Close', array( '2 to 4 weeks' ), array( '30 to 45 days' ) ),
 					),
 				),
 				'clients' => array(
@@ -167,7 +167,7 @@ class Velocity_Program {
 					'Clients who want long-term certainty but can’t—or would rather not—qualify through a bank’s income paperwork. Now you can move forward with them.',
 					array(
 						array( 'The Buy-and-Hold Investor', 'Keeps the property for the long run and wants payments that never change.' ),
-						array( 'The Self-Employed Borrower', 'Has strong property, healthy cash flow, but needs a loan that isn’t judged on tax returns.' ),
+						array( 'The Self-Employed Borrower', 'Has strong property, healthy cash flow, but needs a loan with simpler documentation than a bank requires.' ),
 						array( 'The Investor Stuck in Short-Term Debt', 'Has a 12-month private money loan coming due and needs 30 years of certainty.' ),
 					),
 				),
