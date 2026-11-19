@@ -184,9 +184,9 @@ function vm_insight_share_shortcode() {
 		'link'     => '<path d="M10.6 13.4a1 1 0 0 1 0 1.4 1 1 0 0 1-1.4 0 5 5 0 0 1 0-7.07l3.53-3.54a5 5 0 0 1 7.08 7.08l-1.5 1.49a7 7 0 0 0-.4-2.42l.48-.49a3 3 0 1 0-4.24-4.24L10.6 9.15a3 3 0 0 0 0 4.25Zm2.8-4.2a1 1 0 0 1 1.4 0 5 5 0 0 1 0 7.07l-3.53 3.54a5 5 0 0 1-7.08-7.08l1.5-1.49c-.02.82.12 1.64.4 2.42l-.48.49a3 3 0 1 0 4.24 4.24l3.54-3.54a3 3 0 0 0 0-4.24 1 1 0 0 1 0-1.4Z"/>',
 	);
 	$links = array(
-		'linkedin' => array( __( 'Share on LinkedIn', 'velocity-kadence' ), 'https://www.linkedin.com/sharing/share-offsite/?url=' . $url ),
-		'x'        => array( __( 'Share on X', 'velocity-kadence' ), 'https://twitter.com/intent/tweet?url=' . $url . '&text=' . $title ),
-		'reddit'   => array( __( 'Share on Reddit', 'velocity-kadence' ), 'https://www.reddit.com/submit?url=' . $url . '&title=' . $title ),
+		'linkedin' => array( __( 'Share on LinkedIn (opens in a new tab)', 'velocity-kadence' ), 'https://www.linkedin.com/sharing/share-offsite/?url=' . $url ),
+		'x'        => array( __( 'Share on X (opens in a new tab)', 'velocity-kadence' ), 'https://twitter.com/intent/tweet?url=' . $url . '&text=' . $title ),
+		'reddit'   => array( __( 'Share on Reddit (opens in a new tab)', 'velocity-kadence' ), 'https://www.reddit.com/submit?url=' . $url . '&title=' . $title ),
 		'email'    => array( __( 'Share by email', 'velocity-kadence' ), 'mailto:?subject=' . $title . '&body=' . $url ),
 	);
 

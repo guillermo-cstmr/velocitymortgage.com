@@ -958,9 +958,12 @@ body .vm-story-media .vm-story-stat--offices {
 
 /*
  * A title inside a Section of the card still covers the whole card: the
- * Sections inside are not what its link is measured against.
+ * Sections inside are not what its link is measured against. The class is
+ * written twice on purpose: Kadence prints each Section's own rule again
+ * when it redraws a list (a new page, a filter), after this one.
  */
-.vm-card-link .wp-block-kadence-column > .kt-inside-inner-col {
+.vm-card-link.vm-card-link .wp-block-kadence-column.wp-block-kadence-column,
+.vm-card-link.vm-card-link .wp-block-kadence-column.wp-block-kadence-column > .kt-inside-inner-col {
 	position: static;
 }
 

@@ -34,8 +34,15 @@
 	};
 
 	if ( bar && article && ! seen() ) {
+		// While the bar is open, the page keeps what has the keyboard's focus
+		// above it: a link reached with Tab is not left hidden under the bar.
+		const clear = ( open ) => {
+			document.documentElement.style.scrollPaddingBottom = open ? bar.offsetHeight + 16 + 'px' : '';
+		};
+
 		const close = () => {
 			bar.classList.remove( 'is-open' );
+			clear( false );
 			window.setTimeout( () => {
 				bar.hidden = true;
 			}, 300 );
@@ -53,7 +60,10 @@
 			remember();
 			bar.hidden = false;
 			// The next frame, so the bar slides in instead of appearing.
-			window.requestAnimationFrame( () => bar.classList.add( 'is-open' ) );
+			window.requestAnimationFrame( () => {
+				bar.classList.add( 'is-open' );
+				clear( true );
+			} );
 		};
 
 		// The bar rests on the footer once the footer is in view.
