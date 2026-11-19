@@ -573,7 +573,7 @@ class Velocity_Insights {
 			'Hero',
 			array(
 				'bgColor'       => Velocity_Seed::color( 'palette3' ),
-				'padding'       => array( '69', '', '40', '' ),
+				'padding'       => array( '69', '', '60', '' ),
 				'mobilePadding' => array( '48', '', '32', '' ),
 			)
 		);
@@ -695,8 +695,8 @@ class Velocity_Insights {
 			$band,
 			'Newsletter',
 			array(
-				'padding'       => array( '32', '', '96', '' ),
-				'mobilePadding' => array( '16', '', '64', '' ),
+				'padding'       => array( '96', '', '96', '' ),
+				'mobilePadding' => array( '48', '', '64', '' ),
 			)
 		);
 	}
@@ -915,8 +915,8 @@ class Velocity_Insights {
 			),
 			'Article',
 			array(
-				'padding'       => array( '0', '', '32', '' ),
-				'mobilePadding' => array( '0', '', '24', '' ),
+				'padding'       => array( '32', '', '32', '' ),
+				'mobilePadding' => array( '16', '', '24', '' ),
 			)
 		);
 	}
@@ -988,8 +988,8 @@ class Velocity_Insights {
 			),
 			'You may also like',
 			array(
-				'padding'       => array( '0', '', '96', '' ),
-				'mobilePadding' => array( '0', '', '64', '' ),
+				'padding'       => array( '0', '', '64', '' ),
+				'mobilePadding' => array( '0', '', '48', '' ),
 				'className'     => 'vm-needs-items',
 			)
 		);

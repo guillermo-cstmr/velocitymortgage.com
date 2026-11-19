@@ -1672,6 +1672,15 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 }
 
 /*
+ * The page of an article: the theme leaves a space above and under the
+ * content of a single post, which the element's own sections already have.
+ */
+.single-insight .content-area {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+/*
  * vm-lines-2, vm-lines-3, vm-lines-4: a text that is cut after that many
  * lines, with "..." at the end. For the titles and summaries of cards, so a
  * long one does not stretch its card. The whole text stays in the page for
@@ -1705,7 +1714,11 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
  * their look as part of an article is set here once: the headings, the
  * space between blocks, lists, images, quotes and tables.
  */
-.vm-article > .kt-inside-inner-col > * + *,
+.vm-article .kb-dynamic-html > * {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
 .vm-article .kb-dynamic-html > * + * {
 	margin-top: 24px;
 }
@@ -1713,32 +1726,56 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 .vm-article h2,
 .vm-article h3,
 .vm-article h4 {
-	margin-bottom: 0;
 	color: var(--global-palette3);
 	line-height: 1.1;
 }
 
+/* A heading opens a part of the article: more space above it than under. */
+.vm-article .kb-dynamic-html > * + h2,
+.vm-article .kb-dynamic-html > * + h3,
+.vm-article .kb-dynamic-html > * + h4 {
+	margin-top: 64px;
+}
+
+.vm-article .kb-dynamic-html > .wp-block-image + h2,
+.vm-article .kb-dynamic-html > .wp-block-image + h3,
+.vm-article .kb-dynamic-html > .vm-takeaways + * {
+	margin-top: 32px;
+}
+
 .vm-article h2 {
-	margin-top: 56px;
 	font-size: 32px;
 	font-weight: 400;
 }
 
 .vm-article h3 {
-	margin-top: 40px;
 	font-size: 24px;
 	font-weight: 400;
 }
 
 .vm-article h4 {
-	margin-top: 32px;
+	font-size: 20px;
+	font-weight: 600;
+}
+
+.vm-article .kb-dynamic-html > h4 + * {
+	margin-top: 16px;
+}
+
+/*
+ * vm-question: a question of the "Frequently Asked Questions" of an article.
+ * A Heading 3 for the page's outline, drawn as a line of bold text.
+ */
+.vm-article .kb-dynamic-html > h3.vm-question {
+	margin-top: 24px;
 	font-family: var(--global-body-font-family);
 	font-size: 16px;
 	font-weight: 700;
+	line-height: 1.47;
 }
 
-.vm-article h4 + p {
-	margin-top: 4px;
+.vm-article .kb-dynamic-html > h3.vm-question + * {
+	margin-top: 0;
 }
 
 .vm-article p,
@@ -1761,9 +1798,12 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	margin-bottom: 0;
 }
 
-/* A quote: large, centered, in Deep Rust, with the name under it. */
-.vm-article blockquote {
-	margin: 48px 0;
+/*
+ * A quote: large, centered, in Deep Rust, with the name under it. Wider than
+ * the text on a wide screen, as in the design (940px against 748).
+ */
+.vm-article .kb-dynamic-html > blockquote {
+	margin: 64px 0;
 	padding: 0;
 	border: 0;
 	color: var(--global-palette2);
@@ -1773,14 +1813,22 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	text-align: center;
 }
 
+@media (min-width: 1100px) {
+	.vm-article .kb-dynamic-html > blockquote {
+		margin-inline: -96px;
+	}
+}
+
 .vm-article blockquote p {
+	margin: 0;
 	color: inherit;
 	line-height: inherit;
 }
 
 .vm-article blockquote cite {
 	display: block;
-	margin-top: 16px;
+	/* 16px under the quote, whose last line has 8px of its own. */
+	margin-top: 8px;
 	color: var(--global-palette3);
 	font-size: 14px;
 	font-style: normal;
@@ -1789,6 +1837,11 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 }
 
 /* A table: navy header, a line around every row, every other row gray. */
+.vm-article .kb-dynamic-html > .wp-block-table {
+	margin-top: 32px;
+	overflow-x: auto;
+}
+
 .vm-article table {
 	width: 100%;
 	border: 1px solid var(--global-palette3);
@@ -1797,7 +1850,7 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 
 .vm-article th,
 .vm-article td {
-	padding: 12px 16px;
+	padding: 20px 16px;
 	border: 0;
 	border-bottom: 1px solid var(--global-palette3);
 	text-align: left;
@@ -1805,6 +1858,7 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 }
 
 .vm-article thead th {
+	padding-block: 12px;
 	background: var(--global-palette3);
 	color: var(--global-palette9);
 	font-weight: 400;
@@ -1812,10 +1866,6 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 
 .vm-article tbody tr:nth-child(even) {
 	background: var(--global-palette8);
-}
-
-.vm-article .wp-block-table {
-	overflow-x: auto;
 }
 
 /*
