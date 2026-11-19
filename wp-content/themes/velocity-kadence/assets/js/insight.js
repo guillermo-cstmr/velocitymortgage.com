@@ -92,6 +92,8 @@
 				link.classList.remove( 'is-copied' );
 				link.setAttribute( 'aria-label', label );
 			}, 2000 );
+		} ).catch( () => {
+			// The browser refused to copy. Nothing to do: the address is in the bar.
 		} );
 	} );
 } )();

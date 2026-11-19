@@ -517,7 +517,8 @@ class Velocity_Insights {
 				)
 			) . "\n\n" .
 			Velocity_Deals_Page::no_results( $query_id, 'No articles on that topic yet.' ) . "\n\n" .
-			Velocity_Deals_Page::pagination( $query_id );
+			// A new page starts at the top of the list, topics included.
+			Velocity_Deals_Page::pagination( $query_id, 'block' );
 	}
 
 	/**

@@ -956,8 +956,11 @@ body .vm-story-media .vm-story-stat--offices {
 	}
 }
 
-/* Its title sits inside a Section of the card, and still covers the whole card. */
-.vm-card-link.vm-card-grow .wp-block-kadence-column > .kt-inside-inner-col {
+/*
+ * A title inside a Section of the card still covers the whole card: the
+ * Sections inside are not what its link is measured against.
+ */
+.vm-card-link .wp-block-kadence-column > .kt-inside-inner-col {
 	position: static;
 }
 
@@ -1678,6 +1681,15 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 .single-insight .content-area {
 	margin-top: 0;
 	margin-bottom: 0;
+}
+
+/*
+ * A new page of a Kadence query scrolls to the top of its list. This keeps
+ * that top clear of the sticky header.
+ */
+.wp-block-kadence-query,
+.wp-block-kadence-query-card {
+	scroll-margin-top: 104px;
 }
 
 /*

@@ -618,13 +618,17 @@ class Velocity_Deals_Page {
 	/**
 	 * The pages of a list: the numbers between two arrows.
 	 *
-	 * @param int $query_id Query post ID.
+	 * @param int    $query_id Query post ID.
+	 * @param string $scroll   Where a new page scrolls to: "card", the cards (Kadence's
+	 *                         own choice), or "block", the top of the query, filters included.
 	 * @return string
 	 */
-	public static function pagination( $query_id ) {
+	public static function pagination( $query_id, $scroll = 'card' ) {
 		return
 		Velocity_Seed::block(
 			'kadence/query-pagination',
+			array_merge(
+			'card' === $scroll ? array() : array( 'scrollTarget' => $scroll ),
 			array(
 				'uniqueID'          => Velocity_Seed::uid( $query_id, 'pagination' ),
 				// Arrows for previous and next. Their circles are in style.css.
@@ -672,6 +676,7 @@ class Velocity_Deals_Page {
 						'paddingType'   => 'px',
 					),
 				),
+			)
 			)
 		);
 	}
