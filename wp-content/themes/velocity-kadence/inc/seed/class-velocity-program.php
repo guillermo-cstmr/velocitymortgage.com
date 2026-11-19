@@ -1314,9 +1314,7 @@ class Velocity_Program {
 					'background'        => Velocity_Seed::color( 'palette9' ),
 					'borderStyle'       => Velocity_Home::border( Velocity_Seed::color( 'palette1' ) ),
 					'borderRadius'      => array( 8, 8, 8, 8 ),
-					// 12px on the sides: the longest button, "Explore Super Jumbo", is 271px
-					// wide with the design's own padding and has to stay on one line.
-					'padding'           => array( '32', '12', '32', '12' ),
+					'padding'           => array( '32', '25', '32', '25' ),
 					// As tall as the design's on desktop, as tall as its content below.
 					'height'            => array( 475, 0, 0 ),
 					// The icon at the top, the text and the button at the bottom.
@@ -1398,7 +1396,7 @@ class Velocity_Program {
 						$columns,
 						array(
 							'columnGutter'       => 'custom',
-							'customGutter'       => array( 16, 20, 20 ),
+							'customGutter'       => array( 24, 20, 20 ),
 							'columnsInnerHeight' => true,
 							'tabletLayout'       => 'row',
 							'mobileLayout'       => 'row',
@@ -1413,8 +1411,8 @@ class Velocity_Program {
 				),
 			),
 			array(
-				'firstColumnWidth'  => 26,
-				'secondColumnWidth' => 74,
+				'firstColumnWidth'  => 25,
+				'secondColumnWidth' => 75,
 				'columnGutter'      => 'custom',
 				'customGutter'      => array( 32, 40, 32 ),
 				'verticalAlignment' => 'middle',
@@ -1431,9 +1429,13 @@ class Velocity_Program {
 			$row,
 			'The other programs',
 			array(
-				'bgColor'       => '#f8e8de',
-				'padding'       => array( '80', '', '80', '' ),
-				'mobilePadding' => array( '64', '', '48', '' ),
+				'bgColor'         => '#f8e8de',
+				// 1312px wide in the design, wider than the page's own 1280px: 1440 with
+				// the 64px Kadence keeps on each side.
+				'inheritMaxWidth' => false,
+				'maxWidth'        => 1440,
+				'padding'         => array( '80', '', '80', '' ),
+				'mobilePadding'   => array( '64', '', '48', '' ),
 			)
 		);
 	}

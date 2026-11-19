@@ -943,6 +943,19 @@ body .vm-story-media .vm-story-stat--offices {
 	border-radius: inherit;
 }
 
+/*
+ * Its button stays on one line where the section is at its full width. The
+ * longest, "Explore Super Jumbo", is wider than the card's text, as in the
+ * design, and runs into the card's right padding.
+ */
+@media (min-width: 1400px) {
+	.vm-card-grow .kb-button {
+		flex: none;
+		max-width: none;
+		white-space: nowrap;
+	}
+}
+
 /* Its title sits inside a Section of the card, and still covers the whole card. */
 .vm-card-link.vm-card-grow .wp-block-kadence-column > .kt-inside-inner-col {
 	position: static;
