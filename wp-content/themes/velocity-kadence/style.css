@@ -1301,6 +1301,15 @@ body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers svg
  * which stay in the page, hidden. On phones the panel folds into one
  * button, added by the same script. See inc/filters.php.
  */
+/*
+ * The panel sits above the cards under it. Kadence redraws the cards after a
+ * choice, and the new ones would cover an open menu.
+ */
+.vm-filters {
+	position: relative;
+	z-index: 30;
+}
+
 .vm-filters .wp-block-kadence-query-filter {
 	flex: 0 1 192px;
 }
