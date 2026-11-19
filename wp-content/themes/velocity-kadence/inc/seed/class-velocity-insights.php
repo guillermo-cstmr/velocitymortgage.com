@@ -1,7 +1,7 @@
 <?php
 /**
  * Builds News and Insights as block content: the page that lists the
- * articles, at /insights/.
+ * articles, at /insights/, and the page of an article.
  *
  * That address is the list of a post type (Insights, from the plugin
  * Velocity Insights), not a page. Its content is a Kadence Element,
@@ -124,6 +124,21 @@ class Velocity_Insights {
 				'facets'     => array( __CLASS__, 'facets' ),
 				'meta'       => array( '_vm_query_role' => 'insights-index' ),
 			),
+			// Under an article: the latest three of its topics, in the same card.
+			'related'  => array(
+				'title'      => 'News and Insights: you may also like',
+				'post_type'  => self::POST_TYPE,
+				'order_by'   => 'date',
+				'order'      => 'desc',
+				'per_page'   => '3',
+				'columns'    => array( '3', '2', '1' ),
+				'column_gap' => array( '32', '24', '20' ),
+				'row_gap'    => array( '32', '24', '20' ),
+				'card'       => array( __CLASS__, 'card' ),
+				'card_key'   => 'index',
+				'card_title' => 'News and Insights: articles card',
+				'meta'       => array( '_vm_query_role' => 'insights-related' ),
+			),
 		);
 	}
 
@@ -220,7 +235,7 @@ class Velocity_Insights {
 				'article-excerpt',
 				'',
 				array(
-					'color'   => Velocity_Seed::color( 'palette4' ),
+					'color'   => Velocity_Seed::color( 'palette5' ),
 					'margin'  => array( '0', '', '16', '' ),
 					'dynamic' => 'post|post_excerpt',
 					'class'   => 'vm-hide-empty',
@@ -698,6 +713,300 @@ class Velocity_Insights {
 				self::featured( $post_id, $queries ),
 				self::index( $post_id, $queries ),
 				self::newsletter( $post_id ),
+			)
+		);
+	}
+	/**
+	 * The top of an article: the way back to the list, its photo, and beside
+	 * it the topic and date, the title, the author, the summary and the
+	 * links to share it.
+	 *
+	 * Every text reads the article. "Written by" is a field of the theme,
+	 * empty for a press release.
+	 *
+	 * @param int $post_id Element ID.
+	 * @return string
+	 */
+	public static function article_top( $post_id ) {
+		$gray = '#666666';
+		$uid  = Velocity_Seed::uid( $post_id, 'top-photo' );
+
+		$photo = Velocity_Seed::block(
+			'kadence/image',
+			array(
+				'ratio'           => 'land169',
+				'useRatio'        => true,
+				'linkDestination' => 'none',
+				'uniqueID'        => $uid,
+				'marginDesktop'   => array( '0', '', '0', '' ),
+				'borderRadius'    => array( 12, 12, 12, 12 ),
+				'kadenceDynamic'  => array(
+					'url' => array(
+						'enable'   => true,
+						'source'   => '',
+						'field'    => 'post|post_featured_image',
+						'custom'   => '',
+						'para'     => '',
+						'before'   => 'large',
+						'after'    => '',
+						'fallback' => '',
+					),
+				),
+			),
+			sprintf(
+				'<figure class="wp-block-kadence-image kb-image%1$s kb-image-is-ratio-size"><div class="kb-is-ratio-image kb-image-ratio-land169"><img src="%2$s" alt="" class="kb-img"/></div></figure>',
+				$uid,
+				esc_url( includes_url( 'images/blank.gif' ) )
+			)
+		);
+
+		$details =
+			Velocity_Home::t(
+				$post_id,
+				'top-meta',
+				'',
+				array(
+					'size'    => array( 14, '', '' ),
+					'lh'      => 1.1,
+					'color'   => $gray,
+					'margin'  => array( '0', '', '20', '' ),
+					'dynamic' => 'post|vm_insight_meta',
+					'class'   => 'vm-hide-empty',
+				)
+			) . "\n\n" .
+			Velocity_Home::t(
+				$post_id,
+				'top-title',
+				'',
+				array(
+					'tag'     => 'h1',
+					'size'    => array( 46, 36, 30 ),
+					'lh'      => 1.1,
+					'color'   => Velocity_Seed::color( 'palette3' ),
+					'margin'  => array( '0', '', '20', '' ),
+					'dynamic' => 'post|post_title',
+				)
+			) . "\n\n" .
+			Velocity_Home::t(
+				$post_id,
+				'top-byline',
+				'',
+				array(
+					'size'    => array( 14, '', '' ),
+					'lh'      => 1.1,
+					'margin'  => array( '0', '', '20', '' ),
+					'dynamic' => 'post|vm_insight_byline',
+					'class'   => 'vm-hide-empty',
+				)
+			) . "\n\n" .
+			Velocity_Home::t(
+				$post_id,
+				'top-excerpt',
+				'',
+				array(
+					'margin'  => array( '0', '', '20', '' ),
+					'dynamic' => 'post|post_excerpt',
+					'class'   => 'vm-hide-empty',
+				)
+			) . "\n\n" .
+			"<!-- wp:shortcode -->\n[vm_insight_share]\n<!-- /wp:shortcode -->";
+
+		$row = Velocity_Seed::row(
+			$post_id,
+			'top-row',
+			array(
+				Velocity_Seed::column( $post_id, 'top-photo-col', $photo, array( 'metadata' => array( 'name' => 'Photo' ) ) ),
+				Velocity_Seed::column(
+					$post_id,
+					'top-text-col',
+					$details,
+					array(
+						'id'                => 2,
+						'verticalAlignment' => 'middle',
+						'metadata'          => array( 'name' => 'Topic, title, author and summary' ),
+					)
+				),
+			),
+			array(
+				// 624px and 416px of the design's 1088.
+				'firstColumnWidth'  => 60,
+				'secondColumnWidth' => 40,
+				'columnGutter'      => 'custom',
+				'customGutter'      => array( 48, 32, 24 ),
+				'verticalAlignment' => 'middle',
+				'tabletLayout'      => 'row',
+				'mobileLayout'      => 'row',
+				'padding'           => array( '0', '', '0', '' ),
+				'metadata'          => array( 'name' => 'Photo and title' ),
+			)
+		);
+
+		$back = Velocity_Home::t(
+			$post_id,
+			'top-back',
+			'<a href="' . esc_url( home_url( '/insights/' ) ) . '">&lt; News &amp; Insights</a>',
+			array(
+				'weight'     => '600',
+				'lh'         => 1.1,
+				'link'       => Velocity_Seed::color( 'palette1' ),
+				'link_hover' => Velocity_Seed::color( 'palette2' ),
+				'margin'     => array( '0', '', '29', '' ),
+			)
+		);
+
+		return Velocity_Home::section(
+			$post_id,
+			'top',
+			Velocity_Seed::row(
+				$post_id,
+				'top-inner',
+				array( Velocity_Seed::column( $post_id, 'top-inner-col', $back . "\n\n" . $row ) ),
+				array(
+					'maxWidth' => 1088,
+					'padding'  => array( '0', '', '0', '' ),
+					'metadata' => array( 'name' => 'Back link, photo and title' ),
+				)
+			),
+			'Top of the article',
+			array(
+				'padding'       => array( '48', '', '48', '' ),
+				'mobilePadding' => array( '32', '', '32', '' ),
+			)
+		);
+	}
+
+	/**
+	 * The article itself: what its author wrote in the editor, in a column
+	 * 748px wide. vm-article sets the look of what is inside. See style.css.
+	 *
+	 * @param int $post_id Element ID.
+	 * @return string
+	 */
+	public static function article_body( $post_id ) {
+		return Velocity_Home::section(
+			$post_id,
+			'body',
+			Velocity_Seed::row(
+				$post_id,
+				'body-inner',
+				array(
+					Velocity_Seed::column(
+						$post_id,
+						'body-col',
+						Velocity_Seed::block(
+							'kadence/dynamichtml',
+							array(
+								'uniqueID' => Velocity_Seed::uid( $post_id, 'body-content' ),
+								'field'    => 'post|post_content',
+								'metadata' => array( 'name' => 'The article' ),
+							)
+						),
+						array( 'className' => 'vm-article' )
+					),
+				),
+				array(
+					'maxWidth' => 748,
+					'padding'  => array( '0', '', '0', '' ),
+					'metadata' => array( 'name' => 'Article column' ),
+				)
+			),
+			'Article',
+			array(
+				'padding'       => array( '0', '', '32', '' ),
+				'mobilePadding' => array( '0', '', '24', '' ),
+			)
+		);
+	}
+
+	/**
+	 * Under the article: the box about its author and the links to share it.
+	 *
+	 * @param int $post_id Element ID.
+	 * @return string
+	 */
+	public static function article_author( $post_id ) {
+		return Velocity_Home::section(
+			$post_id,
+			'author',
+			Velocity_Seed::row(
+				$post_id,
+				'author-inner',
+				array(
+					Velocity_Seed::column(
+						$post_id,
+						'author-col',
+						"<!-- wp:shortcode -->\n[vm_insight_author]\n<!-- /wp:shortcode -->\n\n<!-- wp:shortcode -->\n[vm_insight_share]\n<!-- /wp:shortcode -->",
+						array( 'className' => 'vm-article-end' )
+					),
+				),
+				array(
+					'maxWidth' => 762,
+					'padding'  => array( '0', '', '0', '' ),
+					'metadata' => array( 'name' => 'Author and share' ),
+				)
+			),
+			'Author and share',
+			array(
+				'padding'       => array( '0', '', '80', '' ),
+				'mobilePadding' => array( '0', '', '56', '' ),
+			)
+		);
+	}
+
+	/**
+	 * "You may also like": the latest three articles of the same topics.
+	 *
+	 * vm-needs-items hides the section when there is none.
+	 *
+	 * @param int   $post_id Element ID.
+	 * @param int[] $queries Query post IDs by key.
+	 * @return string
+	 */
+	public static function article_related( $post_id, $queries ) {
+		return Velocity_Home::section(
+			$post_id,
+			'related',
+			Velocity_Home::t(
+				$post_id,
+				'related-title',
+				'You may also like',
+				array(
+					'tag'    => 'h2',
+					'align'  => 'center',
+					'margin' => array( '0', '', '30', '' ),
+				)
+			) . "\n\n" .
+			Velocity_Seed::block(
+				'kadence/query',
+				array(
+					'uniqueID' => Velocity_Seed::uid( $post_id, 'related-query' ),
+					'id'       => (int) $queries['related'],
+				)
+			),
+			'You may also like',
+			array(
+				'padding'       => array( '0', '', '96', '' ),
+				'mobilePadding' => array( '0', '', '64', '' ),
+				'className'     => 'vm-needs-items',
+			)
+		);
+	}
+
+	/**
+	 * Every section of the page of an article, in page order.
+	 *
+	 * @param int   $post_id Element ID.
+	 * @param int[] $queries Query post IDs by key.
+	 * @return string
+	 */
+	public static function single( $post_id, $queries ) {
+		return implode(
+			"\n\n",
+			array(
+				self::article_top( $post_id ),
+				self::article_body( $post_id ),
+				self::article_author( $post_id ),
+				self::article_related( $post_id, $queries ),
 			)
 		);
 	}

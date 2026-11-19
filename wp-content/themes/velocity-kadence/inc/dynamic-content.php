@@ -35,6 +35,8 @@ function vm_dynamic_fields() {
 		'vm_toolkit_new'       => array( __( 'Toolkit: "New" tag', 'velocity-kadence' ), 'vm_dynamic_toolkit_new' ),
 		'vm_toolkit_file_type' => array( __( 'Toolkit: file type', 'velocity-kadence' ), 'vm_dynamic_toolkit_file_type' ),
 		'vm_insight_topic'     => array( __( 'Insight: topic', 'velocity-kadence' ), 'vm_dynamic_insight_topic' ),
+		'vm_insight_meta'      => array( __( 'Insight: topic and date', 'velocity-kadence' ), 'vm_dynamic_insight_meta' ),
+		'vm_insight_byline'    => array( __( 'Insight: written by', 'velocity-kadence' ), 'vm_dynamic_insight_byline' ),
 	);
 }
 
@@ -338,4 +340,36 @@ function vm_dynamic_insight_topic( $post_id ) {
 	sort( $names, SORT_NATURAL | SORT_FLAG_CASE );
 
 	return (string) $names[0];
+}
+
+/**
+ * The topic and the date of an article, on one line.
+ *
+ * @param int $post_id Insight ID.
+ * @return string
+ */
+function vm_dynamic_insight_meta( $post_id ) {
+	return implode( '  |  ', array_filter( array( vm_dynamic_insight_topic( $post_id ), get_the_date( 'F j, Y', $post_id ) ) ) );
+}
+
+/**
+ * "Written by" and the author of an article. Empty for a press release,
+ * which has no author.
+ *
+ * @param int $post_id Insight ID.
+ * @return string
+ */
+function vm_dynamic_insight_byline( $post_id ) {
+	if ( function_exists( 'vm_insight_is_press' ) && vm_insight_is_press( $post_id ) ) {
+		return '';
+	}
+
+	$author = get_userdata( (int) get_post_field( 'post_author', $post_id ) );
+
+	if ( ! $author ) {
+		return '';
+	}
+
+	/* translators: %s: author name. */
+	return sprintf( __( 'Written by: %s', 'velocity-kadence' ), $author->display_name );
 }

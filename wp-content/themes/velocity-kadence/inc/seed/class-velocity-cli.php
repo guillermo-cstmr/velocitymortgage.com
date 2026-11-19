@@ -1189,8 +1189,10 @@ class Velocity_CLI {
 	 * That address is the list of a post type, not a page, so its content is
 	 * a Kadence Element, "News and Insights" (Kadence > Elements), that takes
 	 * the place of the theme's own list, there and on the address of each
-	 * topic. The command creates the element, its two Kadence queries (the
-	 * featured article and the list) and their cards.
+	 * topic. The page of an article is a second element, "News and Insights:
+	 * article". The command creates the two elements, their three Kadence
+	 * queries (the featured article, the list, and "You may also like") and
+	 * the two cards.
 	 *
 	 * Needs the plugin Velocity Insights. An element, a query or a card that
 	 * already exists is left alone unless --force is given.
@@ -1239,6 +1241,21 @@ class Velocity_CLI {
 				'_kad_element_hook_priority'     => 10,
 				// The list of articles, and the address of each topic.
 				'_kad_element_show_conditionals' => '[{"rule":"post_type_archive|insight","select":"all","ids":[],"subRule":"","subSelection":[],"mustMatch":false},{"rule":"tax_archive|insight_topic","select":"all","ids":[],"subRule":"","subSelection":[],"mustMatch":false}]',
+			)
+		);
+
+		$this->seed_post(
+			'insights-single',
+			'kadence_element',
+			'News and Insights: article',
+			static function ( $post_id ) use ( $queries ) {
+				return Velocity_Insights::single( $post_id, $queries );
+			},
+			array(
+				'_kad_element_type'              => 'template',
+				'_kad_element_hook'              => 'replace_single_content',
+				'_kad_element_hook_priority'     => 10,
+				'_kad_element_show_conditionals' => '[{"rule":"singular|insight","select":"all","ids":[],"subRule":"","subSelection":[],"mustMatch":false}]',
 			)
 		);
 

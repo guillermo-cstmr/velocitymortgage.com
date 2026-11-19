@@ -160,6 +160,8 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule above it. Under the pointer it turns bold and shows an arrow. Navigation has no per-item styling |
 | `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
 | `vm-card-grow` | Section that is a card | The card grows a little under the pointer (mouse only, and not with "reduce motion"). Used with `vm-card-link` on the cards of "Other Ways We’ll Get You to Yes", as the design notes |
+| `vm-article` | Section that holds the Post Content block of an article | The look of what an author writes: headings, lists, images, quotes and tables. See "News and Insights" |
+| `vm-takeaways` | Group (core), in an article | The "Key Takeaways" box, wider than the text. Comes with the pattern of that name |
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
 | `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
@@ -536,9 +538,29 @@ The list of articles, at `/insights/`. The articles are the posts under **Insigh
 
 Two things a Kadence query has no setting for are in `inc/insights.php`: which article is the featured one, and leaving it out of the list. Each query has a role for that, kept beside it in the field `_vm_query_role` ("insights-featured", "insights-index"). A query made by hand has no role and behaves as Kadence's own. The row of topics and sort is a Section with the classes `vm-filters vm-filters--bar`: the same menus as Featured Deals, drawn as a pill and plain text.
 
+### The page of an article
+
+A second element, "News and Insights: article", with the placement "Replace single post content" for Insights. It gives every article the same frame; the article itself is what its author writes in the editor.
+
+| Part | Where it comes from |
+|---|---|
+| "< News & Insights" | A link in the element |
+| Photo | The article's featured image |
+| Topic and date, title, summary | The article: its topic, date, title and excerpt |
+| "Written by" | The article's author, chosen in the box "Byline (Author)" of its editor |
+| Links to share | The shortcode `[vm_insight_share]`: LinkedIn, X, Reddit, email, and copy the link |
+| The article | The block "Post Content" of the element. It prints what was written in the editor |
+| Box about the author | The shortcode `[vm_insight_author]`: the author's profile picture, name and "Biographical Info", from Users. "Read Full Bio" opens the biography, and is left out when the user has none |
+| "You may also like" | Kadence query "News and Insights: you may also like": the latest three articles of the same topics, in the card of the list. The section hides when there is none |
+| Newsletter bar | Printed by `inc/insights.php`. It slides in from the bottom of the screen once half of the article has been read, once per visit (`assets/js/insight.js`) |
+
+**A press release has no author.** An article filed under the topic "Press Release" (slug `press-release`) shows no "Written by" and no author box.
+
+**Writing an article.** Ordinary blocks are enough: Heading, Paragraph, List, Image, Quote, Table. Their look inside an article is set once in `style.css` (`vm-article`), so an author sets nothing: a Heading 2 opens a section, a Heading 3 a part of it, a Heading 4 is a small bold title, a Quote is the large centered quote with its name in the "citation" line, and a Table gets the navy header. Two patterns, under Patterns > Velocity, give the two blocks that need a start: "Article: Key Takeaways", the peach box that opens an article, and "Article: Frequently Asked Questions".
+
 ### What is still open
 
-- The page of an article is not built yet: it shows on the theme's default template.
+- The author's position has no field of its own: for now it is written in the user's display name ("Name, Position"). The design's "extended bio" reads the user's "Biographical Info".
 - The press releases still live under Press. They move to Insights, under the topic "Press Release", with a command to be written.
 - The list of topics is not defined. The design says "Category".
 - The newsletter form saves the address in Gravity Forms and sends it nowhere yet.
