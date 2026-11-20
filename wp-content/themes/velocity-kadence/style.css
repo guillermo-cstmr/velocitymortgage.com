@@ -225,9 +225,19 @@ h2 strong {
 	line-height: 1.5;
 }
 
+/*
+ * On desktop the legal links sit at the right end of their line, as in the
+ * design. The navigation block has no setting for that. The last link gives
+ * up its own space on the right, so its text ends at the edge.
+ */
 @media (min-width: 1025px) {
+	.vm-footer-legal .wp-block-kadence-navigation .navigation,
 	.vm-footer-legal .wp-block-kadence-navigation .kb-navigation {
 		justify-content: flex-end;
+	}
+
+	.vm-footer-legal .kb-navigation > li:last-child > .kb-link-wrap > .kb-nav-link-content {
+		padding-right: 0;
 	}
 }
 
