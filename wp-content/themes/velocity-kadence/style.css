@@ -1834,7 +1834,7 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	}
 }
 
-.vm-article blockquote p {
+.vm-article .kb-dynamic-html blockquote p {
 	margin: 0;
 	color: inherit;
 	line-height: inherit;
@@ -1842,13 +1842,58 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 
 .vm-article blockquote cite {
 	display: block;
-	/* 16px under the quote, whose last line has 8px of its own. */
-	margin-top: 8px;
+	margin-top: 16px;
 	color: var(--global-palette3);
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 400;
 	line-height: 1.1;
+}
+
+/*
+ * vm-press-quote: a quote with the photo of the person above it. A Group
+ * with an Image and a Quote, from the pattern "Article: Press Quote". The
+ * photo is drawn round, 96px, whatever the shape of the file.
+ */
+.vm-article .kb-dynamic-html > .vm-press-quote {
+	margin: 64px 0;
+	text-align: center;
+}
+
+@media (min-width: 1100px) {
+	.vm-article .kb-dynamic-html > .vm-press-quote {
+		margin-inline: -96px;
+	}
+}
+
+.vm-article .vm-press-quote .wp-block-image {
+	width: 96px;
+	margin: 0 auto 24px;
+}
+
+.vm-article .vm-press-quote .wp-block-image img {
+	display: block;
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+/* The photo was left empty: the quote shows alone. */
+.vm-article .vm-press-quote .wp-block-image:has(img:not([src])),
+.vm-article .vm-press-quote .wp-block-image:has(img[src=""]) {
+	display: none;
+}
+
+.vm-article .vm-press-quote blockquote {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: var(--global-palette2);
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.31;
+	text-align: center;
 }
 
 /* A table: navy header, a line around every row, every other row gray. */

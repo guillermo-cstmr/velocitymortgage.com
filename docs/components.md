@@ -164,6 +164,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-article` | Section that holds the Post Content block of an article | The look of what an author writes: headings, lists, images, quotes and tables. See "News and Insights" |
 | `vm-takeaways` | Group (core), in an article | The "Key Takeaways" box, wider than the text. Comes with the pattern of that name |
 | `vm-question` | Heading 3 (core), in an article | A question of the "Frequently Asked Questions": a heading for the outline, drawn as a line of bold text. Comes with the pattern of that name |
+| `vm-press-quote` | Group (core), in an article | A quote with the round photo of the person above it. Comes with the pattern "Article: Press Quote" |
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
 | `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
@@ -558,7 +559,7 @@ A second element, "News and Insights: article", with the placement "Replace sing
 
 **A press release has no author.** An article filed under the topic "Press Release" (slug `press-release`) shows no "Written by" and no author box.
 
-**Writing an article.** Ordinary blocks are enough: Heading, Paragraph, List, Image, Quote, Table. Their look inside an article is set once in `style.css` (`vm-article`), so an author sets nothing: a Heading 2 opens a section, a Heading 3 a part of it, a Heading 4 is a smaller title in semibold (the one above a table in the design), a Quote is the large centered quote with its name in the "citation" line, and a Table gets the navy header. Two patterns, under Patterns > Velocity, give the two blocks that need a start: "Article: Key Takeaways", the peach box that opens an article, and "Article: Frequently Asked Questions".
+**Writing an article.** Ordinary blocks are enough: Heading, Paragraph, List, Image, Quote, Table. Their look inside an article is set once in `style.css` (`vm-article`), so an author sets nothing: a Heading 2 opens a section, a Heading 3 a part of it, a Heading 4 is a smaller title in semibold (the one above a table in the design), a Quote is the large centered quote with its name in the "citation" line, and a Table gets the navy header. Three patterns, under Patterns > Velocity, give the blocks that need a start: "Article: Key Takeaways", the peach box that opens an article; "Article: Frequently Asked Questions"; and "Article: Press Quote", a quote with the round photo of the person above it. A press quote goes wherever it is inserted, an article can have several, and deleting its image leaves the quote alone. It takes the place of the "Quote" box (headshot, quote, name and title) that a press release had in its editor.
 
 ### What is still open
 
