@@ -165,6 +165,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-takeaways` | Group (core), in an article | The "Key Takeaways" box, wider than the text. Comes with the pattern of that name |
 | `vm-question` | Heading 3 (core), in an article | A question of the "Frequently Asked Questions": a heading for the outline, drawn as a line of bold text. Comes with the pattern of that name |
 | `vm-press-quote` | Group (core), in an article | A quote with the round photo of the person above it. Comes with the pattern "Article: Press Quote" |
+| `vm-key-results` | Group (core), in a case study | The "Key Results" band, the full width of the screen. Comes with the pattern "Case Study: Key Results" |
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
 | `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
@@ -189,7 +190,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 |---|---|---|
 | Photo | Image, with a fixed 2:1 shape | Post featured image |
 | Closing time, with the bolt | Text (Adv) with an icon, a background and the class `vm-tag` | "Deal: closing time". The property field "Processed Details Text" |
-| Title | Text (Adv), linked to the post | "Deal: property type and purpose". Falls back to the property name when both are empty |
+| Title | Text (Adv). Not a link: a deal has no page of its own | "Deal: property type and purpose". Falls back to the property name when both are empty |
 | Program | Text (Adv) | "Deal: loan program" |
 | Name | Text (Adv) | "Deal: account executive" |
 
@@ -485,7 +486,7 @@ Choosing a filter, a sort or a page updates the list without reloading the page,
 
 The look of the dropdowns (border, radius, label and text size) is set on the query itself, under Style. The peach panel around them is a Section with the class `vm-filters`. That class does what the blocks have no setting for: the size and inner space of each filter and its arrow, the sort as a pill, and the underline of "Clear". The circles around the two arrows of the pagination are in `style.css` too: the Pagination block has no setting for them.
 
-**Every dropdown of the panel has a menu drawn by the theme** (`vm-select`), white under a filter and peach under the sort, in place of the browser's own list. The filters keep the look of a field and read their choice.
+**Every dropdown of the panel has a menu drawn by the theme** (`vm-select`), white under a filter and peach under the sort, in place of the browser's own list. The filters keep the look of a field and read their choice. A choice too long for the field stays on one line and ends in "…"; the menu shows the whole name.
 
 **"Sort By" is a pill with its own menu.** The Filter and Sort blocks print plain dropdowns, whose open list cannot be styled. `assets/js/filters.js` leaves each dropdown in the page, hidden, and adds the field or the pill and the menu over it: choosing in the menu sets the dropdown, and Kadence does the rest. Kadence redraws the filters after each choice, and the script gives the new ones their menu. The choices and their texts are still the Sort block's, edited in the query. The menu works with the keyboard (arrows, Enter, Escape). Kadence lists each pair high to low first, so the menu reads "Amount (High - Low)" before "Amount (Low - High)": the design has them the other way round.
 
@@ -497,9 +498,17 @@ The card reads the deal with dynamic content:
 |---|---|
 | Photo | Post featured image, in a fixed 2:1 shape |
 | Closing time, with the bolt | "Deal: closing time". Left out when the deal has none |
-| Title, linked to the deal | "Deal: amount and place" |
+| Title | "Deal: amount and place" |
 | Under the title | "Deal: program and purpose" |
 | Name | "Deal: account executive" |
+
+**The gallery shows twelve deals a page**, four rows of three, as the design draws it (Kadence > Queries, "Featured Deals: gallery", Posts per page).
+
+**A filter offers only the choices that have a deal.** Deals and case studies share their taxonomies (program, purpose, type), and Kadence lists every term in use unless the Filter block's "Hide items when result count is zero" is on. It is on for the three filters here and for the three of Case Studies, so neither page offers a choice that only the other one uses. A Filter block added by hand needs that setting too.
+
+**A deal card is not a link.** Deals have no page of their own on the site, so neither the card nor its title links anywhere. The same goes for the deals on the home page.
+
+**The program's name on a deal card links to the program's page**, on Featured Deals and on the home page, when the program has one: its "Program page" (Properties > Programs) or, when that is empty, its page under Programs Overview. A program with neither, like FlexTerm, shows as plain text. The link is underlined, since it sits in a line of text of its own color.
 
 **The Region filter is not there yet.** Region has no terms until Velocity sends the list. A filter with nothing to choose prints its label alone, so the command leaves it out while the taxonomy is empty. Once deals have regions, run `wp velocity seed-deals-page --force --execute`, or add a Filter block to the query in the editor and choose Region.
 
@@ -569,6 +578,52 @@ A second element, "News and Insights: article", with the placement "Replace sing
 - One press release has no copy: "Why Conventional Loans Stall Real Estate Investors..." already exists as an article waiting for review, written for Insights. The command skips it and says so.
 - The list of topics is not defined. The design says "Category".
 - The newsletter form saves the address in Gravity Forms and sends it nowhere yet.
+
+## Case Studies
+
+The list at `/case-studies/` and the page of a case study, at `/case-study/...`. The case studies are the posts under **Case Studies**. Both addresses belong to that post type, so their content is two **Kadence Elements** (Kadence > Elements), built by `wp velocity seed-cases` and edited with blocks after that: "Case Studies" and "Case Studies: case study". They work like News and Insights, and share its styles, its share links and its quote.
+
+### The list
+
+| Part | Block | Where it is edited |
+|---|---|---|
+| Hero and the closing band | Text (Adv), buttons | The element |
+| Featured case study | Kadence query "Case Studies: featured case study" | Kadence > Queries, and its card under Query Cards |
+| Filters, sort, the cards and the pages | Kadence query "Case Studies: case studies" | Kadence > Queries. The card is "Case Studies: case study card" |
+
+**The featured case study is chosen in the case study itself**: the box "Featured case study" in its editor. Ticking it takes the tick off the one featured before, and the box says which one that is. While none has it, the featured section does not show. The featured one is left out of the list under it.
+
+**The filters show once there are more than ten published case studies**, as the design notes, and by themselves: nothing to switch on. Until then the list shows its cards and pages only. The number is `VM_CASES_FILTERS_FROM`, in `inc/case-studies.php`.
+
+**The card is the one of Featured Deals** ("The stories behind the deals"), so a case study looks the same on both pages.
+
+### The page of a case study
+
+| Part | Where it comes from |
+|---|---|
+| "< Case Studies" | A link in the element |
+| Photo | The case study's featured image |
+| Program | The shortcode `[vm_case_program]`: the case study's program, as a link to the program's page |
+| Title and summary | The case study's title and excerpt. Only a written excerpt shows |
+| "Deal closed by ..." | The account executive's name and title |
+| Links to share | `[vm_insight_share]`, as in an article |
+| "Deal at a glance" | The shortcode `[vm_case_glance]`: the orange strip with the days to close, the loan amount, the loan purpose and the deal date |
+| Card of the account executive | The shortcode `[vm_case_ae]`: photo, name and title. On a wide screen it sits to the left of the first part of the text |
+| The case study | The block "Post Content". It prints what was written in the editor |
+| "You may also like" | Kadence query "Case Studies: you may also like": the latest three of the same program, or of any program when that one has fewer than three |
+
+**The figures are fields, not text.** They are in the box "Deal at a glance" of the case study's editor: either choose the **Deal** it is about, and its amount, date, days to close, location, program, purpose, property type and account executive are copied from the deal; or leave "Deal" empty and type them. The strip and the cards read those fields, and leave out the ones that are empty. They are always the same four, so there is nothing to add or reorder per case study.
+
+**The account executive's photo and title** come from their profile under Account Executives. A case study is tied to an AE by name (the box "AEs" in the sidebar, or the deal's). The profile is the one chosen for that AE in Properties > AEs ("AE profile") or, when none is chosen, the Account Executive of the same name. A case study with no AE shows no card and no "Deal closed by".
+
+**The program's link** is the program's "Program page" (Properties > Programs) or, when that is empty, its page under Programs Overview.
+
+**Writing a case study.** As an article: ordinary blocks, styled by `vm-article`. The design asks that every case study name its program in the text and link it to the program's page: that is written by hand, in the text. The pattern "Case Study: Key Results" (Patterns > Velocity) gives the band that closes a case study; "Article: Press Quote" gives a quote with a photo.
+
+### What is still open
+
+- No case study is published yet. Eleven test ones, titled "TEST", stand in for them.
+- The program "Multifamily & Commercial" was added to Properties > Programs for the case studies of those deals, as the design asks. It has no page of its own.
 
 ## The legal pages
 

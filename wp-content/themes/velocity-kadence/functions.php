@@ -29,6 +29,7 @@ require_once VELOCITY_KADENCE_DIR . '/inc/not-found.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/legal.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/dynamic-content.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/insights.php';
+require_once VELOCITY_KADENCE_DIR . '/inc/case-studies.php';
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-seed.php';
@@ -42,6 +43,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-legal.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-process.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-insights.php';
+	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-cases.php';
 	require_once VELOCITY_KADENCE_DIR . '/inc/seed/class-velocity-cli.php';
 }
 

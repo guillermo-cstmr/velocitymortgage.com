@@ -418,7 +418,7 @@ class Velocity_Program {
 					'As we judge based on the property, we make it possible for you to offer clients long-term certainty on loan amounts other lenders won’t touch.',
 					array(
 						array( 'icon-diamond-shine.svg', 'Loan Amounts Made for Luxury Properties', 'Larger loans and less paperwork keep your client moving forward at their pace.' ),
-						array( 'icon-apartment.svg', 'Fixed for 30 Years, Judged on Property', 'Long-term predictable payments based on the value of property, not paychecks.' ),
+						array( 'icon-apartment.svg', 'Fixed for 30 Years', 'Long-term predictable payments with our simple documentation process.' ),
 						array( 'icon-cheer.svg', 'Built on Years of Experience With Large Loans', 'After lending $2MM+ loans for years, we know how to help you close successfully.' ),
 					),
 				),
@@ -435,7 +435,7 @@ class Velocity_Program {
 						array( 'Loan Purpose', array( 'Purchase', 'Rate-and-term refinance', 'Cash-out refinance' ) ),
 						array( 'Several Rentals on One Loan', array( 'Two or more 1-4 unit properties in the same county on one loan with one payment' ) ),
 						array( 'Borrower Experience', array( 'Seasoned investors only' ) ),
-						array( 'Qualifies On', $on_value ),
+						array( 'Qualifies On', array( 'The property and the investor’s experience, through our simple documentation process' ) ),
 						array(
 							'Paying It Off Early',
 							array(
@@ -463,7 +463,7 @@ class Velocity_Program {
 						'What is a Super Jumbo loan?',
 						array(
 							'A jumbo loan refers to any loan above $2 million. At Velocity, our Super Jumbo loan has the same terms as our 30-Year Fixed, but ranges from $2 million to $10 million. Seasoned investors can use it to finance 1-4 unit investment properties in major metropolitan areas.',
-							'For most loans above $2 million, lenders will require full income qualification. Velocity doesn’t do that. Instead, we judge the loan based on the property and the investor’s track record. We’ve successfully used this process for years before making it a program.',
+							'For most loans above $2 million, lenders pile on documentation requirements. Velocity keeps it simple: we focus on the property and the investor’s track record, with a streamlined process that we’ve used successfully for years before making it a program.',
 						),
 					),
 					array(
@@ -1122,9 +1122,10 @@ class Velocity_Program {
 		);
 
 		$figures = array(
-			array( 'Loan amount', 'velocity_case_study_loan_amount' ),
-			array( 'Days to close', 'velocity_case_study_days_to_close' ),
-			array( 'Location', 'velocity_case_study_location' ),
+			// The amount through its own field, which gives it its dollar sign.
+			array( 'Loan amount', 'post|vm_case_amount' ),
+			array( 'Days to close', array( 'post|post_custom_field', 'velocity_case_study_days_to_close' ) ),
+			array( 'Location', array( 'post|post_custom_field', 'velocity_case_study_location' ) ),
 		);
 
 		$boxes = array();
@@ -1154,7 +1155,7 @@ class Velocity_Program {
 						'weight'  => '700',
 						'lh'      => 1.1,
 						'margin'  => array( '0', '', '0', '' ),
-						'dynamic' => array( 'post|post_custom_field', $figure[1] ),
+						'dynamic' => $figure[1],
 					)
 				),
 				array(

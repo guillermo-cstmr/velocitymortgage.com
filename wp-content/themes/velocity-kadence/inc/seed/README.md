@@ -18,6 +18,7 @@ footer and menus as block content. They only load for WP-CLI, behind the
 | `class-velocity-deals-page.php` | Featured Deals |
 | `class-velocity-legal.php` | Terms of Use, Privacy and the 404 element. Their text is in `data/` |
 | `class-velocity-insights.php` | News and Insights: the element that lists the articles, its queries and cards |
+| `class-velocity-cases.php` | Case Studies: the element that lists them, the element of one, their queries and cards |
 
 They exist so the same page can be created on Local, staging and production
 with one command. Once a page is created it is edited in the block editor, and

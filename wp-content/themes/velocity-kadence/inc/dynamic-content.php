@@ -16,7 +16,8 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * The theme's dynamic fields. Key => label and the function that returns
- * the value for a post ID.
+ * the value for a post ID. A third item, true, says the function returns
+ * HTML, a link at most, in place of plain text.
  *
  * @return array[]
  */
@@ -25,13 +26,16 @@ function vm_dynamic_fields() {
 		'vm_career_cities' => array( __( 'Career: cities on one line', 'velocity-kadence' ), 'vm_dynamic_career_cities' ),
 		'vm_deal_closed'   => array( __( 'Deal: closing time', 'velocity-kadence' ), 'vm_dynamic_deal_closed' ),
 		'vm_deal_title'    => array( __( 'Deal: property type and purpose', 'velocity-kadence' ), 'vm_dynamic_deal_title' ),
-		'vm_deal_program'  => array( __( 'Deal: loan program', 'velocity-kadence' ), 'vm_dynamic_deal_program' ),
+		'vm_deal_program'  => array( __( 'Deal: loan program', 'velocity-kadence' ), 'vm_dynamic_deal_program', true ),
 		'vm_deal_ae'       => array( __( 'Deal: account executive', 'velocity-kadence' ), 'vm_dynamic_deal_ae' ),
 		'vm_deal_headline'     => array( __( 'Deal: amount and place', 'velocity-kadence' ), 'vm_dynamic_deal_headline' ),
-		'vm_deal_terms'        => array( __( 'Deal: program and purpose', 'velocity-kadence' ), 'vm_dynamic_deal_terms' ),
+		'vm_deal_terms'        => array( __( 'Deal: program and purpose', 'velocity-kadence' ), 'vm_dynamic_deal_terms', true ),
 		'vm_case_terms'        => array( __( 'Case study: program and purpose', 'velocity-kadence' ), 'vm_dynamic_case_terms' ),
 		'vm_case_amount'       => array( __( 'Case study: loan amount', 'velocity-kadence' ), 'vm_dynamic_case_amount' ),
 		'vm_case_date'         => array( __( 'Case study: date', 'velocity-kadence' ), 'vm_dynamic_case_date' ),
+		'vm_case_purpose'      => array( __( 'Case study: loan purpose', 'velocity-kadence' ), 'vm_dynamic_case_purpose' ),
+		'vm_case_featured_label' => array( __( 'Case study: program and "Featured case study"', 'velocity-kadence' ), 'vm_dynamic_case_featured_label' ),
+		'vm_case_closed_by'    => array( __( 'Case study: deal closed by', 'velocity-kadence' ), 'vm_dynamic_case_closed_by' ),
 		'vm_toolkit_new'       => array( __( 'Toolkit: "New" tag', 'velocity-kadence' ), 'vm_dynamic_toolkit_new' ),
 		'vm_toolkit_file_type' => array( __( 'Toolkit: file type', 'velocity-kadence' ), 'vm_dynamic_toolkit_file_type' ),
 		'vm_insight_topic'     => array( __( 'Insight: topic', 'velocity-kadence' ), 'vm_dynamic_insight_topic' ),
@@ -74,7 +78,9 @@ function vm_register_dynamic_fields() {
 		add_filter(
 			'kadence_dynamic_content_core_post_' . $key . '_render',
 			static function ( $output, $item_id ) use ( $field ) {
-				return esc_html( (string) call_user_func( $field[1], (int) $item_id ) );
+				$value = (string) call_user_func( $field[1], (int) $item_id );
+
+				return empty( $field[2] ) ? esc_html( $value ) : wp_kses( $value, array( 'a' => array( 'href' => true ) ) );
 			},
 			10,
 			2
@@ -143,13 +149,54 @@ function vm_dynamic_deal_title( $post_id ) {
 }
 
 /**
- * The loan program of a deal.
+ * The loan program of a deal, as HTML: a link when the program has a page.
  *
  * @param int $post_id Property ID.
  * @return string
  */
 function vm_dynamic_deal_program( $post_id ) {
-	return vm_first_term_name( $post_id, 'velocity-property-program' );
+	return vm_program_link( $post_id );
+}
+
+/**
+ * The address of a program's page: its "Program page" (Properties >
+ * Programs) or, when that is empty, its page under Programs Overview. Empty
+ * when the program has neither.
+ *
+ * @param string $name    Program name.
+ * @param int    $term_id Program term ID, if known.
+ * @return string
+ */
+function vm_program_url( $name, $term_id = 0 ) {
+	$url = $term_id ? trim( (string) get_term_meta( $term_id, 'velocity_program_page', true ) ) : '';
+
+	if ( '' === $url && '' !== $name ) {
+		$slug = 'Super Jumbo' === $name ? 'jumbo' : sanitize_title( $name );
+		$page = get_page_by_path( 'loan-programs/' . $slug );
+		$url  = ( $page && 'publish' === $page->post_status ) ? get_permalink( $page ) : '';
+	}
+
+	return $url;
+}
+
+/**
+ * The loan program of a deal, as HTML: a link to the program's page when
+ * the program has one, its name alone when it has none.
+ *
+ * @param int $post_id Property ID.
+ * @return string
+ */
+function vm_program_link( $post_id ) {
+	$terms = get_the_terms( $post_id, 'velocity-property-program' );
+
+	if ( empty( $terms ) || is_wp_error( $terms ) ) {
+		return '';
+	}
+
+	$name = $terms[0]->name;
+	$url  = vm_program_url( $name, (int) $terms[0]->term_id );
+
+	return '' !== $url ? '<a href="' . esc_url( $url ) . '">' . esc_html( $name ) . '</a>' : esc_html( $name );
 }
 
 /**
@@ -197,7 +244,8 @@ function vm_dynamic_deal_headline( $post_id ) {
 }
 
 /**
- * The program and the purpose of a deal, on one line.
+ * The program and the purpose of a deal, on one line, as HTML: the program
+ * is a link when it has a page.
  *
  * @param int $post_id Property ID.
  * @return string
@@ -207,8 +255,8 @@ function vm_dynamic_deal_terms( $post_id ) {
 		' · ',
 		array_filter(
 			array(
-				vm_first_term_name( $post_id, 'velocity-property-program' ),
-				vm_first_term_name( $post_id, 'velocity-property-purpose' ),
+				vm_program_link( $post_id ),
+				esc_html( vm_first_term_name( $post_id, 'velocity-property-purpose' ) ),
 			)
 		)
 	);
@@ -387,4 +435,53 @@ function vm_dynamic_insight_byline( $post_id ) {
  */
 function vm_dynamic_insight_excerpt( $post_id ) {
 	return has_excerpt( $post_id ) ? trim( (string) get_post_field( 'post_excerpt', $post_id ) ) : '';
+}
+
+/**
+ * The loan purpose of a case study.
+ *
+ * @param int $post_id Case study ID.
+ * @return string
+ */
+function vm_dynamic_case_purpose( $post_id ) {
+	return trim( (string) get_post_meta( $post_id, 'velocity_case_study_purpose', true ) );
+}
+
+/**
+ * The line over the title of the featured case study: its program, then
+ * "Featured case study".
+ *
+ * @param int $post_id Case study ID.
+ * @return string
+ */
+function vm_dynamic_case_featured_label( $post_id ) {
+	return implode(
+		' · ',
+		array_filter(
+			array(
+				trim( (string) get_post_meta( $post_id, 'velocity_case_study_program', true ) ),
+				__( 'Featured case study', 'velocity-kadence' ),
+			)
+		)
+	);
+}
+
+/**
+ * Who closed the deal of a case study: "Deal closed by Name, Title". Empty
+ * when the case study has no account executive.
+ *
+ * @param int $post_id Case study ID.
+ * @return string
+ */
+function vm_dynamic_case_closed_by( $post_id ) {
+	$name = trim( (string) get_post_meta( $post_id, 'velocity_case_study_ae_name', true ) );
+
+	if ( '' === $name ) {
+		return '';
+	}
+
+	$title = trim( (string) get_post_meta( $post_id, 'velocity_case_study_ae_title', true ) );
+
+	/* translators: %s: name of the account executive, and their title. */
+	return sprintf( __( 'Deal closed by %s', 'velocity-kadence' ), $name . ( '' !== $title ? ', ' . $title : '' ) );
 }

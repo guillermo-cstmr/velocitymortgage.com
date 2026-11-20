@@ -1379,6 +1379,25 @@ body .vm-filters .kb-query-label {
 	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 6' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M.6.6 6 5.4 11.4.6'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
+/* A filter keeps to one line: a choice too long for it ends in "…". The
+   whole name is still in the list, and read out by the button. */
+.vm-select:not(.vm-select--sort) .vm-select__button {
+	display: block;
+	position: relative;
+	padding-right: 36px;
+	overflow: hidden;
+	line-height: 42px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.vm-select:not(.vm-select--sort) .vm-select__button::after {
+	position: absolute;
+	top: 50%;
+	right: 12px;
+	margin-top: -3px;
+}
+
 /* The sort: a pill, with two arrows in the color of its text. */
 .vm-select--sort .vm-select__button {
 	justify-content: center;
@@ -1697,6 +1716,213 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 }
 
 /*
+ * Case Studies (Kadence > Elements, "Case Studies" and "Case Studies: case
+ * study"). The text of a case study is styled as an article's (vm-article).
+ */
+
+/* The page of a case study: no space of the theme around its sections. */
+.single-velocity-case-study .content-area {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+/*
+ * The filters of the list wait for more than ten case studies, as the design
+ * notes. inc/case-studies.php marks the page until then.
+ */
+.vm-cases-few #case-studies .vm-filters {
+	display: none;
+}
+
+/* The program over the title of a case study: a small label, and a link. */
+/* Written twice: the theme gives every paragraph of a post its own margin. */
+.vm-case-program.vm-case-program {
+	margin: 0 0 20px;
+	font-size: 14px;
+	line-height: 1.1;
+}
+
+.vm-case-program a {
+	color: var(--global-palette3);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.vm-case-program a:hover,
+.vm-case-program a:focus-visible {
+	color: var(--global-palette2);
+}
+
+/*
+ * vm-glance: the orange strip "Deal at a glance". It runs the full width of
+ * the screen whatever the width of the block that holds it: the color is
+ * painted outwards (box-shadow) and cut at the screen's edges (clip-path).
+ */
+.vm-glance {
+	background: #f18521;
+	box-shadow: 0 0 0 100vmax #f18521;
+	clip-path: inset(0 -100vmax);
+	color: var(--global-palette3);
+}
+
+.vm-glance__inner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 12px 37px;
+	padding: 15px 0 14px;
+}
+
+.vm-glance .vm-glance__title {
+	margin: 0;
+	font-weight: 700;
+	line-height: 1.47;
+}
+
+.vm-glance .vm-glance__figures {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px 48px;
+	margin: 0;
+}
+
+.vm-glance .vm-glance__figure dt {
+	margin: 0 0 8px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.1;
+}
+
+.vm-glance .vm-glance__figure dd {
+	margin: 0;
+	font-weight: 700;
+	line-height: 1.47;
+}
+
+@media (max-width: 767px) {
+	.vm-glance__inner {
+		justify-content: flex-start;
+		padding: 20px 0;
+	}
+
+	.vm-glance__title {
+		flex-basis: 100%;
+	}
+
+	.vm-glance__figures {
+		gap: 16px 32px;
+	}
+}
+
+/*
+ * vm-case-ae: the card of the account executive who closed the deal. On a
+ * wide screen it sits to the left of the text, part of it in the margin, and
+ * the text starts beside it, as in the design. Below that it is a row above
+ * the text.
+ */
+.vm-case-ae {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-bottom: 32px;
+	padding: 16px 24px;
+	border-radius: 19px;
+	background: var(--global-palette7);
+	color: var(--global-palette3);
+}
+
+.vm-case-ae .vm-case-ae__photo {
+	flex: none;
+	width: 72px;
+	height: 72px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.vm-case-ae__text {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+@media (min-width: 1100px) {
+	.vm-case-ae {
+		float: left;
+		flex-direction: column;
+		justify-content: center;
+		gap: 8px;
+		box-sizing: border-box;
+		width: 229px;
+		min-height: 264px;
+		margin: 0 60px 24px -139px;
+		padding: 35px 14px;
+		text-align: center;
+	}
+
+	.vm-case-ae .vm-case-ae__photo {
+		width: 114px;
+		height: 114px;
+	}
+
+	/* The text beside the card starts 11px under the card's top, as drawn. */
+	.vm-case .kb-dynamic-html > :first-child {
+		padding-top: 11px;
+	}
+
+	/* What comes after the first part of the text starts under the card. */
+	.vm-case .kb-dynamic-html > h2,
+	.vm-case .kb-dynamic-html > blockquote,
+	.vm-case .kb-dynamic-html > figure,
+	.vm-case .kb-dynamic-html > .wp-block-group {
+		clear: both;
+	}
+
+	.vm-case .kb-dynamic-html > h2:first-child,
+	.vm-case .kb-dynamic-html > h3:first-child {
+		clear: none;
+	}
+}
+
+/*
+ * The heading that opens a case study, beside the card, is drawn smaller
+ * than the ones after it (24px against 32). It is still a Heading 2, so the
+ * outline of the page keeps its order.
+ */
+.vm-case .kb-dynamic-html > h2:first-child {
+	font-size: 24px;
+}
+
+/*
+ * vm-key-results: the "Key Results" band of a case study, the full width of
+ * the screen. A Group block with this class, from the pattern of that name.
+ */
+.vm-article .kb-dynamic-html > .vm-key-results {
+	margin-top: 64px;
+	padding: 32px 0;
+	background: #fff7ed;
+	box-shadow: 0 0 0 100vmax #fff7ed;
+	clip-path: inset(0 -100vmax);
+}
+
+.vm-article .vm-key-results > *,
+.vm-article .vm-key-results > .wp-block-group__inner-container > * {
+	max-width: none;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.vm-article .vm-key-results > :not(.wp-block-group__inner-container) + *,
+.vm-article .vm-key-results > .wp-block-group__inner-container > * + * {
+	margin-top: 24px;
+}
+
+.vm-article .vm-key-results li {
+	font-weight: 700;
+}
+
+/*
  * A new page of a Kadence query scrolls to the top of its list. This keeps
  * that top clear of the sticky header.
  */
@@ -1836,6 +2062,12 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 
 .vm-article img {
 	border-radius: 16px;
+}
+
+/* An image narrower than the text sits in the middle of it. */
+.vm-article .kb-dynamic-html > .wp-block-image img {
+	display: block;
+	margin-inline: auto;
 }
 
 .vm-article figure {

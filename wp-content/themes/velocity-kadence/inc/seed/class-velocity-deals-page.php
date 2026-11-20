@@ -127,7 +127,7 @@ class Velocity_Deals_Page {
 				'post_type'  => 'velocity-property',
 				'order_by'   => 'date',
 				'order'      => 'desc',
-				'per_page'   => '9',
+				'per_page'   => '12',
 				'columns'    => array( '3', '2', '1' ),
 				'column_gap' => array( '24', '20', '20' ),
 				'row_gap'    => array( '24', '20', '20' ),
@@ -244,16 +244,20 @@ class Velocity_Deals_Page {
 	/**
 	 * Settings of a card of the two lists: the light card with a shadow.
 	 *
-	 * @param string $name Name shown in the editor's list view.
+	 * @param string $name   Name shown in the editor's list view.
+	 * @param bool   $linked Whether the card links to its post.
 	 * @return array
 	 */
-	private static function card( $name ) {
+	private static function card( $name, $linked = true ) {
 		return array_merge(
 			Velocity_Home::card(
-				array(
-					'background' => Velocity_Seed::color( 'palette8' ),
-					'className'  => 'vm-card-link',
-					'metadata'   => array( 'name' => $name ),
+				array_filter(
+					array(
+						'background' => Velocity_Seed::color( 'palette8' ),
+						// The whole card is a link only where there is a page to go to.
+						'className'  => $linked ? 'vm-card-link' : '',
+						'metadata'   => array( 'name' => $name ),
+					)
 				)
 			),
 			array(
@@ -271,8 +275,8 @@ class Velocity_Deals_Page {
 	 *
 	 * Every part reads the deal being listed. The texts are fields of the
 	 * theme, under Velocity in the dynamic content list. A text with no
-	 * value is left out. vm-card-link stretches the title's link over the
-	 * whole card.
+	 * value is left out. The card links nowhere: a deal has no page of
+	 * its own.
 	 *
 	 * @param int $card_id Query card post ID.
 	 * @return string
@@ -310,8 +314,8 @@ class Velocity_Deals_Page {
 				array(
 					'color'   => Velocity_Seed::color( 'palette3' ),
 					'margin'  => array( '0', '', '8', '' ),
+					// No link: a deal has no page of its own.
 					'dynamic' => 'post|vm_deal_headline',
-					'to_post' => true,
 				)
 			) . "\n\n" .
 			Velocity_Home::t(
@@ -337,7 +341,7 @@ class Velocity_Deals_Page {
 					'class'   => 'vm-hide-empty',
 				)
 			),
-			self::card( 'Deal' )
+			self::card( 'Deal', false )
 		);
 	}
 
@@ -483,6 +487,10 @@ class Velocity_Deals_Page {
 					'taxonomy'    => $filter[1],
 					'label'       => $filter[0],
 					'slug'        => $key,
+					// "Hide items when result count is zero": deals and case studies
+					// share these taxonomies, and without it a filter offers the
+					// terms the other one uses.
+					'hideWhenEmptyCount' => true,
 				)
 			);
 		}

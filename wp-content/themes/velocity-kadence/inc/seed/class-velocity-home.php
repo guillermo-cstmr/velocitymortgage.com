@@ -1210,8 +1210,8 @@ class Velocity_Home {
 				array(
 					'color'   => Velocity_Seed::color( 'palette3' ),
 					'margin'  => array( '0', '', '8', '' ),
+					// No link: a deal has no page of its own.
 					'dynamic' => 'post|vm_deal_title',
-					'to_post' => true,
 				)
 			) . "\n\n" .
 			self::t(
@@ -1240,7 +1240,6 @@ class Velocity_Home {
 					array(
 						'background'   => Velocity_Seed::color( 'palette8' ),
 						'borderRadius' => array( 12, 12, 12, 12 ),
-						'className'    => 'vm-card-link',
 						'metadata'     => array( 'name' => 'Deal' ),
 					)
 				),

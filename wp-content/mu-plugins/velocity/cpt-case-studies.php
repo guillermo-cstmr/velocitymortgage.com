@@ -46,8 +46,16 @@ class Velocity_Case_Studies {
 		add_action( 'init', array( __CLASS__, 'cpt_setup' ) );
 		add_action( 'init', array( __CLASS__, 'taxonomy_setup' ), 20 );
 		add_action( 'cmb2_admin_init', array( __CLASS__, 'info_meta_box' ) );
-		add_action( 'save_post_' . self::POST_TYPE, array( __CLASS__, 'refresh' ), 99 );
-		add_action( 'save_post_velocity-property', array( __CLASS__, 'refresh_from_deal' ), 99 );
+		// On "save_post", not on "save_post_{type}": WordPress runs the second
+		// one first, before CMB2 has saved the fields of the box (it saves on
+		// "save_post"). Hooked there, a deal that was just chosen was only read
+		// on the save after.
+		add_action( 'save_post', array( __CLASS__, 'refresh' ), 99 );
+		// Last of all, after Kadence has finished with the deal being saved:
+		// until then its index of the lists' filters ignores a change of
+		// terms on any other post, and a case study that took a new program
+		// from its deal would still be listed under the old one.
+		add_action( 'save_post', array( __CLASS__, 'refresh_from_deal' ), PHP_INT_MAX );
 		add_filter( 'wpseo_metabox_prio', array( __CLASS__, 'yoast_below' ) );
 	}
 
@@ -203,7 +211,7 @@ class Velocity_Case_Studies {
 	 */
 	public static function refresh( $post_id ) {
 
-		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+		if ( self::POST_TYPE !== get_post_type( $post_id ) || wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
 			return;
 		}
 
@@ -236,7 +244,7 @@ class Velocity_Case_Studies {
 	 */
 	public static function refresh_from_deal( $deal_id ) {
 
-		if ( wp_is_post_revision( $deal_id ) || wp_is_post_autosave( $deal_id ) ) {
+		if ( 'velocity-property' !== get_post_type( $deal_id ) || wp_is_post_revision( $deal_id ) || wp_is_post_autosave( $deal_id ) ) {
 			return;
 		}
 
@@ -285,6 +293,19 @@ class Velocity_Case_Studies {
 		if ( $ae ) {
 			$values['velocity_case_study_ae_name'] = $ae->name;
 			$profile = absint( get_term_meta( $ae->term_id, 'velocity_property_ae_profile', true ) );
+
+			// No profile chosen for this AE (Properties > AEs, "AE profile"): use
+			// the Account Executive of the same name, if there is one.
+			if ( ! $profile ) {
+				$same = get_posts( array(
+					'post_type'      => 'velocity-ae',
+					'post_status'    => 'publish',
+					'title'          => $ae->name,
+					'posts_per_page' => 1,
+					'fields'         => 'ids',
+				) );
+				$profile = $same ? absint( $same[0] ) : 0;
+			}
 			if ( $profile ) {
 				$values['velocity_case_study_ae_title'] = get_post_meta( $profile, 'velocity_ae_title', true );
 				$photo_id = get_post_thumbnail_id( $profile );
