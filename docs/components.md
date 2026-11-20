@@ -160,7 +160,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule above it. Under the pointer it turns bold and shows an arrow. Navigation has no per-item styling |
 | `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
 | `vm-card-grow` | Section that is a card | The card grows a little under the pointer (mouse only, and not with "reduce motion"). Used with `vm-card-link` on the cards of "Other Ways We’ll Get You to Yes", as the design notes |
-| `vm-lines-2`, `vm-lines-3`, `vm-lines-4` | Text (Adv) | Cuts the text after that many lines, with "..." at the end. On the titles and summaries of the News and Insights cards |
+| `vm-lines-1` to `vm-lines-4` | Text (Adv) | Cuts the text after that many lines, with "..." at the end. On the titles and summaries of the News and Insights cards |
 | `vm-article` | Section that holds the Post Content block of an article | The look of what an author writes: headings, lists, images, quotes and tables. See "News and Insights" |
 | `vm-takeaways` | Group (core), in an article | The "Key Takeaways" box, wider than the text. Comes with the pattern of that name |
 | `vm-question` | Heading 3 (core), in an article | A question of the "Frequently Asked Questions": a heading for the outline, drawn as a line of bold text. Comes with the pattern of that name |
@@ -533,7 +533,7 @@ The list of articles, at `/insights/`. The articles are the posts under **Insigh
 
 **The featured article is chosen in the article itself**: the box "Featured article" in its editor, from the plugin. Ticking it takes the tick off the article featured before. While no article has it, the featured section does not show. The featured article is left out of the list under it, since it is already on the page.
 
-**A card reads the article**: its featured image, its topic, its title and its excerpt. An article with no excerpt shows no summary, and one with no topic shows no label. An article filed under several topics shows the first, in alphabetical order.
+**A card reads the article**: its featured image, its topic, its title and its excerpt. The summary is the article's **Excerpt** (in its editor, in the sidebar), cut to one line on a card and to two on the featured article. An article with no excerpt shows the start of its text there instead, which WordPress gives by itself. At the top of the article's own page only a written excerpt shows: the start of the text would repeat what comes right under it. An article with no topic shows no label. An article filed under several topics shows the first, in alphabetical order.
 
 **Choosing a topic lists its articles on the same page**, as the design notes. The address of a topic (`/insights/topic/...`) goes to the list with that topic chosen, so there is one page that lists articles and not one per topic.
 

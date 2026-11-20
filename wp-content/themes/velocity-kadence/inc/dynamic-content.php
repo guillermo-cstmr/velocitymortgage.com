@@ -37,6 +37,7 @@ function vm_dynamic_fields() {
 		'vm_insight_topic'     => array( __( 'Insight: topic', 'velocity-kadence' ), 'vm_dynamic_insight_topic' ),
 		'vm_insight_meta'      => array( __( 'Insight: topic and date', 'velocity-kadence' ), 'vm_dynamic_insight_meta' ),
 		'vm_insight_byline'    => array( __( 'Insight: written by', 'velocity-kadence' ), 'vm_dynamic_insight_byline' ),
+		'vm_insight_excerpt'   => array( __( 'Insight: excerpt, only if written', 'velocity-kadence' ), 'vm_dynamic_insight_excerpt' ),
 	);
 }
 
@@ -372,4 +373,18 @@ function vm_dynamic_insight_byline( $post_id ) {
 
 	/* translators: %s: author name. */
 	return sprintf( __( 'Written by: %s', 'velocity-kadence' ), $author->display_name );
+}
+
+/**
+ * The excerpt of an article, only when one was written for it.
+ *
+ * Kadence's own "Excerpt" field falls back on the start of the text, which
+ * suits a card. At the top of the article itself that would repeat the text
+ * right under it, so this one stays empty instead.
+ *
+ * @param int $post_id Insight ID.
+ * @return string
+ */
+function vm_dynamic_insight_excerpt( $post_id ) {
+	return has_excerpt( $post_id ) ? trim( (string) get_post_field( 'post_excerpt', $post_id ) ) : '';
 }
