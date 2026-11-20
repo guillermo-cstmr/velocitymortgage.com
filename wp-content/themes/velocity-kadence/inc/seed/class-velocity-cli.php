@@ -1263,6 +1263,99 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Builds Case Studies: the list at /case-studies/ and the page of a
+	 * case study.
+	 *
+	 * Both are Kadence Elements (Kadence > Elements): "Case Studies" takes
+	 * the place of the theme's own list, and "Case Studies: case study" of
+	 * the theme's page for one. The command creates the two elements, their
+	 * three Kadence queries (the featured case study, the list, and "You
+	 * may also like") and the two cards.
+	 *
+	 * It also adds the program "Multifamily & Commercial" to Properties,
+	 * Programs, if it is missing: the case studies of those deals are filed
+	 * under it.
+	 *
+	 * An element, a query or a card that already exists is left alone unless
+	 * --force is given.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * [--force]
+	 * : Rebuild the elements, the queries and the cards. This DISCARDS what
+	 * was changed in the editor.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-cases
+	 *     wp velocity seed-cases --execute
+	 *
+	 * @subcommand seed-cases
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_cases( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		if ( ! post_type_exists( Velocity_Cases::POST_TYPE ) ) {
+			WP_CLI::error( 'The post type "velocity-case-study" does not exist.' );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		if ( ! get_term_by( 'name', Velocity_Cases::EXTRA_PROGRAM, 'velocity-property-program' ) ) {
+			WP_CLI::log( sprintf( '  create   program  %s', Velocity_Cases::EXTRA_PROGRAM ) );
+
+			if ( $this->execute ) {
+				$made = wp_insert_term( Velocity_Cases::EXTRA_PROGRAM, 'velocity-property-program', array( 'slug' => 'multifamily-commercial' ) );
+
+				if ( is_wp_error( $made ) ) {
+					WP_CLI::warning( $made->get_error_message() );
+				}
+			}
+		}
+
+		$queries = $this->seed_queries( 'cases', Velocity_Cases::queries() );
+
+		$this->seed_post(
+			'cases-archive',
+			'kadence_element',
+			'Case Studies',
+			static function ( $post_id ) use ( $queries ) {
+				return Velocity_Cases::archive( $post_id, $queries );
+			},
+			array(
+				'_kad_element_type'              => 'template',
+				'_kad_element_hook'              => 'replace_archive_content',
+				'_kad_element_hook_priority'     => 10,
+				'_kad_element_show_conditionals' => '[{"rule":"post_type_archive|velocity-case-study","select":"all","ids":[],"subRule":"","subSelection":[],"mustMatch":false}]',
+			)
+		);
+
+		$this->seed_post(
+			'cases-single',
+			'kadence_element',
+			'Case Studies: case study',
+			static function ( $post_id ) use ( $queries ) {
+				return Velocity_Cases::single( $post_id, $queries );
+			},
+			array(
+				'_kad_element_type'              => 'template',
+				'_kad_element_hook'              => 'replace_single_content',
+				'_kad_element_hook_priority'     => 10,
+				'_kad_element_show_conditionals' => '[{"rule":"singular|velocity-case-study","select":"all","ids":[],"subRule":"","subSelection":[],"mustMatch":false}]',
+			)
+		);
+
+		WP_CLI::success( $this->execute ? 'Case Studies is in place. Edit it in the block editor from now on.' : 'Dry run finished.' );
+	}
+
+	/**
 	 * Copies the press releases into News and Insights.
 	 *
 	 * Each press release (Press) gets a twin under Insights with the same

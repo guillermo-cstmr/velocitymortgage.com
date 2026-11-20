@@ -151,7 +151,7 @@ class Velocity_Insights {
 	 * @param string $size    Image size.
 	 * @return string
 	 */
-	private static function photo( $card_id, $key, $radius, $size ) {
+	public static function photo( $card_id, $key, $radius, $size ) {
 		$uid = Velocity_Seed::uid( $card_id, $key );
 
 		return Velocity_Seed::block(
@@ -413,7 +413,7 @@ class Velocity_Insights {
 	 * @param string $text    Button text.
 	 * @return string
 	 */
-	private static function post_button( $card_id, $key, $text ) {
+	public static function post_button( $card_id, $key, $text ) {
 		return Velocity_Home::buttons(
 			$card_id,
 			$key,

@@ -32,6 +32,9 @@ function vm_dynamic_fields() {
 		'vm_case_terms'        => array( __( 'Case study: program and purpose', 'velocity-kadence' ), 'vm_dynamic_case_terms' ),
 		'vm_case_amount'       => array( __( 'Case study: loan amount', 'velocity-kadence' ), 'vm_dynamic_case_amount' ),
 		'vm_case_date'         => array( __( 'Case study: date', 'velocity-kadence' ), 'vm_dynamic_case_date' ),
+		'vm_case_purpose'      => array( __( 'Case study: loan purpose', 'velocity-kadence' ), 'vm_dynamic_case_purpose' ),
+		'vm_case_featured_label' => array( __( 'Case study: program and "Featured case study"', 'velocity-kadence' ), 'vm_dynamic_case_featured_label' ),
+		'vm_case_closed_by'    => array( __( 'Case study: deal closed by', 'velocity-kadence' ), 'vm_dynamic_case_closed_by' ),
 		'vm_toolkit_new'       => array( __( 'Toolkit: "New" tag', 'velocity-kadence' ), 'vm_dynamic_toolkit_new' ),
 		'vm_toolkit_file_type' => array( __( 'Toolkit: file type', 'velocity-kadence' ), 'vm_dynamic_toolkit_file_type' ),
 		'vm_insight_topic'     => array( __( 'Insight: topic', 'velocity-kadence' ), 'vm_dynamic_insight_topic' ),
@@ -387,4 +390,53 @@ function vm_dynamic_insight_byline( $post_id ) {
  */
 function vm_dynamic_insight_excerpt( $post_id ) {
 	return has_excerpt( $post_id ) ? trim( (string) get_post_field( 'post_excerpt', $post_id ) ) : '';
+}
+
+/**
+ * The loan purpose of a case study.
+ *
+ * @param int $post_id Case study ID.
+ * @return string
+ */
+function vm_dynamic_case_purpose( $post_id ) {
+	return trim( (string) get_post_meta( $post_id, 'velocity_case_study_purpose', true ) );
+}
+
+/**
+ * The line over the title of the featured case study: its program, then
+ * "Featured case study".
+ *
+ * @param int $post_id Case study ID.
+ * @return string
+ */
+function vm_dynamic_case_featured_label( $post_id ) {
+	return implode(
+		' · ',
+		array_filter(
+			array(
+				trim( (string) get_post_meta( $post_id, 'velocity_case_study_program', true ) ),
+				__( 'Featured case study', 'velocity-kadence' ),
+			)
+		)
+	);
+}
+
+/**
+ * Who closed the deal of a case study: "Deal closed by Name, Title". Empty
+ * when the case study has no account executive.
+ *
+ * @param int $post_id Case study ID.
+ * @return string
+ */
+function vm_dynamic_case_closed_by( $post_id ) {
+	$name = trim( (string) get_post_meta( $post_id, 'velocity_case_study_ae_name', true ) );
+
+	if ( '' === $name ) {
+		return '';
+	}
+
+	$title = trim( (string) get_post_meta( $post_id, 'velocity_case_study_ae_title', true ) );
+
+	/* translators: %s: name of the account executive, and their title. */
+	return sprintf( __( 'Deal closed by %s', 'velocity-kadence' ), $name . ( '' !== $title ? ', ' . $title : '' ) );
 }

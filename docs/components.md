@@ -165,6 +165,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-takeaways` | Group (core), in an article | The "Key Takeaways" box, wider than the text. Comes with the pattern of that name |
 | `vm-question` | Heading 3 (core), in an article | A question of the "Frequently Asked Questions": a heading for the outline, drawn as a line of bold text. Comes with the pattern of that name |
 | `vm-press-quote` | Group (core), in an article | A quote with the round photo of the person above it. Comes with the pattern "Article: Press Quote" |
+| `vm-key-results` | Group (core), in a case study | The "Key Results" band, the full width of the screen. Comes with the pattern "Case Study: Key Results" |
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
 | `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
@@ -569,6 +570,53 @@ A second element, "News and Insights: article", with the placement "Replace sing
 - One press release has no copy: "Why Conventional Loans Stall Real Estate Investors..." already exists as an article waiting for review, written for Insights. The command skips it and says so.
 - The list of topics is not defined. The design says "Category".
 - The newsletter form saves the address in Gravity Forms and sends it nowhere yet.
+
+## Case Studies
+
+The list at `/case-studies/` and the page of a case study, at `/case-study/...`. The case studies are the posts under **Case Studies**. Both addresses belong to that post type, so their content is two **Kadence Elements** (Kadence > Elements), built by `wp velocity seed-cases` and edited with blocks after that: "Case Studies" and "Case Studies: case study". They work like News and Insights, and share its styles, its share links and its quote.
+
+### The list
+
+| Part | Block | Where it is edited |
+|---|---|---|
+| Hero and the closing band | Text (Adv), buttons | The element |
+| Featured case study | Kadence query "Case Studies: featured case study" | Kadence > Queries, and its card under Query Cards |
+| Filters, sort, the cards and the pages | Kadence query "Case Studies: case studies" | Kadence > Queries. The card is "Case Studies: case study card" |
+
+**The featured case study is chosen in the case study itself**: the box "Featured case study" in its editor. Ticking it takes the tick off the one featured before, and the box says which one that is. While none has it, the featured section does not show. The featured one is left out of the list under it.
+
+**The filters show once there are more than ten published case studies**, as the design notes, and by themselves: nothing to switch on. Until then the list shows its cards and pages only. The number is `VM_CASES_FILTERS_FROM`, in `inc/case-studies.php`.
+
+**The card is the one of Featured Deals** ("The stories behind the deals"), so a case study looks the same on both pages.
+
+### The page of a case study
+
+| Part | Where it comes from |
+|---|---|
+| "< Case Studies" | A link in the element |
+| Photo | The case study's featured image |
+| Program | The shortcode `[vm_case_program]`: the case study's program, as a link to the program's page |
+| Title and summary | The case study's title and excerpt. Only a written excerpt shows |
+| "Deal closed by ..." | The account executive's name and title |
+| Links to share | `[vm_insight_share]`, as in an article |
+| "Deal at a glance" | The shortcode `[vm_case_glance]`: the orange strip with the days to close, the loan amount, the loan purpose and the deal date |
+| Card of the account executive | The shortcode `[vm_case_ae]`: photo, name and title. On a wide screen it sits to the left of the first part of the text |
+| The case study | The block "Post Content". It prints what was written in the editor |
+| "You may also like" | Kadence query "Case Studies: you may also like": the latest three of the same program, or of any program when that one has fewer than three |
+
+**The figures are fields, not text.** They are in the box "Deal at a glance" of the case study's editor: either choose the **Deal** it is about, and its amount, date, days to close, location, program, purpose, property type and account executive are copied from the deal; or leave "Deal" empty and type them. The strip and the cards read those fields, and leave out the ones that are empty. They are always the same four, so there is nothing to add or reorder per case study.
+
+**The account executive's photo and title** come from their profile under Account Executives. A case study is tied to an AE by name (the box "AEs" in the sidebar, or the deal's). The profile is the one chosen for that AE in Properties > AEs ("AE profile") or, when none is chosen, the Account Executive of the same name. A case study with no AE shows no card and no "Deal closed by".
+
+**The program's link** is the program's "Program page" (Properties > Programs) or, when that is empty, its page under Programs Overview.
+
+**Writing a case study.** As an article: ordinary blocks, styled by `vm-article`. The design asks that every case study name its program in the text and link it to the program's page: that is written by hand, in the text. The pattern "Case Study: Key Results" (Patterns > Velocity) gives the band that closes a case study; "Article: Press Quote" gives a quote with a photo.
+
+### What is still open
+
+- No case study is published yet. Eleven test ones, titled "TEST", stand in for them.
+- The program "Multifamily & Commercial" was added to Properties > Programs for the case studies of those deals, as the design asks. It has no page of its own.
+- The program filter lists every program a deal or a case study uses, so it can offer one with no case study yet.
 
 ## The legal pages
 

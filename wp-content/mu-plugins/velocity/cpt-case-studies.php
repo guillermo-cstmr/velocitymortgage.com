@@ -285,6 +285,19 @@ class Velocity_Case_Studies {
 		if ( $ae ) {
 			$values['velocity_case_study_ae_name'] = $ae->name;
 			$profile = absint( get_term_meta( $ae->term_id, 'velocity_property_ae_profile', true ) );
+
+			// No profile chosen for this AE (Properties > AEs, "AE profile"): use
+			// the Account Executive of the same name, if there is one.
+			if ( ! $profile ) {
+				$same = get_posts( array(
+					'post_type'      => 'velocity-ae',
+					'post_status'    => 'publish',
+					'title'          => $ae->name,
+					'posts_per_page' => 1,
+					'fields'         => 'ids',
+				) );
+				$profile = $same ? absint( $same[0] ) : 0;
+			}
 			if ( $profile ) {
 				$values['velocity_case_study_ae_title'] = get_post_meta( $profile, 'velocity_ae_title', true );
 				$photo_id = get_post_thumbnail_id( $profile );

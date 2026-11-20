@@ -286,7 +286,7 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 | Privacy (Privacy Notice for California Residents) | `/privacy/` | `seed-legal-pages` | Built | Built, 2026-11-18. The old text about cookies is gone; a cookie banner replaces it and is not built yet |
 | 404 | Any address that does not exist | `seed-404` | Built, as a Kadence Element | Built, 2026-11-18 |
 | A deal | `/property/...` | None yet | Not built: default template | |
-| Case Studies, and a case study | `/case-studies/` | None yet | Not built: default template | |
+| Case Studies, and a case study | `/case-studies/`, `/case-study/...` | `seed-cases` | Built, as two Kadence Elements. Tested with eleven test case studies | Not yet: default template |
 | Contact thank-you | `/contact/thank-you/` | None yet | Does not exist | |
 | Forms Library (footer) | | None yet | Does not exist. Its link points to "#". "Licenses" was taken out of the footer on 2026-11-20 | |
 
@@ -319,6 +319,7 @@ All of them are dry runs unless called with `--execute`.
 | `wp velocity seed-404` | Creates the Kadence Element that replaces the theme's 404 content. `--force` rebuilds it (see [components.md](components.md), "The 404 page") |
 | `wp velocity seed-insights` | Creates the two Kadence Elements of News and Insights (the list at `/insights/` and the page of an article), their three Kadence queries (the featured article, the list, and "You may also like") and the two cards. Needs the plugin Velocity Insights. `--force` rebuilds them (see [components.md](components.md), "News and Insights") |
 | `wp velocity copy-press` | Copies every press release (Press) into Insights, under the topic "Press Release": same title, address ending, text, summary, date, status, featured image and SEO settings. The quote of the old "Quote" box is added at the end of the text, as the pattern "Article: Press Quote". Press itself is not touched. Safe to run again: a press release that has its copy is left alone. `--force` writes the copies again |
+| `wp velocity seed-cases` | Creates the two Kadence Elements of Case Studies (the list at `/case-studies/` and the page of a case study), their three Kadence queries and the two cards, and adds the program "Multifamily & Commercial" if it is missing. `--force` rebuilds them (see [components.md](components.md), "Case Studies") |
 | `wp velocity seed-forms` | Updates the contact form to the design and adds its consent checkbox, and creates the newsletter form. Leaves them alone once done (see [components.md](components.md), "Forms") |
 | `wp velocity seed-contact` | Fills the Contact page, if it is empty: heading, ways to reach Velocity, the contact form and the offices map. `--force` rebuilds it and discards every change made in the editor (see [components.md](components.md), "Offices map") |
 | `wp velocity seed-company` | Creates the About Us page if it is missing and fills it, if it is empty. Its people and careers sections are Kadence queries, which it creates with their cards (Kadence > Queries and Query Cards); they read Staff and Careers, so the people and the positions need no seeding. `--force` rebuilds the page and discards every change made in the editor (see [components.md](components.md), "The About Us page") |
