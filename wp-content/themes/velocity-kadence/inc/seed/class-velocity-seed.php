@@ -89,7 +89,6 @@ class Velocity_Seed {
 		return array(
 			array( 'Privacy Policy', '/privacy/' ),
 			array( 'Terms of Service', '/terms-of-use/' ),
-			array( 'Licenses', '#' ),
 			array( 'Forms Library', '#' ),
 		);
 	}

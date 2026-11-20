@@ -21,7 +21,7 @@
  * The page of an article is a second element, "News and Insights: article".
  * Three of its parts are printed by this file, since no block reads them:
  * the links to share it ([vm_insight_share]), the box about its author
- * ([vm_insight_author]) and the newsletter bar that comes up from the bottom
+ * ([vm_insight_author]) and the newsletter bar that comes up at the bottom
  * of the screen halfway through the article.
  *
  * A press release has no author: an article under the topic "Press Release"
@@ -176,12 +176,15 @@ function vm_insight_share_shortcode() {
 
 	$url   = rawurlencode( get_permalink( $post_id ) );
 	$title = rawurlencode( html_entity_decode( get_the_title( $post_id ), ENT_QUOTES, 'UTF-8' ) );
+	// The design's icons: Font Awesome Free 5.15.4 by @fontawesome,
+	// https://fontawesome.com, license https://fontawesome.com/license/free
+	// (icons: CC BY 4.0). The X is the brand's own mark. Each: view box, path.
 	$icons = array(
-		'linkedin' => '<path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4v11.25H3V9.75Zm6.5 0h3.8v1.6h.06c.53-.95 1.83-1.95 3.76-1.95 4.02 0 4.88 2.5 4.88 6.1V21h-4v-4.9c0-1.25-.02-2.86-1.8-2.86-1.8 0-2.08 1.36-2.08 2.77V21h-4V9.75Z"/>',
-		'x'        => '<path d="M17.75 3h3.07l-6.7 7.63L22 21h-6.17l-4.83-6.3L5.47 21H2.4l7.17-8.17L2 3h6.33l4.37 5.76L17.75 3Zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43Z"/>',
-		'reddit'   => '<path d="M22 12.1a2.2 2.2 0 0 0-3.74-1.57 10.9 10.9 0 0 0-5.6-1.72l.95-4.42 3.1.66a1.57 1.57 0 1 0 .17-.98l-3.6-.77a.5.5 0 0 0-.6.38l-1.1 5.13a10.9 10.9 0 0 0-5.8 1.72A2.2 2.2 0 1 0 3.3 14a4.2 4.2 0 0 0-.05.66c0 3.4 3.92 6.14 8.75 6.14s8.75-2.75 8.75-6.14c0-.22-.02-.44-.05-.66A2.2 2.2 0 0 0 22 12.1ZM7 13.6a1.57 1.57 0 1 1 3.14 0 1.57 1.57 0 0 1-3.14 0Zm8.72 4.14c-1.07 1.07-3.12 1.15-3.72 1.15s-2.65-.08-3.72-1.15a.4.4 0 0 1 .57-.57c.68.67 2.12.91 3.15.91s2.47-.24 3.15-.91a.4.4 0 0 1 .57.57Zm-.3-2.57a1.57 1.57 0 1 1 0-3.14 1.57 1.57 0 0 1 0 3.14Z"/>',
-		'email'    => '<path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 8.1L4.2 7H4v.9l8 6.2 8-6.2V7h-.2L12 13.1Z"/>',
-		'link'     => '<path d="M10.6 13.4a1 1 0 0 1 0 1.4 1 1 0 0 1-1.4 0 5 5 0 0 1 0-7.07l3.53-3.54a5 5 0 0 1 7.08 7.08l-1.5 1.49a7 7 0 0 0-.4-2.42l.48-.49a3 3 0 1 0-4.24-4.24L10.6 9.15a3 3 0 0 0 0 4.25Zm2.8-4.2a1 1 0 0 1 1.4 0 5 5 0 0 1 0 7.07l-3.53 3.54a5 5 0 0 1-7.08-7.08l1.5-1.49c-.02.82.12 1.64.4 2.42l-.48.49a3 3 0 1 0 4.24 4.24l3.54-3.54a3 3 0 0 0 0-4.24 1 1 0 0 1 0-1.4Z"/>',
+		'linkedin' => array( '0 0 448 512', 'M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z' ),
+		'x' => array( '0 0 24 24', 'M17.75 3h3.07l-6.7 7.63L22 21h-6.17l-4.83-6.3L5.47 21H2.4l7.17-8.17L2 3h6.33l4.37 5.76L17.75 3Zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43Z' ),
+		'reddit' => array( '0 0 512 512', 'M201.5 305.5c-13.8 0-24.9-11.1-24.9-24.6 0-13.8 11.1-24.9 24.9-24.9 13.6 0 24.6 11.1 24.6 24.9 0 13.6-11.1 24.6-24.6 24.6zM504 256c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zm-132.3-41.2c-9.4 0-17.7 3.9-23.8 10-22.4-15.5-52.6-25.5-86.1-26.6l17.4-78.3 55.4 12.5c0 13.6 11.1 24.6 24.6 24.6 13.8 0 24.9-11.3 24.9-24.9s-11.1-24.9-24.9-24.9c-9.7 0-18 5.8-22.1 13.8l-61.2-13.6c-3-.8-6.1 1.4-6.9 4.4l-19.1 86.4c-33.2 1.4-63.1 11.3-85.5 26.8-6.1-6.4-14.7-10.2-24.1-10.2-34.9 0-46.3 46.9-14.4 62.8-1.1 5-1.7 10.2-1.7 15.5 0 52.6 59.2 95.2 132 95.2 73.1 0 132.3-42.6 132.3-95.2 0-5.3-.6-10.8-1.9-15.8 31.3-16 19.8-62.5-14.9-62.5zM302.8 331c-18.2 18.2-76.1 17.9-93.6 0-2.2-2.2-6.1-2.2-8.3 0-2.5 2.5-2.5 6.4 0 8.6 22.8 22.8 87.3 22.8 110.2 0 2.5-2.2 2.5-6.1 0-8.6-2.2-2.2-6.1-2.2-8.3 0zm7.7-75c-13.6 0-24.6 11.1-24.6 24.9 0 13.6 11.1 24.6 24.6 24.6 13.8 0 24.9-11.1 24.9-24.6 0-13.8-11-24.9-24.9-24.9z' ),
+		'email' => array( '0 0 512 512', 'M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z' ),
+		'link' => array( '0 0 512 512', 'M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z' ),
 	);
 	$links = array(
 		'linkedin' => array( __( 'Share on LinkedIn (opens in a new tab)', 'velocity-kadence' ), 'https://www.linkedin.com/sharing/share-offsite/?url=' . $url ),
@@ -193,21 +196,23 @@ function vm_insight_share_shortcode() {
 	$html = '';
 	foreach ( $links as $key => $link ) {
 		$html .= sprintf(
-			'<li><a href="%1$s"%2$s aria-label="%3$s"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">%4$s</svg></a></li>',
+			'<li><a href="%1$s"%2$s aria-label="%3$s"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="%4$s" fill="currentColor"><path d="%5$s"/></svg></a></li>',
 			esc_url( $link[1] ),
 			'email' === $key ? '' : ' target="_blank" rel="noopener noreferrer"',
 			esc_attr( $link[0] ),
-			$icons[ $key ]
+			esc_attr( $icons[ $key ][0] ),
+			esc_attr( $icons[ $key ][1] )
 		);
 	}
 
 	// Copies the address. Without the script it is a plain link to the article.
 	$html .= sprintf(
-		'<li><a href="%1$s" class="vm-share__copy" aria-label="%2$s" data-copied="%3$s"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">%4$s</svg></a></li>',
+		'<li><a href="%1$s" class="vm-share__copy" aria-label="%2$s" data-copied="%3$s"><svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="%4$s" fill="currentColor"><path d="%5$s"/></svg></a></li>',
 		esc_url( get_permalink( $post_id ) ),
 		esc_attr__( 'Copy the link', 'velocity-kadence' ),
 		esc_attr__( 'Link copied', 'velocity-kadence' ),
-		$icons['link']
+		esc_attr( $icons['link'][0] ),
+		esc_attr( $icons['link'][1] )
 	);
 
 	return '<ul class="vm-share" aria-label="' . esc_attr__( 'Share this article', 'velocity-kadence' ) . '">' . $html . '</ul>';
@@ -306,14 +311,16 @@ function vm_insight_author_shortcode() {
 add_shortcode( 'vm_insight_author', 'vm_insight_author_shortcode' );
 
 /**
- * The newsletter bar of an article, and the script of its page.
+ * The newsletter bar of an article.
  *
- * The bar comes up from the bottom of the screen once half of the article
- * has been read, and only once per visit: closing it, or having seen it,
- * keeps it away until the browser is closed. The same script copies the
- * article's address for the "copy the link" icon.
+ * It is printed at the end of the page's content, right above the footer,
+ * and stays hidden until half of the article has been read. Once shown it
+ * holds on to the bottom of the screen by itself ("sticky" in style.css), and
+ * at the end of the page it rests where it is printed, above the footer. It
+ * shows once per visit: closing it, or having seen it, keeps it away until
+ * the browser is closed. See assets/js/insight.js.
  */
-function vm_insight_footer() {
+function vm_insight_news_bar() {
 	if ( ! is_singular( 'insight' ) ) {
 		return;
 	}
@@ -329,6 +336,17 @@ function vm_insight_footer() {
 			esc_attr__( 'Close', 'velocity-kadence' )
 		);
 	}
+}
+add_action( 'kadence_before_footer', 'vm_insight_news_bar' );
+
+/**
+ * The script of the page of an article: it opens the newsletter bar, and
+ * copies the article's address for the "copy the link" icon.
+ */
+function vm_insight_script() {
+	if ( ! is_singular( 'insight' ) ) {
+		return;
+	}
 
 	$file = VELOCITY_KADENCE_DIR . '/assets/js/insight.js';
 	wp_enqueue_script(
@@ -342,4 +360,4 @@ function vm_insight_footer() {
 		)
 	);
 }
-add_action( 'wp_footer', 'vm_insight_footer', 5 );
+add_action( 'wp_enqueue_scripts', 'vm_insight_script' );

@@ -1,11 +1,11 @@
 /**
  * The page of an article of News and Insights.
  *
- * 1. The newsletter bar (inc/insights.php prints it, hidden) comes up from
- *    the bottom of the screen once half of the article has been read. It
- *    shows once per visit: after it showed, or was closed, it stays away
- *    until the browser is closed. At the end of the page it stops above
- *    the footer instead of covering it.
+ * 1. The newsletter bar (inc/insights.php prints it above the footer,
+ *    hidden) shows once half of the article has been read. It shows once
+ *    per visit: after it showed, or was closed, it stays away until the
+ *    browser is closed. Keeping it at the bottom of the screen, and above
+ *    the footer at the end of the page, is the stylesheet's work alone.
  *
  * 2. The "copy the link" icon of the share links copies the article's
  *    address and says so. Without this script it is a plain link.
@@ -40,12 +40,15 @@
 			document.documentElement.style.scrollPaddingBottom = open ? bar.offsetHeight + 16 + 'px' : '';
 		};
 
+		// The bar fades out first and leaves the page after: the footer moves up
+		// into its place only once the bar can no longer be seen.
 		const close = () => {
-			bar.classList.remove( 'is-open' );
-			clear( false );
+			bar.classList.add( 'is-closing' );
 			window.setTimeout( () => {
 				bar.hidden = true;
-			}, 300 );
+				bar.classList.remove( 'is-open', 'is-closing' );
+				clear( false );
+			}, 220 );
 		};
 
 		const check = () => {
@@ -66,17 +69,12 @@
 			} );
 		};
 
-		// The bar rests on the footer once the footer is in view.
-		const footer = document.querySelector( 'footer' );
-		const dock = () => {
-			const over = footer ? window.innerHeight - footer.getBoundingClientRect().top : 0;
-			bar.style.bottom = Math.max( 0, Math.round( over ) ) + 'px';
-		};
-
 		window.addEventListener( 'scroll', check, { passive: true } );
-		window.addEventListener( 'scroll', dock, { passive: true } );
-		window.addEventListener( 'resize', dock );
-		dock();
+		window.addEventListener( 'resize', () => {
+			if ( bar.classList.contains( 'is-open' ) ) {
+				clear( true );
+			}
+		} );
 		bar.querySelector( '.vm-news-bar__close' ).addEventListener( 'click', close );
 		document.addEventListener( 'keydown', ( event ) => {
 			if ( 'Escape' === event.key && bar.classList.contains( 'is-open' ) && bar.contains( document.activeElement ) ) {

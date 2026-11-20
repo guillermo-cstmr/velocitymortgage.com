@@ -288,7 +288,7 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 | A deal | `/property/...` | None yet | Not built: default template | |
 | Case Studies, and a case study | `/case-studies/` | None yet | Not built: default template | |
 | Contact thank-you | `/contact/thank-you/` | None yet | Does not exist | |
-| Licenses, Forms Library (footer) | | None yet | Do not exist. Their links point to "#" | |
+| Forms Library (footer) | | None yet | Does not exist. Its link points to "#". "Licenses" was taken out of the footer on 2026-11-20 | |
 
 Branches, each on top of the one before, none pushed: `feature/contact-page`, `feature/company-page`, `feature/process-page`, `feature/program-pages`.
 

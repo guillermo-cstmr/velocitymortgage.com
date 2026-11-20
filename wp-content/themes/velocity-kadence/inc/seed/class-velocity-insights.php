@@ -191,7 +191,8 @@ class Velocity_Insights {
 	 * The card of an article: photo, topic, title, summary and the link.
 	 *
 	 * Every part reads the article being listed. The summary is its
-	 * excerpt. vm-card-link stretches the title's link over the whole card.
+	 * excerpt, on one line; with no excerpt, WordPress gives the start of
+	 * the text instead. vm-card-link stretches the title's link over the whole card.
 	 * The same card is used under an article, in "You may also like".
 	 *
 	 * @param int $card_id Query card post ID.
@@ -240,7 +241,8 @@ class Velocity_Insights {
 					'color'   => Velocity_Seed::color( 'palette5' ),
 					'margin'  => array( '0', '', '16', '' ),
 					'dynamic' => 'post|post_excerpt',
-					'class'   => 'vm-hide-empty vm-lines-3',
+					// One line, as in the design. See style.css.
+					'class'   => 'vm-hide-empty vm-lines-1',
 				)
 			) . "\n\n" .
 			// Looks like a link. The card's title already links the whole card.
@@ -332,7 +334,7 @@ class Velocity_Insights {
 					'color'   => $gray,
 					'margin'  => array( '0', '', '20', '' ),
 					'dynamic' => 'post|post_excerpt',
-					'class'   => 'vm-hide-empty vm-lines-3',
+					'class'   => 'vm-hide-empty vm-lines-2',
 				)
 			) . "\n\n" .
 			self::post_button( $card_id, 'featured', 'Read the Full Post' );
@@ -809,7 +811,9 @@ class Velocity_Insights {
 				'',
 				array(
 					'margin'  => array( '0', '', '20', '' ),
-					'dynamic' => 'post|post_excerpt',
+					// Only an excerpt that was written. The start of the text, which a
+					// card falls back on, would repeat what comes right under it.
+					'dynamic' => 'post|vm_insight_excerpt',
 					'class'   => 'vm-hide-empty',
 				)
 			) . "\n\n" .

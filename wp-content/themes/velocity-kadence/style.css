@@ -225,9 +225,19 @@ h2 strong {
 	line-height: 1.5;
 }
 
+/*
+ * On desktop the legal links sit at the right end of their line, as in the
+ * design. The navigation block has no setting for that. The last link gives
+ * up its own space on the right, so its text ends at the edge.
+ */
 @media (min-width: 1025px) {
+	.vm-footer-legal .wp-block-kadence-navigation .navigation,
 	.vm-footer-legal .wp-block-kadence-navigation .kb-navigation {
 		justify-content: flex-end;
+	}
+
+	.vm-footer-legal .kb-navigation > li:last-child > .kb-link-wrap > .kb-nav-link-content {
+		padding-right: 0;
 	}
 }
 
@@ -1696,13 +1706,32 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 }
 
 /*
- * vm-lines-2, vm-lines-3, vm-lines-4: a text that is cut after that many
- * lines, with "..." at the end. For the titles and summaries of cards, so a
- * long one does not stretch its card. The whole text stays in the page for
- * screen readers and search engines. Text (Adv) has no setting for it.
+ * vm-lines-1 to vm-lines-4: a text that is cut after that many lines, with
+ * "..." at the end. For the titles and summaries of cards, so a long one
+ * does not stretch its card. The whole text stays in the page for screen
+ * readers and search engines. Text (Adv) has no setting for it.
  */
+.vm-lines-1,
 .vm-lines-2,
 .vm-lines-3,
+.vm-lines-4 {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+}
+
+.vm-lines-1 {
+	-webkit-line-clamp: 1;
+	line-clamp: 1;
+}
+
+.vm-lines-2 {
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+
 .vm-lines-4 {
 	display: -webkit-box;
 	overflow: hidden;
@@ -1954,8 +1983,12 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	margin-top: 24px;
 }
 
-/* The links to share an article. */
-.vm-share {
+/*
+ * The links to share an article. The list starts at the left edge of its
+ * column, in line with the title and the summary above it: the theme
+ * indents every list, and this one is a row of icons.
+ */
+ul.vm-share.vm-share {
 	display: flex;
 	align-items: center;
 	gap: 16px;
@@ -1966,7 +1999,7 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 
 .vm-share a {
 	display: flex;
-	color: #b04c11;
+	color: var(--global-palette2);
 }
 
 .vm-share a:hover,
@@ -1975,7 +2008,17 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	color: var(--global-palette3);
 }
 
-.vm-article-end .vm-share {
+.vm-article-end .vm-share a {
+	color: #b04c11;
+}
+
+.vm-article-end .vm-share a:hover,
+.vm-article-end .vm-share a:focus-visible,
+.vm-article-end .vm-share a.is-copied {
+	color: var(--global-palette3);
+}
+
+.vm-article-end ul.vm-share.vm-share {
 	justify-content: center;
 	margin-top: 30px;
 }
@@ -2060,23 +2103,32 @@ summary.vm-author__head {
 }
 
 /*
- * The newsletter bar of an article: fixed to the bottom of the screen, it
- * slides in halfway through the article. See assets/js/insight.js.
+ * The newsletter bar of an article. It is part of the page, printed right
+ * above the footer, and "sticky": the browser keeps it at the bottom of the
+ * screen while the article scrolls, and at the end of the page it rests in
+ * its own place, above the footer, with no script moving it. It slides in
+ * when it opens and fades out when it is closed. See assets/js/insight.js.
  */
 .vm-news-bar {
-	position: fixed;
+	position: sticky;
 	z-index: 90;
-	right: 0;
 	bottom: 0;
-	left: 0;
 	background: var(--global-palette5);
 	color: var(--global-palette9);
 	transform: translateY(100%);
-	transition: transform 0.3s ease;
+	transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.vm-news-bar[hidden] {
+	display: none;
 }
 
 .vm-news-bar.is-open {
 	transform: none;
+}
+
+.vm-news-bar.is-closing {
+	opacity: 0;
 }
 
 .vm-news-bar__inner {
