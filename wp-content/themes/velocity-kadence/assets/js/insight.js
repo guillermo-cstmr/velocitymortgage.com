@@ -36,13 +36,23 @@
 	if ( bar && article && ! seen() ) {
 		// While the bar is open, the page keeps what has the keyboard's focus
 		// above it: a link reached with Tab is not left hidden under the bar.
+		// It also leaves room for the bar above the footer, as tall as the bar
+		// (style.css reads --vm-news-bar-space), so at the end of the page the
+		// bar rests in that room instead of over the last cards.
 		const clear = ( open ) => {
-			document.documentElement.style.scrollPaddingBottom = open ? bar.offsetHeight + 16 + 'px' : '';
+			const root = document.documentElement;
+			root.style.scrollPaddingBottom = open ? bar.offsetHeight + 16 + 'px' : '';
+			if ( open ) {
+				root.style.setProperty( '--vm-news-bar-space', bar.offsetHeight + 'px' );
+			} else {
+				root.style.removeProperty( '--vm-news-bar-space' );
+			}
 		};
 
 		const close = () => {
 			bar.classList.remove( 'is-open' );
 			clear( false );
+			dock();
 			window.setTimeout( () => {
 				bar.hidden = true;
 			}, 300 );
@@ -63,6 +73,7 @@
 			window.requestAnimationFrame( () => {
 				bar.classList.add( 'is-open' );
 				clear( true );
+				dock();
 			} );
 		};
 
@@ -75,7 +86,12 @@
 
 		window.addEventListener( 'scroll', check, { passive: true } );
 		window.addEventListener( 'scroll', dock, { passive: true } );
-		window.addEventListener( 'resize', dock );
+		window.addEventListener( 'resize', () => {
+			if ( bar.classList.contains( 'is-open' ) ) {
+				clear( true );
+			}
+			dock();
+		} );
 		dock();
 		bar.querySelector( '.vm-news-bar__close' ).addEventListener( 'click', close );
 		document.addEventListener( 'keydown', ( event ) => {

@@ -2127,6 +2127,14 @@ summary.vm-author__head {
 	cursor: pointer;
 }
 
+/*
+ * Room for the bar above the footer while it is open, as tall as the bar
+ * (set by assets/js/insight.js), so it does not cover the end of the page.
+ */
+.single-insight footer {
+	margin-top: var(--vm-news-bar-space, 0px);
+}
+
 @media (max-width: 1100px) {
 	.vm-news-bar__inner {
 		flex-direction: column;
