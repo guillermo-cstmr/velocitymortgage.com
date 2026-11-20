@@ -4,7 +4,7 @@
  * Slug: velocity-kadence/article-press-quote
  * Categories: velocity
  * Keywords: quote, press, headshot, insight, article
- * Post Types: insight
+ * Post Types: insight, velocity-case-study
  * Description: A quote with the photo of the person, for an article or a press release of News and Insights: the photo, the quote, and the name and title in the citation line. Delete the image for a quote with no photo. Its look comes from the class vm-press-quote.
  *
  * @package Velocity_Kadence
