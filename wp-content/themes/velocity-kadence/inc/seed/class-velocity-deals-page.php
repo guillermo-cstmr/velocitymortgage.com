@@ -563,94 +563,122 @@ class Velocity_Deals_Page {
 					'id'       => (int) $card_id,
 				)
 			) . "\n\n" .
-			Velocity_Seed::block(
-				'kadence/query-noresults',
-				array( 'uniqueID' => Velocity_Seed::uid( $query_id, 'noresults' ) ),
-				// The Filter Reset block is only allowed in a query or a Section,
-				// so a Section holds the message and its own "Clear filters".
-				Velocity_Seed::column(
+			self::no_results( $query_id, 'No deals match those filters.' ) . "\n\n" .
+			self::pagination( $query_id );
+	}
+
+	/**
+	 * The message of a list with nothing to show, and its "Clear filters".
+	 *
+	 * @param int    $query_id Query post ID.
+	 * @param string $text     The message.
+	 * @return string
+	 */
+	public static function no_results( $query_id, $text ) {
+		return
+		Velocity_Seed::block(
+			'kadence/query-noresults',
+			array( 'uniqueID' => Velocity_Seed::uid( $query_id, 'noresults' ) ),
+			// The Filter Reset block is only allowed in a query or a Section,
+			// so a Section holds the message and its own "Clear filters".
+			Velocity_Seed::column(
+				$query_id,
+				'noresults-box',
+				Velocity_Home::t(
 					$query_id,
-					'noresults-box',
-					Velocity_Home::t(
-						$query_id,
-						'noresults-text',
-						'No deals match those filters.',
-						array(
-							'align'  => 'center',
-							'margin' => array( '0', '', '8', '' ),
-						)
-					) . "\n\n" .
-					Velocity_Seed::block(
-						'kadence/query-filter-reset',
-						array(
-							'uniqueID'        => Velocity_Seed::uid( $query_id, 'noresults-reset' ),
-							'text'            => 'Clear filters',
-							'hAlign'          => 'center',
-							// Brand Navy and Deep Rust, as plain colors.
-							'color'           => '#010739',
-							'background'      => 'rgba(0,0,0,0)',
-							'colorHover'      => '#bb5013',
-							'backgroundHover' => 'rgba(0,0,0,0)',
-						)
-					),
+					'noresults-text',
+					$text,
 					array(
-						'padding'   => array( '32', '', '32', '' ),
-						'textAlign' => array( 'center', '', '' ),
-						'metadata'  => array( 'name' => 'No results' ),
+						'align'  => 'center',
+						'margin' => array( '0', '', '8', '' ),
 					)
-				)
-			) . "\n\n" .
-			Velocity_Seed::block(
-				'kadence/query-pagination',
+				) . "\n\n" .
+				Velocity_Seed::block(
+					'kadence/query-filter-reset',
+					array(
+						'uniqueID'        => Velocity_Seed::uid( $query_id, 'noresults-reset' ),
+						'text'            => 'Clear filters',
+						'hAlign'          => 'center',
+						// Brand Navy and Deep Rust, as plain colors.
+						'color'           => '#010739',
+						'background'      => 'rgba(0,0,0,0)',
+						'colorHover'      => '#bb5013',
+						'backgroundHover' => 'rgba(0,0,0,0)',
+					)
+				),
 				array(
-					'uniqueID'          => Velocity_Seed::uid( $query_id, 'pagination' ),
-					// Arrows for previous and next. Their circles are in style.css.
-					'buttonContentType' => 'icon',
-					'nextIcon'          => 'fe_arrowRight',
-					'previousIcon'      => 'fe_arrowLeft',
-					// Gray, Deep Rust and Brand Navy, as plain colors.
-					'color'             => '#666666',
-					'colorHover'        => '#bb5013',
-					'colorActive'       => '#010739',
-					'background'        => 'rgba(0,0,0,0)',
-					'backgroundHover'   => 'rgba(0,0,0,0)',
-					'backgroundActive'  => 'rgba(0,0,0,0)',
-					'margin'            => array( '48', '', '0', '' ),
-					'typography'        => array(
-						array(
-							'size'          => array( 30, '', 24 ),
-							'sizeType'      => 'px',
-							'lineHeight'    => array( '', '', '' ),
-							'lineType'      => '',
-							'letterSpacing' => '',
-							'family'        => '',
-							'google'        => '',
-							'style'         => '',
-							'weight'        => '',
-							'variant'       => '',
-							'subset'        => '',
-							'loadGoogle'    => true,
-							'padding'       => array( 'xxs', 'xs', 'xxs', 'xs' ),
-							'marginTop'     => 8,
-							'color'         => '',
-							'background'    => '',
-							'border'        => array( '', '', '', '' ),
-							'borderRadius'  => array( '', '', '', '' ),
-							'borderWidth'   => array( '', '', '', '' ),
-							'colorHover'    => '',
-							'backgroundHover' => '',
-							'borderHover'   => array( '', '', '', '' ),
-							'colorActive'   => '',
-							'backgroundActive' => '',
-							'borderActive'  => array( '', '', '', '' ),
-							'textTransform' => '',
-							'paddingTablet' => array( '', '', '', '' ),
-							'paddingMobile' => array( '', '', '', '' ),
-							'paddingType'   => 'px',
-						),
-					),
+					'padding'   => array( '32', '', '32', '' ),
+					'textAlign' => array( 'center', '', '' ),
+					'metadata'  => array( 'name' => 'No results' ),
 				)
-			);
+			)
+		);
+	}
+
+	/**
+	 * The pages of a list: the numbers between two arrows.
+	 *
+	 * @param int    $query_id Query post ID.
+	 * @param string $scroll   Where a new page scrolls to: "card", the cards (Kadence's
+	 *                         own choice), or "block", the top of the query, filters included.
+	 * @return string
+	 */
+	public static function pagination( $query_id, $scroll = 'card' ) {
+		return
+		Velocity_Seed::block(
+			'kadence/query-pagination',
+			array_merge(
+			'card' === $scroll ? array() : array( 'scrollTarget' => $scroll ),
+			array(
+				'uniqueID'          => Velocity_Seed::uid( $query_id, 'pagination' ),
+				// Arrows for previous and next. Their circles are in style.css.
+				'buttonContentType' => 'icon',
+				'nextIcon'          => 'fe_arrowRight',
+				'previousIcon'      => 'fe_arrowLeft',
+				// Gray, Deep Rust and Brand Navy, as plain colors.
+				'color'             => '#666666',
+				'colorHover'        => '#bb5013',
+				'colorActive'       => '#010739',
+				'background'        => 'rgba(0,0,0,0)',
+				'backgroundHover'   => 'rgba(0,0,0,0)',
+				'backgroundActive'  => 'rgba(0,0,0,0)',
+				'margin'            => array( '48', '', '0', '' ),
+				'typography'        => array(
+					array(
+						'size'          => array( 30, '', 24 ),
+						'sizeType'      => 'px',
+						'lineHeight'    => array( '', '', '' ),
+						'lineType'      => '',
+						'letterSpacing' => '',
+						'family'        => '',
+						'google'        => '',
+						'style'         => '',
+						'weight'        => '',
+						'variant'       => '',
+						'subset'        => '',
+						'loadGoogle'    => true,
+						'padding'       => array( 'xxs', 'xs', 'xxs', 'xs' ),
+						'marginTop'     => 8,
+						'color'         => '',
+						'background'    => '',
+						'border'        => array( '', '', '', '' ),
+						'borderRadius'  => array( '', '', '', '' ),
+						'borderWidth'   => array( '', '', '', '' ),
+						'colorHover'    => '',
+						'backgroundHover' => '',
+						'borderHover'   => array( '', '', '', '' ),
+						'colorActive'   => '',
+						'backgroundActive' => '',
+						'borderActive'  => array( '', '', '', '' ),
+						'textTransform' => '',
+						'paddingTablet' => array( '', '', '', '' ),
+						'paddingMobile' => array( '', '', '', '' ),
+						'paddingType'   => 'px',
+					),
+				),
+			)
+			)
+		);
 	}
 
 	/**

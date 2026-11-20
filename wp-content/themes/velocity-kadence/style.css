@@ -956,8 +956,14 @@ body .vm-story-media .vm-story-stat--offices {
 	}
 }
 
-/* Its title sits inside a Section of the card, and still covers the whole card. */
-.vm-card-link.vm-card-grow .wp-block-kadence-column > .kt-inside-inner-col {
+/*
+ * A title inside a Section of the card still covers the whole card: the
+ * Sections inside are not what its link is measured against. The class is
+ * written twice on purpose: Kadence prints each Section's own rule again
+ * when it redraws a list (a new page, a filter), after this one.
+ */
+.vm-card-link.vm-card-link .wp-block-kadence-column.wp-block-kadence-column,
+.vm-card-link.vm-card-link .wp-block-kadence-column.wp-block-kadence-column > .kt-inside-inner-col {
 	position: static;
 }
 
@@ -1301,6 +1307,15 @@ body .wp-block-kadence-query-pagination .navigation .nav-links .page-numbers svg
  * which stay in the page, hidden. On phones the panel folds into one
  * button, added by the same script. See inc/filters.php.
  */
+/*
+ * The panel sits above the cards under it. Kadence redraws the cards after a
+ * choice, and the new ones would cover an open menu.
+ */
+.vm-filters {
+	position: relative;
+	z-index: 30;
+}
+
 .vm-filters .wp-block-kadence-query-filter {
 	flex: 0 1 192px;
 }
@@ -1378,6 +1393,79 @@ body .vm-filters .kb-query-label {
 .vm-select--sort .vm-select__button[aria-expanded="true"] {
 	background: var(--global-palette1);
 	color: var(--global-palette9);
+}
+
+/*
+ * vm-filters--bar: the lighter version, of News and Insights. The filter is
+ * a filled pill that reads "Topics" or the topic chosen, with no label above
+ * it. The sort is plain text at the other end of the line.
+ */
+.vm-filters--bar .wp-block-kadence-query-filter {
+	flex: 0 0 auto;
+}
+
+body .vm-filters--bar .kb-query-label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__button {
+	justify-content: center;
+	gap: 8px;
+	width: auto;
+	padding: 0 24px;
+	border-color: var(--global-palette1);
+	border-radius: 9999px;
+	background: var(--global-palette1);
+	color: var(--global-palette9);
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__button:hover,
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__button:focus,
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__button[aria-expanded="true"] {
+	border-color: var(--global-palette2);
+	background: var(--global-palette2);
+}
+
+.vm-filters--bar .vm-select:not(.vm-select--sort) .vm-select__menu {
+	min-width: 220px;
+}
+
+.vm-filters--bar .vm-select--sort .vm-select__button,
+.vm-filters--bar .vm-select--sort .vm-select__button:hover,
+.vm-filters--bar .vm-select--sort .vm-select__button:focus,
+.vm-filters--bar .vm-select--sort .vm-select__button[aria-expanded="true"] {
+	min-width: 0;
+	padding: 0;
+	border-color: transparent;
+	border-radius: 4px;
+	background: transparent;
+	color: #606060;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.vm-filters--bar .vm-select--sort .vm-select__button:hover,
+.vm-filters--bar .vm-select--sort .vm-select__button[aria-expanded="true"] {
+	color: var(--global-palette3);
+}
+
+.vm-filters--bar .vm-select--sort .vm-select__button::after {
+	width: 12px;
+	height: 6px;
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 6' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M.6.6 6 5.4 11.4.6'/%3E%3C/svg%3E");
+}
+
+.vm-filters--bar .vm-select--sort .vm-select__menu {
+	right: 0;
+	left: auto;
 }
 
 /* The menu: white under a filter, peach under the sort. */
@@ -1588,3 +1676,484 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	left: 5px;
 	top: 10.5px;
 }
+
+/*
+ * The page of an article: the theme leaves a space above and under the
+ * content of a single post, which the element's own sections already have.
+ */
+.single-insight .content-area {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+/*
+ * A new page of a Kadence query scrolls to the top of its list. This keeps
+ * that top clear of the sticky header.
+ */
+.wp-block-kadence-query,
+.wp-block-kadence-query-card {
+	scroll-margin-top: 104px;
+}
+
+/*
+ * vm-lines-2, vm-lines-3, vm-lines-4: a text that is cut after that many
+ * lines, with "..." at the end. For the titles and summaries of cards, so a
+ * long one does not stretch its card. The whole text stays in the page for
+ * screen readers and search engines. Text (Adv) has no setting for it.
+ */
+.vm-lines-2,
+.vm-lines-3,
+.vm-lines-4 {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+}
+
+.vm-lines-2 {
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+
+.vm-lines-4 {
+	-webkit-line-clamp: 4;
+	line-clamp: 4;
+}
+
+/*
+ * The page of an article (Kadence > Elements, "News and Insights: article").
+ *
+ * vm-article is the column that holds what the author wrote. The article is
+ * written with ordinary blocks, which carry no settings of their own, so
+ * their look as part of an article is set here once: the headings, the
+ * space between blocks, lists, images, quotes and tables.
+ */
+.vm-article .kb-dynamic-html > * {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.vm-article .kb-dynamic-html > * + * {
+	margin-top: 24px;
+}
+
+.vm-article h2,
+.vm-article h3,
+.vm-article h4 {
+	color: var(--global-palette3);
+	line-height: 1.1;
+}
+
+/* A heading opens a part of the article: more space above it than under. */
+.vm-article .kb-dynamic-html > * + h2,
+.vm-article .kb-dynamic-html > * + h3,
+.vm-article .kb-dynamic-html > * + h4 {
+	margin-top: 64px;
+}
+
+.vm-article .kb-dynamic-html > .wp-block-image + h2,
+.vm-article .kb-dynamic-html > .wp-block-image + h3,
+.vm-article .kb-dynamic-html > .vm-takeaways + * {
+	margin-top: 32px;
+}
+
+.vm-article h2 {
+	font-size: 32px;
+	font-weight: 400;
+}
+
+.vm-article h3 {
+	font-size: 24px;
+	font-weight: 400;
+}
+
+.vm-article h4 {
+	font-size: 20px;
+	font-weight: 600;
+}
+
+.vm-article .kb-dynamic-html > h4 + * {
+	margin-top: 16px;
+}
+
+/*
+ * vm-question: a question of the "Frequently Asked Questions" of an article.
+ * A Heading 3 for the page's outline, drawn as a line of bold text.
+ */
+.vm-article .kb-dynamic-html > h3.vm-question {
+	margin-top: 24px;
+	font-family: var(--global-body-font-family);
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.47;
+}
+
+.vm-article .kb-dynamic-html > h3.vm-question + * {
+	margin-top: 0;
+}
+
+.vm-article p,
+.vm-article li {
+	color: var(--global-palette3);
+	line-height: 1.47;
+}
+
+.vm-article ul,
+.vm-article ol {
+	margin-bottom: 0;
+	padding-left: 24px;
+}
+
+.vm-article img {
+	border-radius: 16px;
+}
+
+.vm-article figure {
+	margin-bottom: 0;
+}
+
+/*
+ * A quote: large, centered, in Deep Rust, with the name under it. Wider than
+ * the text on a wide screen, as in the design (940px against 748).
+ */
+.vm-article .kb-dynamic-html > blockquote {
+	margin: 64px 0;
+	padding: 0;
+	border: 0;
+	color: var(--global-palette2);
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.31;
+	text-align: center;
+}
+
+@media (min-width: 1100px) {
+	.vm-article .kb-dynamic-html > blockquote {
+		margin-inline: -96px;
+	}
+}
+
+.vm-article .kb-dynamic-html blockquote p {
+	margin: 0;
+	color: inherit;
+	line-height: inherit;
+}
+
+.vm-article blockquote cite {
+	display: block;
+	margin-top: 16px;
+	color: var(--global-palette3);
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1.1;
+}
+
+/*
+ * vm-press-quote: a quote with the photo of the person above it. A Group
+ * with an Image and a Quote, from the pattern "Article: Press Quote". The
+ * photo is drawn round, 96px, whatever the shape of the file.
+ */
+.vm-article .kb-dynamic-html > .vm-press-quote {
+	margin: 64px 0;
+	text-align: center;
+}
+
+@media (min-width: 1100px) {
+	.vm-article .kb-dynamic-html > .vm-press-quote {
+		margin-inline: -96px;
+	}
+}
+
+.vm-article .vm-press-quote .wp-block-image {
+	width: 96px;
+	margin: 0 auto 24px;
+}
+
+.vm-article .vm-press-quote .wp-block-image img {
+	display: block;
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+/* The photo was left empty: the quote shows alone. */
+.vm-article .vm-press-quote .wp-block-image:has(img:not([src])),
+.vm-article .vm-press-quote .wp-block-image:has(img[src=""]) {
+	display: none;
+}
+
+.vm-article .vm-press-quote blockquote {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: var(--global-palette2);
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.31;
+	text-align: center;
+}
+
+/* A table: navy header, a line around every row, every other row gray. */
+.vm-article .kb-dynamic-html > .wp-block-table {
+	margin-top: 32px;
+	overflow-x: auto;
+}
+
+.vm-article table {
+	width: 100%;
+	border: 1px solid var(--global-palette3);
+	border-collapse: collapse;
+}
+
+.vm-article th,
+.vm-article td {
+	padding: 20px 16px;
+	border: 0;
+	border-bottom: 1px solid var(--global-palette3);
+	text-align: left;
+	line-height: 1.47;
+}
+
+.vm-article thead th {
+	padding-block: 12px;
+	background: var(--global-palette3);
+	color: var(--global-palette9);
+	font-weight: 400;
+}
+
+.vm-article tbody tr:nth-child(even) {
+	background: var(--global-palette8);
+}
+
+/*
+ * vm-takeaways: the "Key Takeaways" box at the top of an article, wider than
+ * the text. A Group block with this class, from the pattern of that name.
+ */
+.vm-article .vm-takeaways {
+	width: min(1107px, 100vw - 2 * var(--global-content-edge-padding));
+	margin-left: 50%;
+	padding: 32px clamp(24px, 14.4vw, 207px);
+	border-radius: 19px;
+	background: #fff7ed;
+	transform: translateX(-50%);
+	box-sizing: border-box;
+}
+
+/* On this theme a Group wraps its blocks in one more element. */
+.vm-article .vm-takeaways > *,
+.vm-article .vm-takeaways > .wp-block-group__inner-container > * {
+	max-width: none;
+	margin-top: 0;
+}
+
+.vm-article .vm-takeaways > :not(.wp-block-group__inner-container) + *,
+.vm-article .vm-takeaways > .wp-block-group__inner-container > * + * {
+	margin-top: 24px;
+}
+
+/* The links to share an article. */
+.vm-share {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.vm-share a {
+	display: flex;
+	color: #b04c11;
+}
+
+.vm-share a:hover,
+.vm-share a:focus-visible,
+.vm-share a.is-copied {
+	color: var(--global-palette3);
+}
+
+.vm-article-end .vm-share {
+	justify-content: center;
+	margin-top: 30px;
+}
+
+/*
+ * The box about the author. Its content starts 83px from the left, as in the
+ * design. "Read Full Bio" opens the biography. With no photo, the name
+ * starts where the photo would.
+ */
+.vm-author {
+	padding: 6px clamp(16px, 8vw, 83px);
+	border-radius: 19px;
+	background: var(--global-palette7);
+	color: var(--global-palette3);
+}
+
+.vm-author__head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 55px;
+	list-style: none;
+}
+
+.vm-author__head::-webkit-details-marker {
+	display: none;
+}
+
+summary.vm-author__head {
+	cursor: pointer;
+}
+
+.vm-author__photo {
+	flex: none;
+	width: 55px;
+	height: 55px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.vm-author__text {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.vm-author__name {
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.vm-author__more {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+	text-decoration: underline;
+}
+
+.vm-author__more::after {
+	content: "";
+	width: 12px;
+	height: 6px;
+	background: currentColor;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 6' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M.6.6 6 5.4 11.4.6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.vm-author[open] .vm-author__more::after {
+	transform: rotate(180deg);
+}
+
+.vm-author__bio {
+	margin: 16px 0 24px;
+	font-size: 16px;
+	line-height: 1.47;
+}
+
+.vm-author__bio > :last-child {
+	margin-bottom: 0;
+}
+
+/*
+ * The newsletter bar of an article: fixed to the bottom of the screen, it
+ * slides in halfway through the article. See assets/js/insight.js.
+ */
+.vm-news-bar {
+	position: fixed;
+	z-index: 90;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: var(--global-palette5);
+	color: var(--global-palette9);
+	transform: translateY(100%);
+	transition: transform 0.3s ease;
+}
+
+.vm-news-bar.is-open {
+	transform: none;
+}
+
+.vm-news-bar__inner {
+	display: flex;
+	align-items: flex-start;
+	gap: 24px 64px;
+	box-sizing: border-box;
+	max-width: 1440px;
+	margin-inline: auto;
+	padding: 24px 150px;
+}
+
+.vm-news-bar__title {
+	flex: 0 1 364px;
+	margin: 0;
+	font-family: var(--global-heading-font-family);
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 1.1;
+}
+
+.vm-news-bar__form {
+	flex: 1 1 630px;
+	min-width: 0;
+}
+
+.vm-news-bar .vm-form--newsletter {
+	margin: 0;
+}
+
+.vm-news-bar .vm-form__note,
+.vm-news-bar .vm-form__note a {
+	color: var(--global-palette9);
+}
+
+.vm-news-bar__close,
+.vm-news-bar__close:hover,
+.vm-news-bar__close:focus {
+	position: absolute;
+	top: 20px;
+	right: max(16px, calc((100vw - 1440px) / 2 + 141px));
+	display: flex;
+	padding: 6px;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--global-palette9);
+	cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+	.vm-news-bar__inner {
+		flex-direction: column;
+		padding: 20px 56px 20px 20px;
+	}
+
+	.vm-news-bar__title {
+		flex: none;
+		font-size: 22px;
+	}
+
+	.vm-news-bar__form {
+		flex: none;
+		width: 100%;
+	}
+
+	.vm-news-bar__close,
+	.vm-news-bar__close:hover,
+	.vm-news-bar__close:focus {
+		top: 12px;
+		right: 12px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.vm-news-bar {
+		transition: none;
+	}
+}
+

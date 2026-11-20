@@ -160,6 +160,11 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule above it. Under the pointer it turns bold and shows an arrow. Navigation has no per-item styling |
 | `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
 | `vm-card-grow` | Section that is a card | The card grows a little under the pointer (mouse only, and not with "reduce motion"). Used with `vm-card-link` on the cards of "Other Ways We’ll Get You to Yes", as the design notes |
+| `vm-lines-2`, `vm-lines-3`, `vm-lines-4` | Text (Adv) | Cuts the text after that many lines, with "..." at the end. On the titles and summaries of the News and Insights cards |
+| `vm-article` | Section that holds the Post Content block of an article | The look of what an author writes: headings, lists, images, quotes and tables. See "News and Insights" |
+| `vm-takeaways` | Group (core), in an article | The "Key Takeaways" box, wider than the text. Comes with the pattern of that name |
+| `vm-question` | Heading 3 (core), in an article | A question of the "Frequently Asked Questions": a heading for the outline, drawn as a line of bold text. Comes with the pattern of that name |
+| `vm-press-quote` | Group (core), in an article | A quote with the round photo of the person above it. Comes with the pattern "Article: Press Quote" |
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
 | `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
@@ -167,6 +172,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-toggle` | Kadence Tabs | Joins the tabs into one control and rounds only its two ends. The block has one radius setting for every tab. See "The program pages" |
 | `vm-hide-empty` | Text (Adv) with dynamic content | The text is not printed when it has no value. Kadence would print it empty, with its background and margins |
 | `vm-filters` | Section holding the Filter, Sort and Filter Reset blocks of a query | Size of the filters, the sort as a pill with its menu, the underline of the reset, and the fold into one button on phones. See "The Featured Deals page" |
+| `vm-filters--bar` | With `vm-filters`, on the same Section | The lighter version, of News and Insights: the filter as a filled pill, the sort as plain text that reads its choice, nothing folds on phones |
 | `vm-legal-toc` | Table of Contents of a legal page | The line between two links and the weight of the section in view. `vm-legal-toc--bar` is the one of a phone and a tablet, which opens and closes. See "The legal pages" |
 | `vm-legal-list` | List (core) in a legal page | Spacing of the list. `vm-legal-list--sub` is a list that belongs under the item before it |
 | `vm-back` | A link | Goes one step back in the browser's history. Only on the 404 page. See "The 404 page" |
@@ -513,6 +519,56 @@ The section has the class `vm-needs-items`: while no case study is published, th
 - **The programs on the deals are the old ones.** Fifteen deals are filed under FlexTerm and two under Fast50, so those are the choices of the Loan Program filter. None is filed under 30-Year Fixed, Flex I/O or Super Jumbo.
 - **A deal with no photo shows an empty frame.**
 - **The new address, `/featured-deals/`,** in Velocity's list of addresses, is not applied. It is now a matter of renaming the page and adding the redirect.
+
+## News and Insights
+
+The list of articles, at `/insights/`. The articles are the posts under **Insights**, a post type of the plugin Velocity Insights. That address is the list of a post type, not a page, so there is no page to open in Pages: its content is a **Kadence Element**, "News and Insights" (Kadence > Elements), built by `wp velocity seed-insights` and edited with blocks after that. Its placement is "Replace archive content", for the Insights list.
+
+| Part | Block | Where it is edited |
+|---|---|---|
+| Hero | Text (Adv) | The element |
+| Featured article | Kadence query "News and Insights: featured article" | Kadence > Queries, and its card under Query Cards |
+| Topics, sort, the cards and the pages | Kadence query "News and Insights: articles" | Kadence > Queries. The card is "News and Insights: articles card" |
+| Newsletter | Text (Adv) and the shortcode `[vm_form name="newsletter"]` | The element. The form is "Newsletter Signup" in Gravity Forms |
+
+**The featured article is chosen in the article itself**: the box "Featured article" in its editor, from the plugin. Ticking it takes the tick off the article featured before. While no article has it, the featured section does not show. The featured article is left out of the list under it, since it is already on the page.
+
+**A card reads the article**: its featured image, its topic, its title and its excerpt. An article with no excerpt shows no summary, and one with no topic shows no label. An article filed under several topics shows the first, in alphabetical order.
+
+**Choosing a topic lists its articles on the same page**, as the design notes. The address of a topic (`/insights/topic/...`) goes to the list with that topic chosen, so there is one page that lists articles and not one per topic.
+
+**The sort reads "Newest first"**, the order the list starts in, and offers "Oldest first".
+
+Two things a Kadence query has no setting for are in `inc/insights.php`: which article is the featured one, and leaving it out of the list. Each query has a role for that, kept beside it in the field `_vm_query_role` ("insights-featured", "insights-index"). A query made by hand has no role and behaves as Kadence's own. The row of topics and sort is a Section with the classes `vm-filters vm-filters--bar`: the same menus as Featured Deals, drawn as a pill and plain text.
+
+### The page of an article
+
+A second element, "News and Insights: article", with the placement "Replace single post content" for Insights. It gives every article the same frame; the article itself is what its author writes in the editor.
+
+| Part | Where it comes from |
+|---|---|
+| "< News & Insights" | A link in the element |
+| Photo | The article's featured image |
+| Topic and date, title, summary | The article: its topic, date, title and excerpt |
+| "Written by" | The article's author, chosen in the box "Byline (Author)" of its editor |
+| Links to share | The shortcode `[vm_insight_share]`: LinkedIn, X, Reddit, email, and copy the link |
+| The article | The block "Post Content" of the element. It prints what was written in the editor |
+| Box about the author | The shortcode `[vm_insight_author]`: the author's photo, name and position, and "Read Full Bio", which opens the biography. All of it comes from the author's profile, in Users. What is empty is left out: no photo, no picture; no biography, no "Read Full Bio" |
+| "You may also like" | Kadence query "News and Insights: you may also like": the latest three articles of the same topics, in the card of the list. The section hides when there is none |
+| Newsletter bar | Printed by `inc/insights.php`. It slides in from the bottom of the screen once half of the article has been read, once per visit (`assets/js/insight.js`) |
+
+**A press release has no author.** An article filed under the topic "Press Release" (slug `press-release`) shows no "Written by" and no author box.
+
+**Writing an article.** Ordinary blocks are enough: Heading, Paragraph, List, Image, Quote, Table. Their look inside an article is set once in `style.css` (`vm-article`), so an author sets nothing: a Heading 2 opens a section, a Heading 3 a part of it, a Heading 4 is a smaller title in semibold (the one above a table in the design), a Quote is the large centered quote with its name in the "citation" line, and a Table gets the navy header. Three patterns, under Patterns > Velocity, give the blocks that need a start: "Article: Key Takeaways", the peach box that opens an article; "Article: Frequently Asked Questions"; and "Article: Press Quote", a quote with the round photo of the person above it. A press quote goes wherever it is inserted, an article can have several, and deleting its image leaves the quote alone. It takes the place of the "Quote" box (headshot, quote, name and title) that a press release had in its editor.
+
+**An author's details are in their profile** (Users, then the person). The name is "Display name publicly as" and the biography is "Biographical Info", both WordPress's own. The theme adds two fields at the end of the profile, under "News and Insights author": **Position**, shown after the name ("Name, Position"), and **Photo**, shown round. A profile picture from Gravatar is not used: only the photo chosen there.
+
+### What is still open
+
+- **The press releases are in two places for now.** `wp velocity copy-press` copies each one into Insights, under the topic "Press Release", and leaves Press as it is: every press release still answers at `/press/...`, and its copy at `/insights/...`. Until Velocity confirms that Press and Insights become one, a change to a press release has to be made in both. Once confirmed, what is left to do is remove Press (its posts, its menu and `mu-plugins/velocity/cpt-press.php`) and redirect `/press/` and each `/press/...` to its copy; the copy keeps the same address ending, so the redirect is one rule.
+- One press release has no copy: "Why Conventional Loans Stall Real Estate Investors..." already exists as an article waiting for review, written for Insights. The command skips it and says so.
+- The list of topics is not defined. The design says "Category".
+- The newsletter form saves the address in Gravity Forms and sends it nowhere yet.
 
 ## The legal pages
 
