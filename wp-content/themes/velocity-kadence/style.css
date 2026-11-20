@@ -1980,20 +1980,23 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	margin-top: 30px;
 }
 
-/* The box about the author. "Read Full Bio" opens the biography. */
+/*
+ * The box about the author. Its content starts 83px from the left, as in the
+ * design. "Read Full Bio" opens the biography. With no photo, the name
+ * starts where the photo would.
+ */
 .vm-author {
-	padding: 6px 24px;
+	padding: 6px clamp(16px, 8vw, 83px);
 	border-radius: 19px;
 	background: var(--global-palette7);
 	color: var(--global-palette3);
 }
 
 .vm-author__head {
-	display: grid;
-	grid-template-columns: 55px auto;
-	column-gap: 8px;
+	display: flex;
 	align-items: center;
-	justify-content: center;
+	gap: 8px;
+	min-height: 55px;
 	list-style: none;
 }
 
@@ -2006,29 +2009,28 @@ summary.vm-author__head {
 }
 
 .vm-author__photo {
-	grid-row: span 2;
+	flex: none;
 	width: 55px;
 	height: 55px;
 	border-radius: 50%;
 	object-fit: cover;
 }
 
-.vm-author__name {
-	align-self: end;
-	font-size: 14px;
-	line-height: 1.5;
+.vm-author__text {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }
 
-.vm-author__head > .vm-author__photo:nth-last-child(2) + .vm-author__name {
-	grid-row: span 2;
-	align-self: center;
+.vm-author__name {
+	font-size: 14px;
+	line-height: 1.5;
 }
 
 .vm-author__more {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	align-self: start;
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.5;
@@ -2048,8 +2050,7 @@ summary.vm-author__head {
 }
 
 .vm-author__bio {
-	max-width: 596px;
-	margin: 16px auto 24px;
+	margin: 16px 0 24px;
 	font-size: 16px;
 	line-height: 1.47;
 }

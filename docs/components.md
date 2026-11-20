@@ -553,7 +553,7 @@ A second element, "News and Insights: article", with the placement "Replace sing
 | "Written by" | The article's author, chosen in the box "Byline (Author)" of its editor |
 | Links to share | The shortcode `[vm_insight_share]`: LinkedIn, X, Reddit, email, and copy the link |
 | The article | The block "Post Content" of the element. It prints what was written in the editor |
-| Box about the author | The shortcode `[vm_insight_author]`: the author's profile picture, name and "Biographical Info", from Users. "Read Full Bio" opens the biography, and is left out when the user has none |
+| Box about the author | The shortcode `[vm_insight_author]`: the author's photo, name and position, and "Read Full Bio", which opens the biography. All of it comes from the author's profile, in Users. What is empty is left out: no photo, no picture; no biography, no "Read Full Bio" |
 | "You may also like" | Kadence query "News and Insights: you may also like": the latest three articles of the same topics, in the card of the list. The section hides when there is none |
 | Newsletter bar | Printed by `inc/insights.php`. It slides in from the bottom of the screen once half of the article has been read, once per visit (`assets/js/insight.js`) |
 
@@ -561,9 +561,10 @@ A second element, "News and Insights: article", with the placement "Replace sing
 
 **Writing an article.** Ordinary blocks are enough: Heading, Paragraph, List, Image, Quote, Table. Their look inside an article is set once in `style.css` (`vm-article`), so an author sets nothing: a Heading 2 opens a section, a Heading 3 a part of it, a Heading 4 is a smaller title in semibold (the one above a table in the design), a Quote is the large centered quote with its name in the "citation" line, and a Table gets the navy header. Three patterns, under Patterns > Velocity, give the blocks that need a start: "Article: Key Takeaways", the peach box that opens an article; "Article: Frequently Asked Questions"; and "Article: Press Quote", a quote with the round photo of the person above it. A press quote goes wherever it is inserted, an article can have several, and deleting its image leaves the quote alone. It takes the place of the "Quote" box (headshot, quote, name and title) that a press release had in its editor.
 
+**An author's details are in their profile** (Users, then the person). The name is "Display name publicly as" and the biography is "Biographical Info", both WordPress's own. The theme adds two fields at the end of the profile, under "News and Insights author": **Position**, shown after the name ("Name, Position"), and **Photo**, shown round. A profile picture from Gravatar is not used: only the photo chosen there.
+
 ### What is still open
 
-- The author's position has no field of its own: for now it is written in the user's display name ("Name, Position"). The design's "extended bio" reads the user's "Biographical Info".
 - The press releases still live under Press. They move to Insights, under the topic "Press Release", with a command to be written.
 - The list of topics is not defined. The design says "Category".
 - The newsletter form saves the address in Gravity Forms and sends it nowhere yet.

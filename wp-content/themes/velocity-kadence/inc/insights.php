@@ -215,12 +215,64 @@ function vm_insight_share_shortcode() {
 add_shortcode( 'vm_insight_share', 'vm_insight_share_shortcode' );
 
 /**
+ * Two fields for the author of an article, in the user's profile (Users >
+ * Profile, "News and Insights author"): the position and the photo.
+ * WordPress has a name and a biography for a user, and neither of these.
+ */
+function vm_insight_author_fields() {
+	if ( ! function_exists( 'new_cmb2_box' ) ) {
+		return;
+	}
+
+	$box = new_cmb2_box(
+		array(
+			'id'               => 'vm_insight_author',
+			'title'            => __( 'News and Insights author', 'velocity-kadence' ),
+			'object_types'     => array( 'user' ),
+			'show_names'       => true,
+			'new_user_section' => 'add-new-user',
+		)
+	);
+
+	$box->add_field(
+		array(
+			'name' => __( 'News and Insights author', 'velocity-kadence' ),
+			'desc' => __( 'Shown under the articles this person writes. The name is "Display name publicly as" and the biography is "Biographical Info", both above.', 'velocity-kadence' ),
+			'id'   => 'vm_author_heading',
+			'type' => 'title',
+		)
+	);
+
+	$box->add_field(
+		array(
+			'name' => __( 'Position', 'velocity-kadence' ),
+			'desc' => __( 'Shown after the name: "Name, Position". Leave empty to show the name alone.', 'velocity-kadence' ),
+			'id'   => 'vm_author_position',
+			'type' => 'text',
+		)
+	);
+
+	$box->add_field(
+		array(
+			'name'         => __( 'Photo', 'velocity-kadence' ),
+			'desc'         => __( 'A square photo works best: it is shown round. Leave empty to show no photo.', 'velocity-kadence' ),
+			'id'           => 'vm_author_photo',
+			'type'         => 'file',
+			'options'      => array( 'url' => false ),
+			'query_args'   => array( 'type' => 'image' ),
+			'preview_size' => 'thumbnail',
+		)
+	);
+}
+add_action( 'cmb2_admin_init', 'vm_insight_author_fields' );
+
+/**
  * [vm_insight_author]: the box about the author of the article being read.
  *
- * The photo, the name and the biography are the author's own, from Users:
- * the profile picture, "Display name publicly as" and "Biographical Info".
- * "Read Full Bio" opens the biography, and is left out when there is none.
- * A press release has no box.
+ * The name is the author's "Display name publicly as" and the biography
+ * their "Biographical Info", from Users. The position and the photo are the
+ * two fields above. What is empty is left out: no photo, no picture; no
+ * biography, no "Read Full Bio". A press release has no box.
  *
  * @return string
  */
@@ -237,16 +289,18 @@ function vm_insight_author_shortcode() {
 		return '';
 	}
 
-	$bio  = trim( (string) $author->description );
-	$head = get_avatar( $author->ID, 110, '', '', array( 'class' => 'vm-author__photo' ) ) .
-		'<span class="vm-author__name">' . esc_html( $author->display_name ) . '</span>';
+	$bio      = trim( (string) $author->description );
+	$position = trim( (string) get_user_meta( $author->ID, 'vm_author_position', true ) );
+	$photo_id = (int) get_user_meta( $author->ID, 'vm_author_photo_id', true );
+	$photo    = $photo_id ? wp_get_attachment_image( $photo_id, 'thumbnail', false, array( 'class' => 'vm-author__photo', 'alt' => '' ) ) : '';
+	$name     = '<span class="vm-author__name">' . esc_html( $author->display_name . ( '' !== $position ? ', ' . $position : '' ) ) . '</span>';
 
 	if ( '' === $bio ) {
-		return '<div class="vm-author"><div class="vm-author__head">' . $head . '</div></div>';
+		return '<div class="vm-author"><div class="vm-author__head">' . $photo . '<span class="vm-author__text">' . $name . '</span></div></div>';
 	}
 
-	return '<details class="vm-author"><summary class="vm-author__head">' . $head .
-		'<span class="vm-author__more">' . esc_html__( 'Read Full Bio', 'velocity-kadence' ) . '</span></summary>' .
+	return '<details class="vm-author"><summary class="vm-author__head">' . $photo .
+		'<span class="vm-author__text">' . $name . '<span class="vm-author__more">' . esc_html__( 'Read Full Bio', 'velocity-kadence' ) . '</span></span></summary>' .
 		'<div class="vm-author__bio">' . wp_kses_post( wpautop( $bio ) ) . '</div></details>';
 }
 add_shortcode( 'vm_insight_author', 'vm_insight_author_shortcode' );
