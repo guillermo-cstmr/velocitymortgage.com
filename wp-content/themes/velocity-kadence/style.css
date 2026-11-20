@@ -1983,8 +1983,12 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	margin-top: 24px;
 }
 
-/* The links to share an article. */
-.vm-share {
+/*
+ * The links to share an article. The list starts at the left edge of its
+ * column, in line with the title and the summary above it: the theme
+ * indents every list, and this one is a row of icons.
+ */
+ul.vm-share.vm-share {
 	display: flex;
 	align-items: center;
 	gap: 16px;
@@ -1995,7 +1999,7 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 
 .vm-share a {
 	display: flex;
-	color: #b04c11;
+	color: var(--global-palette2);
 }
 
 .vm-share a:hover,
@@ -2004,7 +2008,17 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	color: var(--global-palette3);
 }
 
-.vm-article-end .vm-share {
+.vm-article-end .vm-share a {
+	color: #b04c11;
+}
+
+.vm-article-end .vm-share a:hover,
+.vm-article-end .vm-share a:focus-visible,
+.vm-article-end .vm-share a.is-copied {
+	color: var(--global-palette3);
+}
+
+.vm-article-end ul.vm-share.vm-share {
 	justify-content: center;
 	margin-top: 30px;
 }
