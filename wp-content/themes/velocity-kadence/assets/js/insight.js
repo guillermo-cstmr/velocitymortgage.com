@@ -1,11 +1,11 @@
 /**
  * The page of an article of News and Insights.
  *
- * 1. The newsletter bar (inc/insights.php prints it, hidden) comes up from
- *    the bottom of the screen once half of the article has been read. It
- *    shows once per visit: after it showed, or was closed, it stays away
- *    until the browser is closed. At the end of the page it stops above
- *    the footer instead of covering it.
+ * 1. The newsletter bar (inc/insights.php prints it above the footer,
+ *    hidden) shows once half of the article has been read. It shows once
+ *    per visit: after it showed, or was closed, it stays away until the
+ *    browser is closed. Keeping it at the bottom of the screen, and above
+ *    the footer at the end of the page, is the stylesheet's work alone.
  *
  * 2. The "copy the link" icon of the share links copies the article's
  *    address and says so. Without this script it is a plain link.
@@ -36,26 +36,19 @@
 	if ( bar && article && ! seen() ) {
 		// While the bar is open, the page keeps what has the keyboard's focus
 		// above it: a link reached with Tab is not left hidden under the bar.
-		// It also leaves room for the bar above the footer, as tall as the bar
-		// (style.css reads --vm-news-bar-space), so at the end of the page the
-		// bar rests in that room instead of over the last cards.
 		const clear = ( open ) => {
-			const root = document.documentElement;
-			root.style.scrollPaddingBottom = open ? bar.offsetHeight + 16 + 'px' : '';
-			if ( open ) {
-				root.style.setProperty( '--vm-news-bar-space', bar.offsetHeight + 'px' );
-			} else {
-				root.style.removeProperty( '--vm-news-bar-space' );
-			}
+			document.documentElement.style.scrollPaddingBottom = open ? bar.offsetHeight + 16 + 'px' : '';
 		};
 
+		// The bar fades out first and leaves the page after: the footer moves up
+		// into its place only once the bar can no longer be seen.
 		const close = () => {
-			bar.classList.remove( 'is-open' );
-			clear( false );
-			dock();
+			bar.classList.add( 'is-closing' );
 			window.setTimeout( () => {
 				bar.hidden = true;
-			}, 300 );
+				bar.classList.remove( 'is-open', 'is-closing' );
+				clear( false );
+			}, 220 );
 		};
 
 		const check = () => {
@@ -73,26 +66,15 @@
 			window.requestAnimationFrame( () => {
 				bar.classList.add( 'is-open' );
 				clear( true );
-				dock();
 			} );
 		};
 
-		// The bar rests on the footer once the footer is in view.
-		const footer = document.querySelector( 'footer' );
-		const dock = () => {
-			const over = footer ? window.innerHeight - footer.getBoundingClientRect().top : 0;
-			bar.style.bottom = Math.max( 0, Math.round( over ) ) + 'px';
-		};
-
 		window.addEventListener( 'scroll', check, { passive: true } );
-		window.addEventListener( 'scroll', dock, { passive: true } );
 		window.addEventListener( 'resize', () => {
 			if ( bar.classList.contains( 'is-open' ) ) {
 				clear( true );
 			}
-			dock();
 		} );
-		dock();
 		bar.querySelector( '.vm-news-bar__close' ).addEventListener( 'click', close );
 		document.addEventListener( 'keydown', ( event ) => {
 			if ( 'Escape' === event.key && bar.classList.contains( 'is-open' ) && bar.contains( document.activeElement ) ) {

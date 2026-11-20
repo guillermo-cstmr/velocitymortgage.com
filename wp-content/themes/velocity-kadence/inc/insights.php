@@ -21,7 +21,7 @@
  * The page of an article is a second element, "News and Insights: article".
  * Three of its parts are printed by this file, since no block reads them:
  * the links to share it ([vm_insight_share]), the box about its author
- * ([vm_insight_author]) and the newsletter bar that comes up from the bottom
+ * ([vm_insight_author]) and the newsletter bar that comes up at the bottom
  * of the screen halfway through the article.
  *
  * A press release has no author: an article under the topic "Press Release"
@@ -306,14 +306,16 @@ function vm_insight_author_shortcode() {
 add_shortcode( 'vm_insight_author', 'vm_insight_author_shortcode' );
 
 /**
- * The newsletter bar of an article, and the script of its page.
+ * The newsletter bar of an article.
  *
- * The bar comes up from the bottom of the screen once half of the article
- * has been read, and only once per visit: closing it, or having seen it,
- * keeps it away until the browser is closed. The same script copies the
- * article's address for the "copy the link" icon.
+ * It is printed at the end of the page's content, right above the footer,
+ * and stays hidden until half of the article has been read. Once shown it
+ * holds on to the bottom of the screen by itself ("sticky" in style.css), and
+ * at the end of the page it rests where it is printed, above the footer. It
+ * shows once per visit: closing it, or having seen it, keeps it away until
+ * the browser is closed. See assets/js/insight.js.
  */
-function vm_insight_footer() {
+function vm_insight_news_bar() {
 	if ( ! is_singular( 'insight' ) ) {
 		return;
 	}
@@ -329,6 +331,17 @@ function vm_insight_footer() {
 			esc_attr__( 'Close', 'velocity-kadence' )
 		);
 	}
+}
+add_action( 'kadence_before_footer', 'vm_insight_news_bar' );
+
+/**
+ * The script of the page of an article: it opens the newsletter bar, and
+ * copies the article's address for the "copy the link" icon.
+ */
+function vm_insight_script() {
+	if ( ! is_singular( 'insight' ) ) {
+		return;
+	}
 
 	$file = VELOCITY_KADENCE_DIR . '/assets/js/insight.js';
 	wp_enqueue_script(
@@ -342,4 +355,4 @@ function vm_insight_footer() {
 		)
 	);
 }
-add_action( 'wp_footer', 'vm_insight_footer', 5 );
+add_action( 'wp_enqueue_scripts', 'vm_insight_script' );

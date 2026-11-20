@@ -2070,23 +2070,32 @@ summary.vm-author__head {
 }
 
 /*
- * The newsletter bar of an article: fixed to the bottom of the screen, it
- * slides in halfway through the article. See assets/js/insight.js.
+ * The newsletter bar of an article. It is part of the page, printed right
+ * above the footer, and "sticky": the browser keeps it at the bottom of the
+ * screen while the article scrolls, and at the end of the page it rests in
+ * its own place, above the footer, with no script moving it. It slides in
+ * when it opens and fades out when it is closed. See assets/js/insight.js.
  */
 .vm-news-bar {
-	position: fixed;
+	position: sticky;
 	z-index: 90;
-	right: 0;
 	bottom: 0;
-	left: 0;
 	background: var(--global-palette5);
 	color: var(--global-palette9);
 	transform: translateY(100%);
-	transition: transform 0.3s ease;
+	transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.vm-news-bar[hidden] {
+	display: none;
 }
 
 .vm-news-bar.is-open {
 	transform: none;
+}
+
+.vm-news-bar.is-closing {
+	opacity: 0;
 }
 
 .vm-news-bar__inner {
@@ -2135,14 +2144,6 @@ summary.vm-author__head {
 	box-shadow: none;
 	color: var(--global-palette9);
 	cursor: pointer;
-}
-
-/*
- * Room for the bar above the footer while it is open, as tall as the bar
- * (set by assets/js/insight.js), so it does not cover the end of the page.
- */
-.single-insight footer {
-	margin-top: var(--vm-news-bar-space, 0px);
 }
 
 @media (max-width: 1100px) {
