@@ -612,15 +612,18 @@ class Velocity_Program {
 	 * @return string
 	 */
 	public static function stats( $post_id, $program ) {
-		// Five or six figures need the whole content width, a narrow gap
-		// between them and a slightly smaller size.
+		// Five or six figures take the whole width of the design's band, 64px
+		// from each side (1440 less the side padding), at a slightly smaller
+		// size. vm-stats--spread sets them as the design does: each as wide as
+		// its text, with the same space between one and the next.
 		return Velocity_Home::stats(
 			$post_id,
 			$program['stats'],
 			array(
-				'maxWidth'     => 1280,
+				'maxWidth'     => 1440,
 				'columnGutter' => 'custom',
 				'customGutter' => array( 8, '', '' ),
+				'className'    => 'vm-stats vm-stats--spread',
 			),
 			22
 		);
@@ -1353,7 +1356,8 @@ class Velocity_Program {
 						)
 					) . "\n\n" .
 					Velocity_Home::t( $post_id, $card_key . '-body', $card[2], array( 'margin' => array( '0', '', '26', '' ) ) ) . "\n\n" .
-					Velocity_Home::buttons( $post_id, $card_key, array( array( $card[3], self::url( $key ) ) ), 'left' ),
+					// The design's arrow, 16px: with a bigger one the longest label leaves the card.
+					Velocity_Home::buttons( $post_id, $card_key, array( array( $card[3], self::url( $key ), '', array( 'iconSize' => array( 16, '', '' ) ) ) ), 'left' ),
 					array( 'metadata' => array( 'name' => 'Text and button' ) )
 				),
 				$attrs
