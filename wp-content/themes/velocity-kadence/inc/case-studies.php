@@ -298,9 +298,7 @@ function vm_case_program_shortcode() {
 	// The program has no "Program page" set: its page under Programs
 	// Overview, if there is one by its name.
 	if ( '' === $url ) {
-		$slug = 'Super Jumbo' === $name ? 'jumbo' : sanitize_title( $name );
-		$page = get_page_by_path( 'loan-programs/' . $slug );
-		$url  = ( $page && 'publish' === $page->post_status ) ? get_permalink( $page ) : '';
+		$url = vm_program_url( $name );
 	}
 
 	return '<p class="vm-case-program">' . ( '' !== $url ? '<a href="' . esc_url( $url ) . '">' . esc_html( $name ) . '</a>' : esc_html( $name ) ) . '</p>';

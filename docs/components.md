@@ -506,6 +506,8 @@ The card reads the deal with dynamic content:
 
 **A deal card is not a link.** Deals have no page of their own on the site, so neither the card nor its title links anywhere. The same goes for the deals on the home page.
 
+**The program's name on a deal card links to the program's page**, on Featured Deals and on the home page, when the program has one: its "Program page" (Properties > Programs) or, when that is empty, its page under Programs Overview. A program with neither, like FlexTerm, shows as plain text. The link is underlined, since it sits in a line of text of its own color.
+
 **The Region filter is not there yet.** Region has no terms until Velocity sends the list. A filter with nothing to choose prints its label alone, so the command leaves it out while the taxonomy is empty. Once deals have regions, run `wp velocity seed-deals-page --force --execute`, or add a Filter block to the query in the editor and choose Region.
 
 **Sorting by date uses the date the deal was published**, not its "Date Funded" field. Kadence's Sort block takes one custom field, and that one is the loan amount.
