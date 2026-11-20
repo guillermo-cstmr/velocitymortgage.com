@@ -43,13 +43,19 @@
 						fragment.appendChild( document.createTextNode( part ) );
 						return;
 					}
-					const mask = document.createElement( 'span' );
-					const word = document.createElement( 'span' );
-					mask.className = 'vm-line-mask';
-					word.className = 'vm-line-word';
-					word.textContent = part;
-					mask.appendChild( word );
-					fragment.appendChild( mask );
+					// A word can still break after its hyphen, as it does without the animation.
+					part.split( /([A-Za-z0-9]+-)(?=[A-Za-z])/ ).forEach( ( piece ) => {
+						if ( ! piece ) {
+							return;
+						}
+						const mask = document.createElement( 'span' );
+						const word = document.createElement( 'span' );
+						mask.className = 'vm-line-mask';
+						word.className = 'vm-line-word';
+						word.textContent = piece;
+						mask.appendChild( word );
+						fragment.appendChild( mask );
+					} );
 				} );
 				child.replaceWith( fragment );
 			} else if ( Node.ELEMENT_NODE === child.nodeType && 'BR' !== child.tagName ) {

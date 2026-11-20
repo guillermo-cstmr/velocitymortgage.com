@@ -1379,6 +1379,25 @@ body .vm-filters .kb-query-label {
 	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 6' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M.6.6 6 5.4 11.4.6'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
+/* A filter keeps to one line: a choice too long for it ends in "…". The
+   whole name is still in the list, and read out by the button. */
+.vm-select:not(.vm-select--sort) .vm-select__button {
+	display: block;
+	position: relative;
+	padding-right: 36px;
+	overflow: hidden;
+	line-height: 42px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.vm-select:not(.vm-select--sort) .vm-select__button::after {
+	position: absolute;
+	top: 50%;
+	right: 12px;
+	margin-top: -3px;
+}
+
 /* The sort: a pill, with two arrows in the color of its text. */
 .vm-select--sort .vm-select__button {
 	justify-content: center;

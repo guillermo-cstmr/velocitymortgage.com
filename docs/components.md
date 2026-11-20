@@ -190,7 +190,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 |---|---|---|
 | Photo | Image, with a fixed 2:1 shape | Post featured image |
 | Closing time, with the bolt | Text (Adv) with an icon, a background and the class `vm-tag` | "Deal: closing time". The property field "Processed Details Text" |
-| Title | Text (Adv), linked to the post | "Deal: property type and purpose". Falls back to the property name when both are empty |
+| Title | Text (Adv). Not a link: a deal has no page of its own | "Deal: property type and purpose". Falls back to the property name when both are empty |
 | Program | Text (Adv) | "Deal: loan program" |
 | Name | Text (Adv) | "Deal: account executive" |
 
@@ -486,7 +486,7 @@ Choosing a filter, a sort or a page updates the list without reloading the page,
 
 The look of the dropdowns (border, radius, label and text size) is set on the query itself, under Style. The peach panel around them is a Section with the class `vm-filters`. That class does what the blocks have no setting for: the size and inner space of each filter and its arrow, the sort as a pill, and the underline of "Clear". The circles around the two arrows of the pagination are in `style.css` too: the Pagination block has no setting for them.
 
-**Every dropdown of the panel has a menu drawn by the theme** (`vm-select`), white under a filter and peach under the sort, in place of the browser's own list. The filters keep the look of a field and read their choice.
+**Every dropdown of the panel has a menu drawn by the theme** (`vm-select`), white under a filter and peach under the sort, in place of the browser's own list. The filters keep the look of a field and read their choice. A choice too long for the field stays on one line and ends in "…"; the menu shows the whole name.
 
 **"Sort By" is a pill with its own menu.** The Filter and Sort blocks print plain dropdowns, whose open list cannot be styled. `assets/js/filters.js` leaves each dropdown in the page, hidden, and adds the field or the pill and the menu over it: choosing in the menu sets the dropdown, and Kadence does the rest. Kadence redraws the filters after each choice, and the script gives the new ones their menu. The choices and their texts are still the Sort block's, edited in the query. The menu works with the keyboard (arrows, Enter, Escape). Kadence lists each pair high to low first, so the menu reads "Amount (High - Low)" before "Amount (Low - High)": the design has them the other way round.
 
@@ -498,9 +498,13 @@ The card reads the deal with dynamic content:
 |---|---|
 | Photo | Post featured image, in a fixed 2:1 shape |
 | Closing time, with the bolt | "Deal: closing time". Left out when the deal has none |
-| Title, linked to the deal | "Deal: amount and place" |
+| Title | "Deal: amount and place" |
 | Under the title | "Deal: program and purpose" |
 | Name | "Deal: account executive" |
+
+**The gallery shows twelve deals a page**, four rows of three, as the design draws it (Kadence > Queries, "Featured Deals: gallery", Posts per page).
+
+**A deal card is not a link.** Deals have no page of their own on the site, so neither the card nor its title links anywhere. The same goes for the deals on the home page.
 
 **The Region filter is not there yet.** Region has no terms until Velocity sends the list. A filter with nothing to choose prints its label alone, so the command leaves it out while the taxonomy is empty. Once deals have regions, run `wp velocity seed-deals-page --force --execute`, or add a Filter block to the query in the editor and choose Region.
 
