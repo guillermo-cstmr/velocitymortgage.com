@@ -280,8 +280,8 @@ class Velocity_Cases {
 			),
 			array(
 				// 581px and 459px of the design's 1088.
-				'firstColumnWidth'  => 56,
-				'secondColumnWidth' => 44,
+				'firstColumnWidth'  => 54.5,
+				'secondColumnWidth' => 45.5,
 				'columnGutter'      => 'custom',
 				'customGutter'      => array( 48, 32, 24 ),
 				'verticalAlignment' => 'middle',
@@ -769,7 +769,7 @@ class Velocity_Cases {
 				),
 				array(
 					'maxWidth' => 748,
-					'padding'  => array( '60', '', '0', '' ),
+					'padding'  => array( '70', '', '0', '' ),
 					'metadata' => array( 'name' => 'Case study column' ),
 				)
 			),

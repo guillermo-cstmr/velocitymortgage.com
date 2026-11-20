@@ -1716,7 +1716,8 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 }
 
 /* The program over the title of a case study: a small label, and a link. */
-.vm-case-program {
+/* Written twice: the theme gives every paragraph of a post its own margin. */
+.vm-case-program.vm-case-program {
 	margin: 0 0 20px;
 	font-size: 14px;
 	line-height: 1.1;
@@ -1754,27 +1755,27 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	padding: 15px 0 14px;
 }
 
-.vm-glance__title {
+.vm-glance .vm-glance__title {
 	margin: 0;
 	font-weight: 700;
 	line-height: 1.47;
 }
 
-.vm-glance__figures {
+.vm-glance .vm-glance__figures {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 12px 48px;
 	margin: 0;
 }
 
-.vm-glance__figure dt {
-	margin-bottom: 8px;
+.vm-glance .vm-glance__figure dt {
+	margin: 0 0 8px;
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 1.1;
 }
 
-.vm-glance__figure dd {
+.vm-glance .vm-glance__figure dd {
 	margin: 0;
 	font-weight: 700;
 	line-height: 1.47;
@@ -1846,6 +1847,11 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 		height: 114px;
 	}
 
+	/* The text beside the card starts 11px under the card's top, as drawn. */
+	.vm-case .kb-dynamic-html > :first-child {
+		padding-top: 11px;
+	}
+
 	/* What comes after the first part of the text starts under the card. */
 	.vm-case .kb-dynamic-html > h2,
 	.vm-case .kb-dynamic-html > blockquote,
@@ -1858,6 +1864,15 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 	.vm-case .kb-dynamic-html > h3:first-child {
 		clear: none;
 	}
+}
+
+/*
+ * The heading that opens a case study, beside the card, is drawn smaller
+ * than the ones after it (24px against 32). It is still a Heading 2, so the
+ * outline of the page keeps its order.
+ */
+.vm-case .kb-dynamic-html > h2:first-child {
+	font-size: 24px;
 }
 
 /*
@@ -2028,6 +2043,12 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 
 .vm-article img {
 	border-radius: 16px;
+}
+
+/* An image narrower than the text sits in the middle of it. */
+.vm-article .kb-dynamic-html > .wp-block-image img {
+	display: block;
+	margin-inline: auto;
 }
 
 .vm-article figure {

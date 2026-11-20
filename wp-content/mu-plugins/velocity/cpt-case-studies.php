@@ -51,7 +51,11 @@ class Velocity_Case_Studies {
 		// "save_post"). Hooked there, a deal that was just chosen was only read
 		// on the save after.
 		add_action( 'save_post', array( __CLASS__, 'refresh' ), 99 );
-		add_action( 'save_post', array( __CLASS__, 'refresh_from_deal' ), 99 );
+		// Last of all, after Kadence has finished with the deal being saved:
+		// until then its index of the lists' filters ignores a change of
+		// terms on any other post, and a case study that took a new program
+		// from its deal would still be listed under the old one.
+		add_action( 'save_post', array( __CLASS__, 'refresh_from_deal' ), PHP_INT_MAX );
 		add_filter( 'wpseo_metabox_prio', array( __CLASS__, 'yoast_below' ) );
 	}
 
