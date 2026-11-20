@@ -994,12 +994,49 @@ body .vm-story-media .vm-story-stat--offices {
 	}
 }
 
-/* In a Kadence query, every card in a line is as tall as the tallest. */
-.kb-query-item > .vm-card-link {
+/*
+ * vm-stats--spread: on desktop each figure of the band is as wide as its text
+ * and the space between one and the next is the same, as the design sets it.
+ * The row's own columns are of equal width, which leaves uneven gaps.
+ */
+@media (min-width: 1025px) {
+	.kb-row-layout-wrap.vm-stats--spread > .kt-row-column-wrap {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.kb-row-layout-wrap.vm-stats--spread > .kt-row-column-wrap > .wp-block-kadence-column {
+		flex: 0 0 auto;
+	}
+}
+
+/*
+ * vm-card-foot: the last part of a card, sent to its foot. With cards of one
+ * height, the rule, the figures and the link line up across the row.
+ */
+.wp-block-kadence-column > .kt-inside-inner-col:has(> .vm-card-foot) {
+	display: flex;
+	flex-direction: column;
+}
+
+.wp-block-kadence-column > .kt-inside-inner-col > .vm-card-foot {
+	margin-top: auto;
+}
+
+/*
+ * vm-figures: a line of figures, each as wide as its text. Kadence makes the
+ * Sections inside a horizontal Section share the whole width.
+ */
+.vm-figures.vm-figures > .kt-inside-inner-col > .wp-block-kadence-column {
+	flex: 0 0 auto;
+}
+
+/* In a Kadence query, every card in a line is as tall as the tallest, whether the card is a link or not. */
+.kb-query-item > .wp-block-kadence-column {
 	height: 100%;
 }
 
-.kb-query-item > .vm-card-link > .kt-inside-inner-col {
+.kb-query-item > .wp-block-kadence-column > .kt-inside-inner-col {
 	flex: 1;
 }
 

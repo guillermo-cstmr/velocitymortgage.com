@@ -391,7 +391,11 @@ class Velocity_Deals_Page {
 			array(
 				'direction'    => array( 'horizontal', '', '' ),
 				'padding'      => array( '16', '', '0', '' ),
-				'margin'       => array( '16', '', '12', '' ),
+				'margin'       => array( '', '', '12', '' ),
+				// vm-card-foot sends the rule, the figures and the link under
+				// them to the foot of the card, so they line up across a row
+				// whatever the length of each title and summary.
+				'className'    => 'vm-card-foot',
 				// A rule above the figures: a top border only.
 				'borderStyle'  => array(
 					array(
@@ -444,7 +448,7 @@ class Velocity_Deals_Page {
 				'story-excerpt',
 				'',
 				array(
-					'margin'  => array( '0', '', '0', '' ),
+					'margin'  => array( '0', '', '16', '' ),
 					'dynamic' => 'post|post_excerpt',
 					'class'   => 'vm-hide-empty',
 				)

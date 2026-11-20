@@ -305,6 +305,8 @@ class Velocity_Cases {
 				'gutter'         => array( 48, 32, 24 ),
 				'gutterVariable' => array( 'custom', 'custom', 'custom' ),
 				'flexGrow'       => array( 1, '', '' ),
+				// vm-figures keeps the three together, under the photo, each as wide as its text.
+				'className'      => 'vm-figures',
 				'inQueryBlock'   => true,
 				'metadata'       => array( 'name' => 'Amount, purpose and date' ),
 			)

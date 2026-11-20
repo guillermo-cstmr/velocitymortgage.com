@@ -159,6 +159,9 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-tag` | Text (Adv) used as a small filled label | Makes it as wide as its text, and hides it, keeping its space, when its dynamic content is empty |
 | `vm-menu-featured` | A navigation link inside a dropdown | Sets the item apart with a rule above it. Under the pointer it turns bold and shows an arrow. Navigation has no per-item styling |
 | `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
+| `vm-card-foot` | Section, the last part of a card | Sends it to the foot of the card. With the cards of a row at one height, the rule, the figures and the link line up across the row. On the card of a case study |
+| `vm-figures` | Section set to horizontal, with one Section per figure | Each figure is as wide as its text, with the gap of the Section between them. Without it Kadence shares the whole width among them. On the featured case study |
+| `vm-stats--spread` | Row, beside `vm-stats` | On desktop each figure of the band is as wide as its text and the space between one and the next is the same. On the band of the program pages |
 | `vm-card-grow` | Section that is a card | The card grows a little under the pointer (mouse only, and not with "reduce motion"). Used with `vm-card-link` on the cards of "Other Ways We’ll Get You to Yes", as the design notes |
 | `vm-lines-1` to `vm-lines-4` | Text (Adv) | Cuts the text after that many lines, with "..." at the end. On the titles and summaries of the News and Insights cards |
 | `vm-article` | Section that holds the Post Content block of an article | The look of what an author writes: headings, lists, images, quotes and tables. See "News and Insights" |
