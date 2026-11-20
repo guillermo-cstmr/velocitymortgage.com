@@ -1122,9 +1122,10 @@ class Velocity_Program {
 		);
 
 		$figures = array(
-			array( 'Loan amount', 'velocity_case_study_loan_amount' ),
-			array( 'Days to close', 'velocity_case_study_days_to_close' ),
-			array( 'Location', 'velocity_case_study_location' ),
+			// The amount through its own field, which gives it its dollar sign.
+			array( 'Loan amount', 'post|vm_case_amount' ),
+			array( 'Days to close', array( 'post|post_custom_field', 'velocity_case_study_days_to_close' ) ),
+			array( 'Location', array( 'post|post_custom_field', 'velocity_case_study_location' ) ),
 		);
 
 		$boxes = array();
@@ -1154,7 +1155,7 @@ class Velocity_Program {
 						'weight'  => '700',
 						'lh'      => 1.1,
 						'margin'  => array( '0', '', '0', '' ),
-						'dynamic' => array( 'post|post_custom_field', $figure[1] ),
+						'dynamic' => $figure[1],
 					)
 				),
 				array(
