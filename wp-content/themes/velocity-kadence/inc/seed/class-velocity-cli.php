@@ -1263,6 +1263,191 @@ class Velocity_CLI {
 	}
 
 	/**
+	 * Copies the press releases into News and Insights.
+	 *
+	 * Each press release (Press) gets a twin under Insights with the same
+	 * title, address ending, text, summary, date, status and featured image,
+	 * filed under the topic "Press Release". The quote a press release kept
+	 * in its "Quote" box is added at the end of the text, as the pattern
+	 * "Article: Press Quote". Its SEO settings (Yoast) are copied too.
+	 *
+	 * The press releases themselves are NOT touched: they stay under Press
+	 * and at their /press/ addresses. Once the two are meant to be one,
+	 * Press is removed and its addresses redirected to their twins.
+	 *
+	 * Safe to run again: a press release that already has its twin is left
+	 * alone, and so is one whose title an article already has.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * [--force]
+	 * : Write the twins again from their press releases. This DISCARDS what
+	 * was changed in a twin's text, summary and topic since it was copied.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity copy-press
+	 *     wp velocity copy-press --execute
+	 *
+	 * @subcommand copy-press
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function copy_press( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+		$this->force   = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'force', false );
+
+		if ( ! post_type_exists( Velocity_Insights::POST_TYPE ) || ! post_type_exists( 'velocity-press' ) ) {
+			WP_CLI::error( 'Both post types are needed: "insight" (plugin Velocity Insights) and "velocity-press".' );
+		}
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		$topic = get_term_by( 'slug', 'press-release', Velocity_Insights::TAXONOMY );
+
+		if ( ! $topic ) {
+			WP_CLI::log( '  create   topic  Press Release' );
+
+			if ( $this->execute ) {
+				$made = wp_insert_term( 'Press Release', Velocity_Insights::TAXONOMY, array( 'slug' => 'press-release' ) );
+
+				if ( is_wp_error( $made ) ) {
+					WP_CLI::error( $made->get_error_message() );
+				}
+
+				$topic = get_term( $made['term_id'], Velocity_Insights::TAXONOMY );
+			}
+		}
+
+		$press = get_posts(
+			array(
+				'post_type'   => 'velocity-press',
+				'post_status' => array( 'publish', 'draft', 'private', 'pending', 'future' ),
+				'numberposts' => -1,
+				'orderby'     => 'date',
+				'order'       => 'ASC',
+			)
+		);
+
+		$counts = array(
+			'copied'  => 0,
+			'updated' => 0,
+			'kept'    => 0,
+			'skipped' => 0,
+		);
+
+		foreach ( $press as $release ) {
+			$twin = get_posts(
+				array(
+					'post_type'   => Velocity_Insights::POST_TYPE,
+					'post_status' => 'any',
+					'meta_key'    => '_vm_press_source', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					'meta_value'  => $release->ID, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+					'numberposts' => 1,
+					'fields'      => 'ids',
+				)
+			);
+			$twin = $twin ? (int) $twin[0] : 0;
+
+			if ( $twin && ! $this->force ) {
+				++$counts['kept'];
+				continue;
+			}
+
+			// An article written for Insights with the same title: not ours to replace.
+			if ( ! $twin ) {
+				$same = get_posts(
+					array(
+						'post_type'   => Velocity_Insights::POST_TYPE,
+						'post_status' => 'any',
+						'title'       => $release->post_title,
+						'numberposts' => 1,
+						'fields'      => 'ids',
+					)
+				);
+
+				if ( $same ) {
+					WP_CLI::warning( sprintf( 'Skipped press #%d "%s": the article #%d (%s) already has that title. Publish that one, or delete it and run this again.', $release->ID, $release->post_title, $same[0], get_post_status( $same[0] ) ) );
+					++$counts['skipped'];
+					continue;
+				}
+			}
+
+			$quote = Velocity_Insights::press_quote(
+				get_post_meta( $release->ID, 'velocity_quote_quote', true ),
+				get_post_meta( $release->ID, 'velocity_quote_name', true ),
+				(int) get_post_meta( $release->ID, 'velocity_quote_headshot_id', true )
+			);
+
+			WP_CLI::log( sprintf( '  %s  #%d  %s  [%s]%s', $twin ? 'update' : 'copy  ', $release->ID, $release->post_title, $release->post_status, $quote ? '  + quote' : '' ) );
+
+			if ( ! $this->execute ) {
+				++$counts[ $twin ? 'updated' : 'copied' ];
+				continue;
+			}
+
+			$data = array(
+				'post_type'     => Velocity_Insights::POST_TYPE,
+				'post_title'    => $release->post_title,
+				'post_name'     => $release->post_name,
+				'post_content'  => $release->post_content . ( $quote ? "\n\n" . $quote : '' ),
+				'post_excerpt'  => $release->post_excerpt,
+				'post_status'   => $release->post_status,
+				'post_date'     => $release->post_date,
+				'post_date_gmt' => $release->post_date_gmt,
+			);
+
+			if ( $twin ) {
+				$data['ID'] = $twin;
+				$twin_id    = wp_update_post( wp_slash( $data ), true );
+			} else {
+				$twin_id = wp_insert_post( wp_slash( $data ), true );
+			}
+
+			if ( is_wp_error( $twin_id ) ) {
+				WP_CLI::warning( sprintf( 'Press #%d: %s', $release->ID, $twin_id->get_error_message() ) );
+				++$counts['skipped'];
+				continue;
+			}
+
+			update_post_meta( $twin_id, '_vm_press_source', $release->ID );
+
+			$image = (int) get_post_thumbnail_id( $release->ID );
+			if ( $image ) {
+				set_post_thumbnail( $twin_id, $image );
+			}
+
+			if ( $topic ) {
+				wp_set_object_terms( $twin_id, (int) $topic->term_id, Velocity_Insights::TAXONOMY );
+			}
+
+			// Its SEO settings, and a link to another site in place of the article.
+			foreach ( get_post_meta( $release->ID ) as $key => $values ) {
+				if ( 0 === strpos( $key, '_yoast_wpseo_' ) || 0 === strpos( $key, '_links_to' ) ) {
+					update_post_meta( $twin_id, $key, maybe_unserialize( $values[0] ) );
+				}
+			}
+
+			++$counts[ $twin ? 'updated' : 'copied' ];
+		}
+
+		WP_CLI::success(
+			sprintf(
+				'%1$s%2$d copied, %3$d written again, %4$d already had a twin, %5$d skipped. Press itself was not changed.',
+				$this->execute ? '' : 'Dry run. Would be: ',
+				$counts['copied'],
+				$counts['updated'],
+				$counts['kept'],
+				$counts['skipped']
+			)
+		);
+	}
+
+	/**
 	 * Moves pages to their addresses in the new site's URL list.
 	 *
 	 * For each page in PAGE_SLUG_CHANGES that still has its old slug, it

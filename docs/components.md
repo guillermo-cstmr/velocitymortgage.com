@@ -565,7 +565,8 @@ A second element, "News and Insights: article", with the placement "Replace sing
 
 ### What is still open
 
-- The press releases still live under Press. They move to Insights, under the topic "Press Release", with a command to be written.
+- **The press releases are in two places for now.** `wp velocity copy-press` copies each one into Insights, under the topic "Press Release", and leaves Press as it is: every press release still answers at `/press/...`, and its copy at `/insights/...`. Until Velocity confirms that Press and Insights become one, a change to a press release has to be made in both. Once confirmed, what is left to do is remove Press (its posts, its menu and `mu-plugins/velocity/cpt-press.php`) and redirect `/press/` and each `/press/...` to its copy; the copy keeps the same address ending, so the redirect is one rule.
+- One press release has no copy: "Why Conventional Loans Stall Real Estate Investors..." already exists as an article waiting for review, written for Insights. The command skips it and says so.
 - The list of topics is not defined. The design says "Category".
 - The newsletter form saves the address in Gravity Forms and sends it nowhere yet.
 

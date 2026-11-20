@@ -1014,4 +1014,48 @@ class Velocity_Insights {
 			)
 		);
 	}
+	/**
+	 * A press quote as blocks: the pattern "Article: Press Quote" filled in.
+	 *
+	 * A press release kept its quote in three fields beside the text (the
+	 * "Quote" box: headshot, quote, name and title). In an article it is part
+	 * of the text. See patterns/article-press-quote.php.
+	 *
+	 * @param string $quote    The quote.
+	 * @param string $name     Name and title.
+	 * @param int    $image_id Media ID of the headshot, or 0.
+	 * @return string Empty when there is nothing to show.
+	 */
+	public static function press_quote( $quote, $name, $image_id = 0 ) {
+		$quote = trim( (string) $quote );
+		// The box had the name and the title on two lines.
+		$name = trim( preg_replace( '/\s*[\r\n]+\s*/', ', ', trim( (string) $name ) ) );
+		$name = trim( preg_replace( '/,\s*,/', ',', $name ), ', ' );
+
+		if ( '' === $quote && '' === $name ) {
+			return '';
+		}
+
+		// The old template added the quotation marks itself.
+		if ( '' !== $quote && ! preg_match( '/^["“]/u', $quote ) ) {
+			$quote = '“' . $quote . '”';
+		}
+
+		$image = '';
+		$url   = $image_id ? wp_get_attachment_image_url( (int) $image_id, 'thumbnail' ) : '';
+
+		if ( $url ) {
+			$image = sprintf(
+				"<!-- wp:image {\"id\":%1\$d,\"sizeSlug\":\"thumbnail\"} -->\n<figure class=\"wp-block-image size-thumbnail\"><img src=\"%2\$s\" alt=\"\" class=\"wp-image-%1\$d\"/></figure>\n<!-- /wp:image -->\n\n",
+				(int) $image_id,
+				esc_url( $url )
+			);
+		}
+
+		return "<!-- wp:group {\"metadata\":{\"name\":\"Press Quote\"},\"className\":\"vm-press-quote\",\"layout\":{\"type\":\"constrained\"}} -->\n" .
+			'<div class="wp-block-group vm-press-quote">' . $image .
+			"<!-- wp:quote -->\n<blockquote class=\"wp-block-quote\"><!-- wp:paragraph -->\n<p>" . esc_html( $quote ) . "</p>\n<!-- /wp:paragraph -->" .
+			( '' !== $name ? '<cite>' . esc_html( $name ) . '</cite>' : '' ) .
+			"</blockquote>\n<!-- /wp:quote --></div>\n<!-- /wp:group -->";
+	}
 }
