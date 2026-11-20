@@ -487,6 +487,10 @@ class Velocity_Deals_Page {
 					'taxonomy'    => $filter[1],
 					'label'       => $filter[0],
 					'slug'        => $key,
+					// "Hide items when result count is zero": deals and case studies
+					// share these taxonomies, and without it a filter offers the
+					// terms the other one uses.
+					'hideWhenEmptyCount' => true,
 				)
 			);
 		}

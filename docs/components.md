@@ -504,6 +504,8 @@ The card reads the deal with dynamic content:
 
 **The gallery shows twelve deals a page**, four rows of three, as the design draws it (Kadence > Queries, "Featured Deals: gallery", Posts per page).
 
+**A filter offers only the choices that have a deal.** Deals and case studies share their taxonomies (program, purpose, type), and Kadence lists every term in use unless the Filter block's "Hide items when result count is zero" is on. It is on for the three filters here and for the three of Case Studies, so neither page offers a choice that only the other one uses. A Filter block added by hand needs that setting too.
+
 **A deal card is not a link.** Deals have no page of their own on the site, so neither the card nor its title links anywhere. The same goes for the deals on the home page.
 
 **The program's name on a deal card links to the program's page**, on Featured Deals and on the home page, when the program has one: its "Program page" (Properties > Programs) or, when that is empty, its page under Programs Overview. A program with neither, like FlexTerm, shows as plain text. The link is underlined, since it sits in a line of text of its own color.
@@ -622,7 +624,6 @@ The list at `/case-studies/` and the page of a case study, at `/case-study/...`.
 
 - No case study is published yet. Eleven test ones, titled "TEST", stand in for them.
 - The program "Multifamily & Commercial" was added to Properties > Programs for the case studies of those deals, as the design asks. It has no page of its own.
-- The program filter lists every program a deal or a case study uses, so it can offer one with no case study yet.
 
 ## The legal pages
 
