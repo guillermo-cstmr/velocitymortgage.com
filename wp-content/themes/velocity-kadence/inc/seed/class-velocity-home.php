@@ -220,6 +220,10 @@ class Velocity_Home {
 			$attrs['margin'] = $o['margin'];
 		}
 
+		if ( isset( $o['tablet_margin'] ) ) {
+			$attrs['tabletMargin'] = $o['tablet_margin'];
+		}
+
 		if ( isset( $o['width'] ) ) {
 			$attrs['maxWidth'] = array( $o['width'], '', '' );
 		}
