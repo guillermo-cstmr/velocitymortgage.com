@@ -880,7 +880,7 @@ class Velocity_Process {
 				array(
 					'How long does a loan take to close?',
 					array(
-						'Two weeks to 45 days on every program besides Fast50, which closes between two to six weeks. For 1-4 unit properties, funding typically takes closer to two weeks once the loan is in processing. For commercial, it’s closer to three weeks.',
+						'Most 1-4 unit deals close in 2 to 4 weeks; commercial deals in 30 to 45 days.',
 						'Want to close as fast as possible? Have your full file ready by uploading your required conditions in the broker portal prior to the appraisal being completed. Before promising your client a date though, ask your account executive for current timing.',
 					),
 				),

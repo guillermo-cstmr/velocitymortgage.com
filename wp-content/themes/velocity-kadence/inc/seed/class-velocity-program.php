@@ -12,8 +12,8 @@
  * editor. What a block setting can express is set on the block.
  *
  * Figma: page "Broker Programs", one frame per program. The copy is the
- * one in the copy documents (V1), which are newer than the text in the
- * design.
+ * one in the copy documents (V1) approved by the client, which win over
+ * the text in the design.
  *
  * Kept compatible with PHP 7.4, see class-velocity-cli.php.
  *
@@ -90,7 +90,6 @@ class Velocity_Program {
 	 */
 	public static function programs() {
 		$fixed_term = array( 'Fixed for 30 years, paid down to zero with no lump sum at the end', 'Shorter terms available' );
-		$prepay     = 'A fee that steps down over five years, 5% of the balance in year one to 1% in year five, then none';
 		$itin       = 'An ITIN works in place of a Social Security number';
 		$commercial = array( 'Multifamily with five or more units', 'Mixed-use', 'Office, retail, warehouse, self-storage, automotive' );
 
@@ -215,25 +214,23 @@ class Velocity_Program {
 				'term'    => 'fast50',
 				'name'    => 'Fast50',
 				'eyebrow' => 'Long-term loan',
-				'title'   => 'Fast50: <strong>Equity Does the Talking</strong>',
-				'intro'   => 'The same term as 30-Year Fixed, with the weight on property equity rather than credit score. Use it to buy, refinance, or cash out at up to 50% of the property’s value.',
+				'title'   => 'Fast50, <strong>Equity Does the Talking</strong>',
+				'intro'   => 'The same term as the 30-Year Fixed, with the weight on property equity—up to 50% of the property’s value. Use it to buy, refinance, or cash out on commercial or residential property.',
 				'photo'   => array( 'hero-fast50.webp', 'A broker smiling with his arms crossed. Property types: 1-4 units to commercial' ),
 				'stats'   => array(
-					array( 'Up to $2MM', '1-4 unit loan amounts' ),
+					array( '$75K to $2MM', '1-4 unit loan amounts' ),
 					array( 'From $100K', 'Commercial loan amounts' ),
 					array( 'Up to 50%', 'Maximum LTV' ),
-					array( 'Equity-based', 'Qualification' ),
-					array( '2 to 6 weeks', 'Time to close' ),
+					array( 'No minimum', 'Credit score' ),
+					array( '1-4 units to commercial', 'Property types' ),
+					array( '2 to 4 weeks', '1-4 unit time to close' ),
 				),
-				// The band's figures sit 155px from each side in this page's design.
-				'band'    => 1258,
-				'others'  => array( 'super-jumbo', '30-year-fixed', 'flex-io' ),
 				'why'     => array(
-					'We make sure credit never keeps you from closing a deal. Along the way, we’ll help you earn a client for the next 30 years.',
+					'Credit score doesn’t decide the deal. Along the way, we’ll help you earn a client for the next 30 years.',
 					array(
-						array( 'icon-airwave.svg', 'Looser Credit Rules,<br>Same 30-Year Loan', 'A discharged bankruptcy or late mortgage payments don’t rule your client out.' ),
+						array( 'icon-airwave.svg', 'Looser Credit Rules,<br>Same 30-Year Loan', 'A discharged bankruptcy or late mortgage payment doesn’t rule a loan out.' ),
 						array( 'icon-hourglass-disabled.svg', 'No Waiting Period to Refinance', 'Refinance a property right after purchase so that cash goes back to work.' ),
-						array( 'icon-readiness-score.svg', 'No Minimum<br>Credit Score', 'Credit never disqualifies. All that matters to us is the property’s equity.' ),
+						array( 'icon-readiness-score.svg', 'No Minimum<br>Credit Score', 'We review credit history, but the property’s equity drives the deal.' ),
 					),
 				),
 				'terms'   => array(
@@ -242,27 +239,18 @@ class Velocity_Program {
 					array(
 						array( 'What It’s For', 'Long-term financing when credit history is the problem and equity is not' ),
 						array( 'Property Types', array( 'Single-family, condo, 2-4 units' ), $commercial ),
-						array( 'Loan Amounts', array( 'Up to $2MM' ), array( '$100K minimum' ) ),
+						array( 'Loan Amounts', array( '$75K to $2MM' ), array( '$100K minimum' ) ),
 						array( 'Maximum LTV', array( '50%, for every credit score and on every property type' ) ),
 						array( 'Term and Payments', $fixed_term ),
 						array( 'Credit Score and History', array( 'Every score qualifies, including below 600', 'A bankruptcy or notice of default discharged as recently as the day before does not stop the loan', 'Late mortgage payments don’t either' ) ),
 						array( 'Waiting Period After Purchase', array( 'One day' ) ),
 						array( 'Loan Purpose', array( 'Purchase', 'Refinance', 'Cash-out refinance' ) ),
 						array( 'Borrower Experience', array( 'First-time buyers not eligible' ) ),
-						array( 'Qualifies On', array( 'The property’s value and equity, with simple documentation' ) ),
-						array(
-							'Paying It Off Early',
-							array(
-								$prepay,
-								'NJ (1–6 units) and PA (1–4 units): no prepay fee on non-entity loans',
-								'NM, KS, and AK (1–4 units): no prepay fee on non-entity loans, with a 1% rate or 1.5% fee add-on',
-							),
-							// The design shows the 1-4 unit terms only.
-							array( $prepay ),
-						),
+						array( 'Qualifies On', array( 'The property’s value, not the borrower’s personal income' ) ),
+						array( 'Paying It Off Early', array( 'A fee that steps down over five years, 5% of the balance in year one to 1% in year five, then none' ) ),
 						array( 'Foreign Borrowers', array( '50% LTV', $itin ) ),
 						array( 'Where Velocity Lends', array( 'Nationwide' ) ),
-						array( 'Time to Close', array( '2 to 4 weeks' ), array( '30 to 45 days' ) ),
+						array( 'Time to Close', array( 'Two to four weeks' ), array( '30 to 45 days' ) ),
 					),
 				),
 				'clients' => array(
@@ -326,7 +314,8 @@ class Velocity_Program {
 					array( 'Up to 75%', 'Maximum LTV' ),
 					array( '24 months', 'Interest-only term' ),
 					array( '675+', 'Credit minimum' ),
-					array( '2 to 4 wks', 'Time to close' ),
+					array( '1-4 units only', 'Property types' ),
+					array( '2 wks to 45 days', 'Time to close' ),
 				),
 				'others'  => array( '30-year-fixed', 'super-jumbo', 'fast50' ),
 				'why'     => array(
@@ -635,22 +624,15 @@ class Velocity_Program {
 	 * @return string
 	 */
 	public static function stats( $post_id, $program ) {
-		// Six figures take the whole width of the design's band, 64px from
-		// each side (1440 less the side padding). Five or fewer stay 166px
-		// from each side, unless the program says otherwise. vm-stats--spread
-		// sets them as the design does: each as wide as its text, with the
-		// same space between one and the next.
-		$width = count( $program['stats'] ) > 5 ? 1440 : 1236;
-
-		if ( ! empty( $program['band'] ) ) {
-			$width = $program['band'];
-		}
-
+		// Five or six figures take the whole width of the design's band, 64px
+		// from each side (1440 less the side padding), at a slightly smaller
+		// size. vm-stats--spread sets them as the design does: each as wide as
+		// its text, with the same space between one and the next.
 		return Velocity_Home::stats(
 			$post_id,
 			$program['stats'],
 			array(
-				'maxWidth'     => $width,
+				'maxWidth'     => 1440,
 				'columnGutter' => 'custom',
 				'customGutter' => array( 8, '', '' ),
 				'className'    => 'vm-stats vm-stats--spread',
