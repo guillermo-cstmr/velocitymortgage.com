@@ -132,7 +132,7 @@ class Velocity_Process {
 			Velocity_Home::subtitle(
 				$post_id,
 				'hero',
-				'Start with a short form, hear back 24 to 48 hours later, then get approved when your first deal is ready. Close within two weeks to 45 days.',
+				'Start with a short form, hear back within 24 hours, then get approved when your first deal is ready. Most 1-4 unit deals close in 2 to 4 weeks; commercial in 30 to 45 days.',
 				array( 'margin' => array( '0', '', '24', '' ) )
 			) . "\n\n" .
 			Velocity_Home::buttons( $post_id, 'hero', array( array( 'Become a Partner', home_url( '/become-a-partner/' ) ) ), 'left' );
@@ -221,7 +221,7 @@ class Velocity_Process {
 				$post_id,
 				'people',
 				'The People You’ll Work With',
-				'At Velocity we lend out our own money and hold every loan. That means our experienced professionals only work to answer your needs.',
+				'At Velocity we lend out our own money as a direct portfolio lender. That means our experienced professionals only work to answer your needs.',
 				854
 			) . "\n\n" . $grid,
 			'The people you will work with',
@@ -329,7 +329,7 @@ class Velocity_Process {
 			array( 'Register on Our Site', 'Start with a quick introduction. Who you are, where you do business, and that’s it.' ),
 			array( 'Hear Back Within 24 Hours', 'After registering, our broker approval team will respond in 24 hours.' ),
 			array( 'Tell Us About Your Business', 'Your account executive learns what you do, then shows you how Velocity can help.' ),
-			array( 'Get Set Up in Our System', 'Once approved, we’ll give you log in details for the broker portal so you can start pricing and submitting loans.' ),
+			array( 'Get Set Up in Our System', 'Once registered, we’ll give you log in details for the broker portal so you can start pricing and submitting loans.' ),
 			array( 'Bring Your First Deal and Get Approved', 'Your account executive sends the approval package for the broker of record to sign.' ),
 		);
 
@@ -539,8 +539,8 @@ class Velocity_Process {
 		);
 
 		$figures = array(
-			array( '2 wks to 45 days', 'To close for every program' ),
-			array( '2 to 6 weeks', 'To close for Fast50' ),
+			array( '2 to 4 weeks', 'To close for 1-4 unit properties' ),
+			array( '30 to 45 days', 'To close for commercial properties' ),
 			array( '2 wks, 1-4 units', 'Processing to funding' ),
 			array( '3 wks, commercial', 'Processing to funding' ),
 		);
@@ -833,7 +833,15 @@ class Velocity_Process {
 				array( 'Become a Partner', home_url( '/become-a-partner/' ) ),
 				array( 'See All Programs', home_url( '/loan-programs/' ), 'outline', Velocity_Home::on_dark() ),
 			),
-			1280
+			1280,
+			// The color of the section above goes on behind the top of the band,
+			// as on the program pages.
+			array(
+				'backgroundSettingTab' => 'gradient',
+				'gradient'             => 'linear-gradient(180deg,rgb(248,232,222) 136px,rgb(255,255,255) 136px)',
+				'padding'              => array( '0', '', '48', '' ),
+				'mobilePadding'        => array( '0', '', '32', '' ),
+			)
 		);
 	}
 
@@ -872,7 +880,7 @@ class Velocity_Process {
 				array(
 					'How long does a loan take to close?',
 					array(
-						'Two weeks to 45 days on every program besides Fast50, which closes between two to six weeks. For 1-4 unit properties, funding typically takes closer to two weeks once the loan is in processing. For commercial, it’s closer to three weeks.',
+						'Most 1-4 unit deals close in 2 to 4 weeks; commercial deals in 30 to 45 days.',
 						'Want to close as fast as possible? Have your full file ready by uploading your required conditions in the broker portal prior to the appraisal being completed. Before promising your client a date though, ask your account executive for current timing.',
 					),
 				),

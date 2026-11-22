@@ -133,7 +133,7 @@ class Velocity_Programs {
 	}
 
 	/**
-	 * Trust strip: three figures on the orange band, as on the home page.
+	 * Trust strip: two figures on the orange band, as on the home page.
 	 *
 	 * @param int $post_id Page ID.
 	 * @return string
@@ -142,10 +142,16 @@ class Velocity_Programs {
 		return Velocity_Home::stats(
 			$post_id,
 			array(
-				array( 'Nationwide', 'Program coverage' ),
 				array( 'Foreign Investors', 'Eligible on every program' ),
 				array( 'Business purpose', 'Investment property only' ),
-			)
+			),
+			// The two sit together at the middle of the band, 477px from each
+			// side in the design. vm-stats--spread keeps each as wide as its text.
+			array(
+				'maxWidth'  => 615,
+				'className' => 'vm-stats vm-stats--spread',
+			),
+			22
 		);
 	}
 
@@ -348,34 +354,34 @@ class Velocity_Programs {
 				array(
 					array( 'Loan amounts', '$75K to $2MM', '1-4 units; commercial from $100K' ),
 					array( 'LTV limit', 'Up to 75%', '70% on office, retail, and similar' ),
-					array( 'Time to close', '2 weeks to 45 days', $close ),
+					array( 'Time to close', 'Two weeks to 45 days', $close ),
 				),
 			),
 			array(
 				'Long-term loan',
-				'Fast50, a Yes When Credit Is the Problem',
-				'Like the 30-Year Fixed, but with looser credit rules. Perfect for clients with plenty of equity.',
+				'Fast50, Equity Does the Talking',
+				'Like the 30-Year Fixed, with the weight on property equity—up to 50% of the property’s value.',
 				'Explore Fast50',
 				'program-fast50.webp',
 				'A row of gabled houses against a blue sky',
 				array(
 					array( 'Loan amounts', 'Up to $2MM', '1-4 units; commercial from $100K' ),
 					array( 'LTV limit', 'Up to 50%', 'On every property type' ),
-					array( 'Time to close', '2 weeks to 6 weeks', $close ),
+					array( 'Time to close', 'Two to six weeks', $close ),
 				),
 			),
 			array(
 				// The design repeats "Long-term loan" here. Flex I/O is the short-term one.
 				'Short-term loan',
 				'Flex I/O, a Bridge Loan Between Projects',
-				'Pay only interest for 2 years, or pay it off early with no penalty. Available on 1-4 unit properties.',
+				'Interest-only payments for 24 months, with no prepay penalty. Available on 1-4 unit properties.',
 				'Explore Flex I/O',
 				'program-flex-io.webp',
 				'A brick apartment building with balconies',
 				array(
 					array( 'Loan amounts', '$75K to $2MM', '1-4 units only' ),
 					array( 'LTV limit', 'Up to 75%', '70% above $1MM' ),
-					array( 'Time to close', '2 weeks to 45 days', $close ),
+					array( 'Time to close', 'Two weeks to 45 days', $close ),
 				),
 			),
 			array(
@@ -388,7 +394,7 @@ class Velocity_Programs {
 				array(
 					array( 'Loan amounts', '$2MM to $10MM', '1-4 units only' ),
 					array( 'LTV limit', 'Up to 65%', 'Same on a purchase or refinance' ),
-					array( 'Time to close', '2 weeks to 45 days', $close ),
+					array( 'Time to close', 'Two weeks to 45 days', $close ),
 				),
 			),
 		);
@@ -753,9 +759,9 @@ class Velocity_Programs {
 			),
 			array(
 				'LTV Limit',
-				array( '75%', '70% on office, retail, and other commercial', 'Combined financing to 90%' ),
+				array( '75%', '70% on office, retail, and other commercial', 'Combined financing to 90% on purchases' ),
 				array( '50%' ),
-				array( '65%', 'Combined financing to 90%' ),
+				array( '65%', 'Combined financing to 90% on purchases' ),
 				array( '75%', '70% above $1MM' ),
 			),
 			array(
@@ -767,7 +773,7 @@ class Velocity_Programs {
 			),
 			array(
 				'Property Types',
-				array( '1-4 units and commercial, multifamily and mixed-use included' ),
+				array( '1-4 units and commercial, multifamily and mixed-use included', 'Super Jumbo 1-4 units only' ),
 				array( 'Same as the 30-Year Fixed' ),
 				array( '1-4 units only' ),
 				array( '1-4 units only' ),
@@ -781,10 +787,10 @@ class Velocity_Programs {
 			),
 			array(
 				'Time to Close',
-				array( '2 weeks to 45 days' ),
-				array( '2 to 6 weeks' ),
-				array( '2 weeks to 45 days' ),
-				array( '2 weeks to 45 days' ),
+				array( '1-4 units, 2 to 4 weeks', 'Commercial, 30 to 45 days' ),
+				array( '1-4 units, 2 to 4 weeks', 'Commercial, 30 to 45 days' ),
+				array( '2 to 4 weeks' ),
+				array( '2 to 4 weeks' ),
 			),
 			array(
 				'Foreign Borrower LTV',
@@ -816,7 +822,7 @@ class Velocity_Programs {
 			Velocity_Home::t(
 				$post_id,
 				'compare-closing',
-				'Both foreign borrowers and nationals are eligible for every program. Get 75% LTV with U.S. credit, 65% without. See program pages for full details.',
+				'Foreign nationals (with U.S. credit) qualify for up to 75% LTV and foreign investors (without U.S. credit) up to 65% LTV—subject to each program’s LTV limit. See program pages for full details.',
 				array(
 					'align'  => 'center',
 					'family' => 'heading',
@@ -901,7 +907,7 @@ class Velocity_Programs {
 			Velocity_Home::subtitle(
 				$post_id,
 				'clients',
-				'We lend based on the property value, not personal income, and that opens the door to a wider range of clients. Here are four you may recognize.'
+				'We lend with simple documentation, focused on the property’s value—and that opens the door to a wider range of clients. Here are four you may recognize.'
 			);
 
 		$row = Velocity_Seed::row(

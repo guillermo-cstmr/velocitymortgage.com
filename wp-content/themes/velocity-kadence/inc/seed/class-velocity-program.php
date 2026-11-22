@@ -12,8 +12,8 @@
  * editor. What a block setting can express is set on the block.
  *
  * Figma: page "Broker Programs", one frame per program. The copy is the
- * one in the copy documents (V1), which are newer than the text in the
- * design.
+ * one in the copy documents (V1) approved by the client, which win over
+ * the text in the design.
  *
  * Kept compatible with PHP 7.4, see class-velocity-cli.php.
  *
@@ -90,7 +90,6 @@ class Velocity_Program {
 	 */
 	public static function programs() {
 		$fixed_term = array( 'Fixed for 30 years, paid down to zero with no lump sum at the end', 'Shorter terms available' );
-		$on_value   = array( 'The property’s value, not the borrower’s personal income' );
 		$itin       = 'An ITIN works in place of a Social Security number';
 		$commercial = array( 'Multifamily with five or more units', 'Mixed-use', 'Office, retail, warehouse, self-storage, automotive' );
 
@@ -215,8 +214,8 @@ class Velocity_Program {
 				'term'    => 'fast50',
 				'name'    => 'Fast50',
 				'eyebrow' => 'Long-term loan',
-				'title'   => 'Fast50, <strong>a Yes When Credit Is the Problem</strong>',
-				'intro'   => 'The same term as the 30-Year Fixed, but with no minimum credit score. Use it to buy, refinance, or cash out on commercial or residential property.',
+				'title'   => 'Fast50, <strong>Equity Does the Talking</strong>',
+				'intro'   => 'The same term as the 30-Year Fixed, with the weight on property equity—up to 50% of the property’s value. Use it to buy, refinance, or cash out on commercial or residential property.',
 				'photo'   => array( 'hero-fast50.webp', 'A broker smiling with his arms crossed. Property types: 1-4 units to commercial' ),
 				'stats'   => array(
 					array( '$75K to $2MM', '1-4 unit loan amounts' ),
@@ -229,9 +228,9 @@ class Velocity_Program {
 				'why'     => array(
 					'Credit score doesn’t decide the deal. Along the way, we’ll help you earn a client for the next 30 years.',
 					array(
-						array( 'icon-airwave.svg', 'Looser Credit Rules, Same 30-Year Loan', 'A discharged bankruptcy or late mortgage payment doesn’t rule a loan out.' ),
+						array( 'icon-airwave.svg', 'Looser Credit Rules,<br>Same 30-Year Loan', 'A discharged bankruptcy or late mortgage payment doesn’t rule a loan out.' ),
 						array( 'icon-hourglass-disabled.svg', 'No Waiting Period to Refinance', 'Refinance a property right after purchase so that cash goes back to work.' ),
-						array( 'icon-readiness-score.svg', 'No Minimum Credit Score', 'We review credit history, but the property’s equity drives the deal.' ),
+						array( 'icon-readiness-score.svg', 'No Minimum<br>Credit Score', 'We review credit history, but the property’s equity drives the deal.' ),
 					),
 				),
 				'terms'   => array(
@@ -247,7 +246,7 @@ class Velocity_Program {
 						array( 'Waiting Period After Purchase', array( 'One day' ) ),
 						array( 'Loan Purpose', array( 'Purchase', 'Refinance', 'Cash-out refinance' ) ),
 						array( 'Borrower Experience', array( 'First-time buyers not eligible' ) ),
-						array( 'Qualifies On', $on_value ),
+						array( 'Qualifies On', array( 'The property’s value, not the borrower’s personal income' ) ),
 						array( 'Paying It Off Early', array( 'A fee that steps down over five years, 5% of the balance in year one to 1% in year five, then none' ) ),
 						array( 'Foreign Borrowers', array( '50% LTV', $itin ) ),
 						array( 'Where Velocity Lends', array( 'Nationwide' ) ),
@@ -318,12 +317,13 @@ class Velocity_Program {
 					array( '1-4 units only', 'Property types' ),
 					array( '2 wks to 45 days', 'Time to close' ),
 				),
+				'others'  => array( '30-year-fixed', 'super-jumbo', 'fast50' ),
 				'why'     => array(
 					'We help you place your client’s short-term deals, alongside their long-term ones. That means they never have to start over with a stranger.',
 					array(
 						array( 'icon-counter-2.svg', 'Two Years of Interest-Only Payments', 'Deliver your client breathing room with lower payments while they prepare to sell or refi.' ),
 						array( 'icon-local-atm.svg', 'Purchase or Cash-Out Refinance', 'Help your client get cash for their next property or tap into equity of one they own.' ),
-						array( 'icon-report.svg', 'No Penalty for Paying Off Early', 'Your client can sell or refi any time in the two years and pay nothing extra to close it out.' ),
+						array( 'icon-report.svg', 'No Penalty for<br>Paying Off Early', 'Your client can sell or refi any time in the two years and pay nothing extra to close it out.' ),
 					),
 				),
 				'terms'   => array(
@@ -347,7 +347,7 @@ class Velocity_Program {
 							),
 						),
 						array( 'Where Velocity Lends', array( 'Nationwide' ) ),
-						array( 'Time to Close', array( 'Two weeks to 45 days' ) ),
+						array( 'Time to Close', array( '2 to 4 weeks' ) ),
 					),
 				),
 				'clients' => array(
@@ -561,12 +561,24 @@ class Velocity_Program {
 				'hero-title',
 				$program['title'],
 				array(
-					'tag'    => 'h1',
-					'margin' => array( '0', '', '24', '' ),
-					'class'  => 'is-style-vm-reveal-lines',
+					'tag'           => 'h1',
+					// 764px wide in the design, 20px more than its column: the
+					// title reaches into the space before the photo.
+					'margin'        => array( '0', '-20', '24', '' ),
+					'tablet_margin' => array( '', '0', '', '' ),
+					'class'         => 'is-style-vm-reveal-lines',
 				)
 			) . "\n\n" .
-			Velocity_Home::subtitle( $post_id, 'hero', $program['intro'], array( 'margin' => array( '0', '', '24', '' ) ) ) . "\n\n" .
+			Velocity_Home::subtitle(
+				$post_id,
+				'hero',
+				$program['intro'],
+				array(
+					// As wide as the title.
+					'margin'        => array( '0', '-20', '24', '' ),
+					'tablet_margin' => array( '', '0', '', '' ),
+				)
+			) . "\n\n" .
 			Velocity_Home::buttons( $post_id, 'hero', array( array( 'Become a Partner', home_url( '/become-a-partner/' ) ) ), 'left' );
 
 		return Velocity_Seed::row(
@@ -738,7 +750,7 @@ class Velocity_Program {
 				// The label column is 344px of 1035 in the design.
 				'first' => 34,
 				'label' => '600',
-				'class' => '',
+				'class' => 'vm-terms',
 				'name'  => 'Terms: ' . $name,
 			)
 		);
@@ -1304,13 +1316,21 @@ class Velocity_Program {
 	 * @return string
 	 */
 	public static function others( $post_id, $current ) {
-		$columns = array();
-		$index   = 0;
+		$columns  = array();
+		$index    = 0;
+		$cards    = self::invitations();
+		$programs = self::programs();
 
-		foreach ( self::invitations() as $key => $card ) {
-			if ( $key === $current ) {
+		// A program may name the order of its cards. Otherwise, every other
+		// program in the order of invitations().
+		$order = isset( $programs[ $current ]['others'] ) ? $programs[ $current ]['others'] : array_keys( $cards );
+
+		foreach ( $order as $key ) {
+			if ( $key === $current || ! isset( $cards[ $key ] ) ) {
 				continue;
 			}
+
+			$card = $cards[ $key ];
 
 			$card_key = 'other-' . $key;
 			$attrs    = array_merge(

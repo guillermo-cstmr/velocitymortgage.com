@@ -1679,7 +1679,8 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 /*
  * vm-legal-table: the table of a legal page. Its lines, widths and sizes are
  * block settings. The block has no setting to start every cell at the top
- * of its row. On a phone, as with vm-compare, it keeps a readable width and
+ * of its row, which vm-terms, the table of a program's terms, and vm-compare
+ * need too. On a phone, as with vm-compare, it keeps a readable width and
  * scrolls sideways inside its container instead of squeezing its columns.
  */
 /* The table takes the keyboard focus so it can be scrolled (inc/legal.php). */
@@ -1690,7 +1691,11 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 }
 
 .kb-table-container.vm-legal-table th,
-.kb-table-container.vm-legal-table td {
+.kb-table-container.vm-legal-table td,
+.kb-table-container.vm-terms th,
+.kb-table-container.vm-terms td,
+.kb-table-container.vm-compare th,
+.kb-table-container.vm-compare td {
 	vertical-align: top;
 }
 

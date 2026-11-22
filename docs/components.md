@@ -161,7 +161,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
 | `vm-card-foot` | Section, the last part of a card | Sends it to the foot of the card. With the cards of a row at one height, the rule, the figures and the link line up across the row. On the card of a case study |
 | `vm-figures` | Section set to horizontal, with one Section per figure | Each figure is as wide as its text, with the gap of the Section between them. Without it Kadence shares the whole width among them. On the featured case study |
-| `vm-stats--spread` | Row, beside `vm-stats` | On desktop each figure of the band is as wide as its text and the space between one and the next is the same. On the band of the program pages |
+| `vm-stats--spread` | Row, beside `vm-stats` | On desktop each figure of the band is as wide as its text and the space between one and the next is the same. On the band of the program pages and of Programs Overview. How far the figures stay from the sides is the row's "Max width": 1440 on the program pages, 615 for the two of Programs Overview |
 | `vm-card-grow` | Section that is a card | The card grows a little under the pointer (mouse only, and not with "reduce motion"). Used with `vm-card-link` on the cards of "Other Ways We’ll Get You to Yes", as the design notes |
 | `vm-lines-1` to `vm-lines-4` | Text (Adv) | Cuts the text after that many lines, with "..." at the end. On the titles and summaries of the News and Insights cards |
 | `vm-article` | Section that holds the Post Content block of an article | The look of what an author writes: headings, lists, images, quotes and tables. See "News and Insights" |
@@ -172,7 +172,8 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
 | `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
-| `vm-compare` | Kadence Table | Keeps the table at a readable width on small screens, scrolling sideways. Kadence has no minimum width setting |
+| `vm-compare` | Kadence Table | Keeps the table at a readable width on small screens, scrolling sideways. Kadence has no minimum width setting. Every cell starts at the top of its row |
+| `vm-terms` | Kadence Table | The terms table of a program page: every cell starts at the top of its row. Kadence has no setting for it |
 | `vm-toggle` | Kadence Tabs | Joins the tabs into one control and rounds only its two ends. The block has one radius setting for every tab. See "The program pages" |
 | `vm-hide-empty` | Text (Adv) with dynamic content | The text is not printed when it has no value. Kadence would print it empty, with its background and margins |
 | `vm-filters` | Section holding the Filter, Sort and Filter Reset blocks of a query | Size of the filters, the sort as a pill with its menu, the underline of the reset, and the fold into one button on phones. See "The Featured Deals page" |
@@ -428,6 +429,10 @@ The four steps on the line are one SVG, `assets/images/process/hero-steps.svg`, 
 ## The program pages
 
 30-Year Fixed, Fast50, Flex I/O and Super Jumbo are four pages under Programs Overview: `/loan-programs/30-year-fixed/`, `/loan-programs/fast50/`, `/loan-programs/flex-i-o/` and `/loan-programs/jumbo/`. `wp velocity seed-program-pages` creates their first version. One builder makes the four, so they share every section and differ in copy, photo and icons. After that each page is edited on its own in the editor.
+
+In the hero, the title and the intro are 764px wide in the design, 20px more than their column. Each has a right margin of -20px on desktop and 0 on tablet and phone, under Advanced, Margin, so a long title such as Flex I/O's stays on two lines.
+
+The cards of "Other Ways We’ll Get You to Yes" follow the order of each page's design. A page built by the command takes it from the program's `others` list in `inc/seed/class-velocity-program.php`; in the editor, drag the cards.
 
 ### The terms
 
