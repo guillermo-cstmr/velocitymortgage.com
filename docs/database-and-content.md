@@ -125,9 +125,9 @@ Both are defined in the must-use plugin: deals in `cpt-properties.php`, case stu
 
 Deals are the posts under Properties. The Featured Deals page lists them, with filters and sorting (see [components.md](components.md), "The Featured Deals page"). That page has the address the automatic list of deals used to have: the plugin no longer makes that list.
 
-Their taxonomies are Program, Purpose, Type, AE and Region.
+Their taxonomies are Program, Purpose, Type, AE and State.
 
-Region starts empty. It gets its terms once the client sends the list of regions, and then each deal is tagged.
+State is filled by itself: a deal is filed under the state of its Location when it is saved. `wp velocity seed-deal-states --execute` files the deals that were there before. Inside, the taxonomy keeps the name it was made with, `velocity-property-region`.
 
 "Days to Close" is a number of days. "Processed Details Text" stays as free text for the card's closing time tag.
 
@@ -146,7 +146,7 @@ Loan amounts are typed as text, for example `1,120,000`, which does not sort as 
 
 A case study tells the story of one deal. In its "Deal at a glance" box, choose that deal. On save, the case study copies from it:
 
-- the program, purpose, type, AE and region terms;
+- the program, purpose, type, AE and state terms;
 - the amount, date, days to close and location.
 
 Those fields are then locked on the case study. They are edited on the deal, and every case study linked to it updates when the deal is saved.
@@ -315,6 +315,7 @@ All of them are dry runs unless called with `--execute`.
 | `wp velocity seed-toolkit` | Creates the Broker Toolkit documents from the old toolkit form and page. Skips the ones that exist (see "Broker Toolkit") |
 | `wp velocity seed-toolkit-page` | Fills the Broker Tools page, if it is empty, and creates its seven Kadence queries and their two cards. `--force` rebuilds them and discards every change made in the editor (see "Broker Toolkit", "The page") |
 | `wp velocity seed-deals-page` | Creates the Featured Deals page if it is missing and fills it, if it is empty, with its two Kadence queries and their cards. `--force` rebuilds them and discards every change made in the editor (see [components.md](components.md), "The Featured Deals page") |
+| `wp velocity seed-deal-states` | Files each deal under the state of its Location, for the State filter of Featured Deals. Lists the deals whose location has no state it can read. Run it before `seed-deals-page`, which adds the filter once a deal has a state |
 | `wp velocity seed-legal-pages` | Fills Terms of Use and Privacy with the layout and the text of the design, creating a page that is missing. A page with content is left alone without `--force`: both have the old site's text, so they need it. `--page=terms` or `--page=privacy` does one page (see [components.md](components.md), "The legal pages") |
 | `wp velocity seed-404` | Creates the Kadence Element that replaces the theme's 404 content. `--force` rebuilds it (see [components.md](components.md), "The 404 page") |
 | `wp velocity seed-insights` | Creates the two Kadence Elements of News and Insights (the list at `/insights/` and the page of an article), their three Kadence queries (the featured article, the list, and "You may also like") and the two cards. Needs the plugin Velocity Insights. `--force` rebuilds them (see [components.md](components.md), "News and Insights") |
@@ -341,7 +342,7 @@ Whatever the plan, production needs these once the code is there:
 - The Process page: copy its blocks from staging, or run `wp velocity seed-process --execute`, which also creates the page.
 - The Programs Overview page: copy its blocks from staging, or run `wp velocity seed-programs-page --execute` after `rename-pages`.
 - The Broker Tools page: run `wp velocity seed-toolkit-page --execute`, after `rename-pages` and `seed-toolkit`. Its queries are posts of their own, so copying the blocks alone is not enough.
-- The Featured Deals page: run `wp velocity seed-deals-page --execute`. It creates the page at the address the list of deals had, and its two Kadence queries. Open the page once afterwards, so Kadence builds the index its filters read, and check that the filters list their choices.
+- The Featured Deals page: run `wp velocity seed-deal-states --execute`, then `wp velocity seed-deals-page --execute`. The first files each deal under its state. The second creates the page at the address the list of deals had, and its two Kadence queries, and indexes the deals for the filters. Open the page afterwards and check that the filters list their choices.
 - The legal pages and the 404: run `wp velocity seed-legal-pages --force --execute` and `wp velocity seed-404 --execute`. `--force` is needed because both pages already have the old site's content, which it replaces (WordPress keeps it as a revision). The old Privacy page had a text about cookies that the new one does not: the cookie banner has to be in place.
 - The four program pages: run `wp velocity seed-program-pages --execute`, after `rename-pages` and `seed-programs`. It creates the pages and their Kadence queries, which are posts of their own, so copying the blocks alone is not enough. Then `wp velocity seed-chrome --menus --force --execute`, so the menus point to them. The "Explore ..." buttons of a home page and a Programs Overview page built before these pages existed still point to "#": set their links in the editor.
 - The About Us page: run `wp velocity seed-company --execute`, which also creates the page and its two Kadence queries. Copying the page's blocks alone is not enough: the queries are posts of their own, and their IDs differ between environments. Then `wp velocity seed-chrome --menus --force --execute`, so "About Us" and "Our Team" in the menus point to it.

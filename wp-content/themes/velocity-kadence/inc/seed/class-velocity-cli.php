@@ -1032,7 +1032,135 @@ class Velocity_CLI {
 		// The address stops being a list WordPress makes and becomes a page.
 		flush_rewrite_rules();
 
+		$indexed = $this->index_for_filters( 'velocity-property' );
+
+		if ( null !== $indexed ) {
+			WP_CLI::log( sprintf( '  index    %d deals, for the filters of the gallery', $indexed ) );
+		}
+
 		WP_CLI::success( 'Featured Deals page content written. Edit it in the block editor from now on.' );
+	}
+
+	/**
+	 * Tells Kadence about every post of a type, so the filters of a query
+	 * that was just built list their choices at once.
+	 *
+	 * Kadence keeps an index of the posts for its filters. It adds a post
+	 * when the post is saved, and builds the index of a new filter only
+	 * once a visitor uses one. Until then a filter that is new to the site
+	 * has nothing to choose and prints its label alone.
+	 *
+	 * @param string $post_type Post type.
+	 * @return int|null How many posts were indexed. Null without Kadence's index.
+	 */
+	private function index_for_filters( $post_type ) {
+		if ( ! class_exists( 'Kadence_Blocks_Pro_Query_Indexer' ) || ! class_exists( 'Kadence_Blocks_Pro_Query_Indexer_Process' ) ) {
+			return null;
+		}
+
+		$indexer = new Kadence_Blocks_Pro_Query_Indexer( new Kadence_Blocks_Pro_Query_Indexer_Process() );
+		$ids     = get_posts(
+			array(
+				'post_type'   => $post_type,
+				'post_status' => 'publish',
+				'numberposts' => -1,
+				'fields'      => 'ids',
+			)
+		);
+
+		foreach ( $ids as $id ) {
+			$indexer->index_single_object( $id, 'post' );
+		}
+
+		return count( $ids );
+	}
+
+	/**
+	 * Files each deal under the state of its location, for the State filter
+	 * of Featured Deals.
+	 *
+	 * A deal saved in the editor is filed by itself, from its Location. This
+	 * command is for the deals that were there before. A deal whose location
+	 * has no state that can be read is listed and left as it is: correct its
+	 * Location in the editor, or tick its state in the "States" box.
+	 *
+	 * The filter joins the page once a deal is filed under a state: run
+	 * "wp velocity seed-deals-page --force --execute" after this command, or
+	 * add a Filter block for State to the query in the editor.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--execute]
+	 * : Apply the changes.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp velocity seed-deal-states
+	 *     wp velocity seed-deal-states --execute
+	 *
+	 * @subcommand seed-deal-states
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Flags.
+	 */
+	public function seed_deal_states( $args, $assoc_args ) {
+		$this->execute = (bool) WP_CLI\Utils\get_flag_value( $assoc_args, 'execute', false );
+
+		WP_CLI::log( $this->execute ? 'EXECUTING.' : 'DRY RUN. Nothing is changed. Add --execute to apply.' );
+
+		if ( ! class_exists( 'Velocity_Properties' ) || ! method_exists( 'Velocity_Properties', 'state_from_location' ) ) {
+			WP_CLI::error( 'The Velocity must-use plugin on this site does not file deals under states yet. Deploy it first.' );
+		}
+
+		$deals = get_posts(
+			array(
+				'post_type'   => 'velocity-property',
+				'post_status' => 'any',
+				'numberposts' => -1,
+				'orderby'     => 'ID',
+				'order'       => 'ASC',
+			)
+		);
+
+		$filed  = 0;
+		$kept   = 0;
+		$unread = 0;
+
+		foreach ( $deals as $deal ) {
+			$location = (string) get_post_meta( $deal->ID, 'velocity_property_location', true );
+			$state    = Velocity_Properties::state_from_location( $location );
+			$current  = wp_get_object_terms( $deal->ID, Velocity_Properties::STATE_TAXONOMY, array( 'fields' => 'names' ) );
+			$current  = is_wp_error( $current ) ? array() : $current;
+
+			if ( '' === $state ) {
+				++$unread;
+				WP_CLI::warning( sprintf( '#%d "%s": no state can be read in its location, "%s". Left as it is%s.', $deal->ID, $deal->post_title, $location, $current ? ', under ' . implode( ', ', $current ) : '' ) );
+				continue;
+			}
+
+			if ( array( $state ) === $current ) {
+				++$kept;
+				continue;
+			}
+
+			++$filed;
+			WP_CLI::log( sprintf( '  file     #%d "%s" under %s', $deal->ID, $location, $state ) );
+
+			if ( $this->execute ) {
+				Velocity_Properties::set_state( $deal->ID, $state );
+			}
+		}
+
+		WP_CLI::success(
+			sprintf(
+				'%d deals: %d %s, %d already filed, %d with no state in the location.',
+				count( $deals ),
+				$filed,
+				$this->execute ? 'filed' : 'would be filed',
+				$kept,
+				$unread
+			)
+		);
 	}
 
 	/**

@@ -484,7 +484,7 @@ One Kadence query, "Featured Deals: gallery" (Kadence > Queries), with its card,
 
 | Block | What it does here |
 |---|---|
-| Filter, three of them | A dropdown each for Property Type, Loan Purpose and Loan Program. They list the terms in use |
+| Filter, four of them | A dropdown each for Property Type, Loan Purpose, Loan Program and State. They list the terms in use. The states read from A to Z: the filter's "Order" is set to ascending, since Kadence lists the choices from Z to A by default |
 | Sort | Date, newest and oldest; amount, high to low and low to high. Drawn as the "Sort By" pill |
 | Filter Reset | "Clear" |
 | Pagination | Nine deals a page, with numbers and arrows |
@@ -518,11 +518,11 @@ The card reads the deal with dynamic content:
 
 **The program's name on a deal card links to the program's page**, on Featured Deals and on the home page, when the program has one: its "Program page" (Properties > Programs) or, when that is empty, its page under Programs Overview. A program with neither, like FlexTerm, shows as plain text. The link is underlined, since it sits in a line of text of its own color.
 
-**The Region filter is not there yet.** Region has no terms until Velocity sends the list. A filter with nothing to choose prints its label alone, so the command leaves it out while the taxonomy is empty. Once deals have regions, run `wp velocity seed-deals-page --force --execute`, or add a Filter block to the query in the editor and choose Region.
+**The State filter lists the states with a deal.** A deal is filed under the state of its Location when it is saved: "Houston, TX" files it under Texas, "Washington, DC" under Washington, D.C. A location with no state that can be read, like a city alone or a mistyped abbreviation, changes nothing: tick the state in the "States" box of the deal, or correct the Location. `wp velocity seed-deal-states --execute` files the deals that were there before, and lists the ones it could not read. The states are the taxonomy that was made as Region (`velocity-property-region`), renamed. Case studies carry the state of their deal, but their page has no State filter: the design has it on Featured Deals alone. A filter with nothing to choose prints its label alone, so `seed-deals-page` leaves State out while no deal is filed under one: run `seed-deal-states` first.
 
 **Sorting by date uses the date the deal was published**, not its "Date Funded" field. Kadence's Sort block takes one custom field, and that one is the loan amount.
 
-Kadence keeps an index of the deals for its filters. It builds it by itself the first time the page is opened after the query is created, and updates it when a deal is saved. If a filter ever shows no choices, Kadence > Queries has "Force Reindex" at the top of the list.
+Kadence keeps an index of the deals for its filters, and updates it when a deal is saved. It builds the index of a filter that is new to the site only once a visitor uses a filter, so `seed-deals-page` indexes the deals itself when it builds the page. If a filter ever shows no choices, Kadence > Queries has "Force Reindex" at the top of the list.
 
 ### The stories
 
@@ -532,7 +532,7 @@ The section has the class `vm-needs-items`: while no case study is published, th
 
 ### What is still open
 
-- **Copy and design differ on three points.** The gallery's title: the copy document says "Browse the Deals That We’ve Funded", Figma says "Browse Past Deals We’ve Funded". The page uses the copy document. The copy mentions a filter by date; Figma has Region in its place. The call to action: the copy says "within 24 hours", Figma and every other page say 48. The page says 48.
+- **Copy and design differ on three points.** The gallery's title: the copy document says "Browse the Deals That We’ve Funded", Figma says "Browse Past Deals We’ve Funded". The page uses the copy document. The copy mentions a filter by date; Figma has State in its place, and the page follows Figma. The date is in "Sort By". The call to action: the copy says "within 24 hours", Figma and every other page say 48. The page says 48.
 - **The programs on the deals are the old ones.** Fifteen deals are filed under FlexTerm and two under Fast50, so those are the choices of the Loan Program filter. None is filed under 30-Year Fixed, Flex I/O or Super Jumbo.
 - **A deal with no photo shows an empty frame.**
 - **The new address, `/featured-deals/`,** in Velocity's list of addresses, is not applied. It is now a matter of renaming the page and adding the redirect.

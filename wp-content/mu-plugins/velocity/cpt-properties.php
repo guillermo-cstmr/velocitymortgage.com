@@ -8,6 +8,12 @@ require_once VELOCITY_CMB2_PATH;
 
 class Velocity_Properties {
 
+	/**
+	 * The taxonomy of the state a deal is in. It was made as "Region" and
+	 * keeps that name inside, so nothing filed under it is lost.
+	 */
+	const STATE_TAXONOMY = 'velocity-property-region';
+
 	function __construct() {}
 
 	public static function hooks() {
@@ -19,6 +25,8 @@ class Velocity_Properties {
 		add_action( 'added_post_meta', array( __CLASS__, 'sync_loan_amount_number' ), 10, 4 );
 		add_action( 'updated_post_meta', array( __CLASS__, 'sync_loan_amount_number' ), 10, 4 );
 		add_action( 'deleted_post_meta', array( __CLASS__, 'delete_loan_amount_number' ), 10, 4 );
+		add_action( 'added_post_meta', array( __CLASS__, 'sync_state' ), 10, 4 );
+		add_action( 'updated_post_meta', array( __CLASS__, 'sync_state' ), 10, 4 );
 		add_shortcode( 'velocity_property_date', array( __CLASS__, 'date_shortcode' ) );
 		add_shortcode( 'velocity_money_dollars', array( __CLASS__, 'money_shortcode' ) );
 	}
@@ -109,8 +117,8 @@ class Velocity_Properties {
 				'show_in_rest' => true,
 			),
 			array(
-				'singular' => __( 'Region', 'velocitymu' ),
-				'plural'   => __( 'Regions', 'velocitymu' ),
+				'singular' => __( 'State', 'velocitymu' ),
+				'plural'   => __( 'States', 'velocitymu' ),
 				'slug'     => 'property-region',
 			)
 		);
@@ -217,7 +225,7 @@ class Velocity_Properties {
 			'name' => __( 'Location', 'velocitymu' ),
 			'id'   => 'velocity_property_location',
 			'type' => 'text_medium',
-			'desc' => __( 'City and state of location, ex. Phoenix, AZ', 'velocitymu' ),
+			'desc' => __( 'City and state of location, ex. Phoenix, AZ. The deal is filed under that state, for the State filter of Featured Deals.', 'velocitymu' ),
 		) );
         
         $info_meta_box->add_field( array(
@@ -357,6 +365,135 @@ class Velocity_Properties {
 		if ( isset( $keys[ $meta_key ] ) ) {
 			delete_post_meta( $post_id, $keys[ $meta_key ] );
 		}
+	}
+
+	/**
+	 * Files a deal under the state of its location, so the State filter of
+	 * Featured Deals can list it. "Houston, TX" files the deal under Texas.
+	 *
+	 * A location with no state that can be read, like a city alone, changes
+	 * nothing: the state ticked in the "States" box stays.
+	 */
+	public static function sync_state( $meta_id, $post_id, $meta_key, $meta_value ) {
+
+		if ( 'velocity_property_location' !== $meta_key || 'velocity-property' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		self::set_state( $post_id, self::state_from_location( $meta_value ) );
+	}
+
+	/**
+	 * Files a deal under a state, by its name. The state is created the first
+	 * time a deal needs it.
+	 *
+	 * @return bool Whether the deal was filed.
+	 */
+	public static function set_state( $post_id, $state ) {
+
+		if ( '' === $state || ! taxonomy_exists( self::STATE_TAXONOMY ) ) {
+			return false;
+		}
+
+		$term = term_exists( $state, self::STATE_TAXONOMY );
+
+		if ( ! $term ) {
+			$term = wp_insert_term( $state, self::STATE_TAXONOMY );
+		}
+
+		if ( ! $term || is_wp_error( $term ) ) {
+			return false;
+		}
+
+		// By ID: a name with a comma, like "Washington, D.C.", would be read
+		// as two names.
+		wp_set_object_terms( $post_id, array( (int) $term['term_id'] ), self::STATE_TAXONOMY );
+
+		return true;
+	}
+
+	/**
+	 * The state in a location as it is typed on a deal: "Houston, TX",
+	 * "Washington, DC" or "Pennsylvania".
+	 *
+	 * @return string The state's name, or nothing if none can be read.
+	 */
+	public static function state_from_location( $location ) {
+
+		$parts = explode( ',', (string) $location );
+		$last  = strtoupper( trim( str_replace( '.', '', end( $parts ) ) ) );
+
+		if ( '' === $last ) {
+			return '';
+		}
+
+		foreach ( self::states() as $code => $name ) {
+			if ( $last === $code || $last === strtoupper( $name ) ) {
+				return $name;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * The states and the District of Columbia, by postal abbreviation.
+	 */
+	public static function states() {
+
+		return array(
+			'AL' => 'Alabama',
+			'AK' => 'Alaska',
+			'AZ' => 'Arizona',
+			'AR' => 'Arkansas',
+			'CA' => 'California',
+			'CO' => 'Colorado',
+			'CT' => 'Connecticut',
+			'DE' => 'Delaware',
+			'DC' => 'Washington, D.C.',
+			'FL' => 'Florida',
+			'GA' => 'Georgia',
+			'HI' => 'Hawaii',
+			'ID' => 'Idaho',
+			'IL' => 'Illinois',
+			'IN' => 'Indiana',
+			'IA' => 'Iowa',
+			'KS' => 'Kansas',
+			'KY' => 'Kentucky',
+			'LA' => 'Louisiana',
+			'ME' => 'Maine',
+			'MD' => 'Maryland',
+			'MA' => 'Massachusetts',
+			'MI' => 'Michigan',
+			'MN' => 'Minnesota',
+			'MS' => 'Mississippi',
+			'MO' => 'Missouri',
+			'MT' => 'Montana',
+			'NE' => 'Nebraska',
+			'NV' => 'Nevada',
+			'NH' => 'New Hampshire',
+			'NJ' => 'New Jersey',
+			'NM' => 'New Mexico',
+			'NY' => 'New York',
+			'NC' => 'North Carolina',
+			'ND' => 'North Dakota',
+			'OH' => 'Ohio',
+			'OK' => 'Oklahoma',
+			'OR' => 'Oregon',
+			'PA' => 'Pennsylvania',
+			'RI' => 'Rhode Island',
+			'SC' => 'South Carolina',
+			'SD' => 'South Dakota',
+			'TN' => 'Tennessee',
+			'TX' => 'Texas',
+			'UT' => 'Utah',
+			'VT' => 'Vermont',
+			'VA' => 'Virginia',
+			'WA' => 'Washington',
+			'WV' => 'West Virginia',
+			'WI' => 'Wisconsin',
+			'WY' => 'Wyoming',
+		);
 	}
 
 	/**

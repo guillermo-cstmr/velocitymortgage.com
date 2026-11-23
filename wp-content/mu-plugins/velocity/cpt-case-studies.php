@@ -11,7 +11,7 @@ require_once VELOCITY_CMB2_PATH;
  *
  * A case study tells the story of a funded deal. When it is linked to a
  * deal in Properties, it copies the deal's program, purpose, property type,
- * AE, region, amount, date, days to close and location, and keeps them in
+ * AE, state, amount, date, days to close and location, and keeps them in
  * sync when the deal changes. Without a deal, those are entered by hand.
  *
  * The copies live on the case study itself because Kadence query cards,
@@ -135,7 +135,7 @@ class Velocity_Case_Studies {
 			'name'       => __( 'Deal', 'velocitymu' ),
 			'id'         => 'velocity_case_study_deal',
 			'type'       => 'select',
-			'desc'       => __( 'The deal in Properties this story is about. Its program, purpose, property type, AE, region, amount, date, days to close and location are copied here on save, and the fields below are locked. Choose none to enter them by hand.', 'velocitymu' ),
+			'desc'       => __( 'The deal in Properties this story is about. Its program, purpose, property type, AE, state, amount, date, days to close and location are copied here on save, and the fields below are locked. Choose none to enter them by hand.', 'velocitymu' ),
 			'options_cb' => array( __CLASS__, 'deal_options' ),
 			'after'      => $deal_id ? '<p><a href="' . esc_url( get_edit_post_link( $deal_id ) ) . '">' . esc_html__( 'Edit the deal', 'velocitymu' ) . '</a></p>' : '',
 		) );
