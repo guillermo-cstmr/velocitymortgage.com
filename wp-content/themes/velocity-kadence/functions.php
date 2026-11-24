@@ -24,6 +24,7 @@ require_once VELOCITY_KADENCE_DIR . '/inc/block-styles.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/forms.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/offices.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/carousel.php';
+require_once VELOCITY_KADENCE_DIR . '/inc/compare.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/filters.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/not-found.php';
 require_once VELOCITY_KADENCE_DIR . '/inc/legal.php';

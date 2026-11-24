@@ -1420,6 +1420,109 @@ body .vm-carousel-track > .kt-inside-inner-col {
 }
 
 /*
+ * vm-compare--pick: on a phone, a comparison table shows two of its programs
+ * at a time. assets/js/compare.js adds the two menus above it (vm-compare-bar)
+ * and marks the table (vm-compare--two) and the cells of the programs that
+ * were not picked (vm-compare-off). Here the table of the block becomes the
+ * one of the design for a phone: two columns, the name of each row above its
+ * values, 16px text. Without the script the table scrolls sideways, as above.
+ */
+.vm-compare-bar {
+	position: sticky;
+	top: var(--vm-compare-top, 0px);
+	z-index: 2;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 14px;
+	padding: 12px 0;
+	background: var(--global-palette9);
+}
+
+.vm-compare-bar[hidden] {
+	display: none;
+}
+
+.vm-compare-bar select {
+	width: 100%;
+	height: 44px;
+	padding: 0 36px 0 12px;
+	border: 1px solid var(--global-palette1);
+	border-radius: 10px;
+	background-color: var(--global-palette9);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8' fill='none' stroke='%23010739' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l6 6 6-6'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 12px center;
+	color: var(--global-palette3);
+	font-size: 14px;
+	line-height: 1.1;
+	appearance: none;
+}
+
+.vm-compare-bar select:focus-visible {
+	outline: 2px solid var(--global-palette3);
+	outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+	.kb-table-container.vm-compare.vm-compare--two {
+		overflow: visible;
+	}
+
+	.kb-table-container.vm-compare.vm-compare--two > table {
+		display: block;
+		min-width: 0;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.vm-compare--two > table > tbody {
+		display: block;
+	}
+
+	.vm-compare--two > table > tbody > tr {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 32px;
+		padding: 16px;
+	}
+
+	/* A cell's own space and width are the block's, for five columns. */
+	.kb-table-container.vm-compare--two > table > tbody > tr > :is(th, td) {
+		width: auto;
+		min-width: 0;
+		padding: 0;
+		border: 0;
+	}
+
+	/* The name of the row, above its two values. */
+	.kb-table-container.vm-compare--two > table > tbody > tr > th[scope="row"] {
+		grid-column: 1 / -1;
+		padding-bottom: 8px;
+	}
+
+	.vm-compare--two th[scope="row"] :is(p, .wp-block-kadence-advancedheading) {
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.1;
+	}
+
+	/* "Program Feature": the menus above already say what the columns are. */
+	.vm-compare--two > table > tbody > tr:first-child > th:first-child,
+	.vm-compare--two .vm-compare-off {
+		display: none;
+	}
+
+	.vm-compare--two :is(td, th[scope="col"]) :is(p, li, .wp-block-kadence-advancedheading) {
+		font-size: 16px;
+		line-height: 1.47;
+	}
+
+	.vm-compare--two th[scope="col"] :is(p, .wp-block-kadence-advancedheading) {
+		font-weight: 400;
+	}
+}
+
+/*
  * A menu item that only opens its submenu ("Open dropdown on click"). Kadence
  * prints it as a link with no address, which the browser treats as plain
  * text: a text cursor over it, and a click that can select its letters.
