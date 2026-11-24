@@ -839,7 +839,9 @@ class Velocity_Programs {
 				'We put all the numbers you want to know in one place. Compare each program here before getting the full picture on each program page.',
 				array( 'margin' => array( '0', '', '48', '' ) )
 			) . "\n\n" .
-			self::table( $post_id, 'compare-table', $head, $rows ) . "\n\n" .
+			// vm-compare--pick: on a phone the visitor picks two programs to see
+			// side by side. See assets/js/compare.js.
+			self::table( $post_id, 'compare-table', $head, $rows, array( 'class' => 'vm-compare vm-compare--pick' ) ) . "\n\n" .
 			Velocity_Home::t(
 				$post_id,
 				'compare-closing',
