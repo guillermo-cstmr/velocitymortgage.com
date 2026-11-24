@@ -1106,9 +1106,12 @@ class Velocity_Program {
 		$photo = Velocity_Seed::block(
 			'kadence/image',
 			array(
-				// A fixed shape, three wide by four tall, whatever the photo's own.
+				// A fixed shape, three wide by four tall, whatever the photo's own,
+				// where the photo sits above the text. Beside the text,
+				// vm-photo-match makes it as tall as the text, down to the button.
 				'ratio'           => 'port34',
 				'useRatio'        => true,
+				'className'       => 'vm-photo-match',
 				'imgMaxWidth'     => 473,
 				'linkDestination' => 'none',
 				'uniqueID'        => $photo_uid,
@@ -1130,7 +1133,7 @@ class Velocity_Program {
 				),
 			),
 			sprintf(
-				'<figure class="wp-block-kadence-image kb-image%1$s kb-image-is-ratio-size"><div class="kb-is-ratio-image kb-image-ratio-port34"><img src="%2$s" alt="" class="kb-img"/></div></figure>',
+				'<figure class="wp-block-kadence-image kb-image%1$s kb-image-is-ratio-size vm-photo-match"><div class="kb-is-ratio-image kb-image-ratio-port34"><img src="%2$s" alt="" class="kb-img"/></div></figure>',
 				$photo_uid,
 				esc_url( includes_url( 'images/blank.gif' ) )
 			)
