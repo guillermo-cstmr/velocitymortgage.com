@@ -89,12 +89,33 @@ class Velocity_Programs {
 			) . "\n\n" .
 			Velocity_Home::buttons( $post_id, 'hero', array( array( 'Become a Partner', home_url( '/become-a-partner/' ) ) ), 'left' );
 
-		$art = self::image(
+		// The four programs around the photo, in the order they come in.
+		$labels = array(
+			array( 'diamond', 'vm-badge--top-right', 'Super Jumbo' ),
+			array( 'gesture', 'vm-badge--upper-left', 'Flex I/O' ),
+			array( 'acute', 'vm-badge--lower-right', 'Fast50' ),
+			array( 'calendar', 'vm-badge--bottom-left', '30-Year Fixed' ),
+		);
+
+		$badges = array();
+		foreach ( $labels as $label ) {
+			$badges[] = array(
+				'icon'           => $label[0],
+				'at'             => $label[1],
+				'padding'        => array( '14', '16', '14', '16' ),
+				'mobile_padding' => array( '10', '12', '10', '12' ),
+				'lines'          => array( array( $label[2], '500' ) ),
+			);
+		}
+
+		// 527px in the design: the photo is 488, and Super Jumbo's label
+		// reaches 39px past its right side.
+		$art = Velocity_Home::photo_badges(
 			$post_id,
 			'hero-art',
-			'hero.webp',
-			527,
-			'A client receiving the keys to a property, with the four programs around them: Flex I/O, Super Jumbo, Fast50 and 30-Year Fixed'
+			self::image( $post_id, 'hero-art', 'photo-overview.webp', 488, 'A client receiving the keys to a property' ),
+			$badges,
+			527
 		);
 
 		return Velocity_Seed::row(

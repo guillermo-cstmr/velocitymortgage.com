@@ -954,6 +954,131 @@ body .vm-story-media .vm-story-stat--offices {
 }
 
 /*
+ * vm-photo-badges and vm-badge: the orange labels over a hero photo.
+ *
+ * vm-photo-badges is the Section that holds the photo and its labels. Each
+ * label is a Section with the class vm-badge: its background, border, radius,
+ * inner space and text are block settings. Here is what a block has no
+ * setting for: the label leaves the flow and sits over the photo, the icon
+ * before its first line (vm-badge--{icon}, a file in assets/images/badges),
+ * its place on the photo, and coming in after the page, one after another.
+ */
+.vm-photo-badges > .kt-inside-inner-col {
+	position: relative;
+}
+
+.vm-photo-badges .vm-badge {
+	position: absolute;
+	z-index: 1;
+	width: max-content;
+	max-width: 100%;
+	min-width: 142px;
+}
+
+.vm-badge .wp-block-kadence-advancedheading:first-child::before {
+	content: "";
+	display: inline-block;
+	width: 19px;
+	height: 18px;
+	margin-right: 6px;
+	vertical-align: -4px;
+	background: var(--global-palette1);
+	-webkit-mask: var(--vm-badge-icon) center / contain no-repeat;
+	mask: var(--vm-badge-icon) center / contain no-repeat;
+}
+
+.vm-badge--cottage {
+	--vm-badge-icon: url("assets/images/badges/cottage.svg");
+}
+
+.vm-badge--diamond {
+	--vm-badge-icon: url("assets/images/badges/diamond.svg");
+}
+
+.vm-badge--gesture {
+	--vm-badge-icon: url("assets/images/badges/gesture.svg");
+}
+
+.vm-badge--acute {
+	--vm-badge-icon: url("assets/images/badges/acute.svg");
+}
+
+.vm-badge--calendar {
+	--vm-badge-icon: url("assets/images/badges/calendar.svg");
+}
+
+/* Where on the photo, as the design places them (a 488px photo). */
+.vm-photo-badges .vm-badge--bottom {
+	bottom: 5.3%;
+	left: 50%;
+	min-width: 195px;
+	translate: -50% 0;
+}
+
+/* Programs Overview: a 527 by 487 area, the photo taking 488 of its width. */
+.vm-photo-badges:has(.vm-badge--top-right) .wp-block-kadence-image {
+	max-width: 92.6%;
+}
+
+.vm-photo-badges .vm-badge--top-right {
+	top: 8.2%;
+	right: 0;
+}
+
+.vm-photo-badges .vm-badge--upper-left {
+	top: 22.2%;
+	left: 1.3%;
+}
+
+.vm-photo-badges .vm-badge--lower-right {
+	top: 53.2%;
+	right: 12%;
+}
+
+.vm-photo-badges .vm-badge--bottom-left {
+	top: 66.3%;
+	left: 7.8%;
+}
+
+@media (max-width: 767px) {
+	/* On a phone a label is as narrow as its text: four share a small photo. */
+	.vm-photo-badges .vm-badge:not(.vm-badge--bottom) {
+		min-width: 0;
+	}
+}
+
+/* The labels come in after the photo, one after another. */
+@media (prefers-reduced-motion: no-preference) {
+	.vm-photo-badges .vm-badge {
+		animation: vm-badge-in 0.5s ease-out 1.2s both;
+	}
+
+	.vm-photo-badges .vm-badge:nth-child(3) {
+		animation-delay: 1.6s;
+	}
+
+	.vm-photo-badges .vm-badge:nth-child(4) {
+		animation-delay: 2s;
+	}
+
+	.vm-photo-badges .vm-badge:nth-child(5) {
+		animation-delay: 2.4s;
+	}
+}
+
+@keyframes vm-badge-in {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/*
  * vm-story-more: the line that reads as a link at the foot of a card whose
  * title links the whole card ("Read the Full Story"). It takes the color of
  * a link under the pointer when the card does: the line is plain text, so

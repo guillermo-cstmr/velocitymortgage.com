@@ -455,6 +455,92 @@ class Velocity_Home {
 	}
 
 	/**
+	 * A photo with the design's orange labels over it.
+	 *
+	 * The labels are blocks, not part of the photo: their text can be read
+	 * and edited, stays the same size on a phone, and they come in after the
+	 * photo. The Section has the class vm-photo-badges, which the labels are
+	 * placed against.
+	 *
+	 * @param int     $post_id   Page ID.
+	 * @param string  $key       Key for the unique IDs.
+	 * @param string  $image     The Image block.
+	 * @param array[] $badges    Labels, in the order they come in. See badge().
+	 * @param int     $max_width Width of the photo and its labels, in px.
+	 * @return string
+	 */
+	public static function photo_badges( $post_id, $key, $image, $badges, $max_width ) {
+		$inner = $image;
+
+		foreach ( $badges as $index => $badge ) {
+			$inner .= "\n\n" . self::badge( $post_id, $key . '-badge-' . $index, $badge );
+		}
+
+		return Velocity_Seed::column(
+			$post_id,
+			$key . '-badges',
+			$inner,
+			array(
+				'maxWidth'     => array( $max_width, '', '' ),
+				'maxWidthUnit' => 'px',
+				'className'    => 'vm-photo-badges',
+				'metadata'     => array( 'name' => 'Photo and labels' ),
+			)
+		);
+	}
+
+	/**
+	 * One orange label: a Section with its background, border, radius and
+	 * inner space in the block settings, and a line or two of text.
+	 *
+	 * vm-badge takes it out of the flow, over the photo, and brings it in a
+	 * moment after the page. vm-badge--{icon} draws the icon before its first
+	 * line. The class in "at" says where on the photo it sits.
+	 *
+	 * @param int    $post_id Page ID.
+	 * @param string $key     Key for the unique IDs.
+	 * @param array  $badge   icon, at, padding, mobile_padding and lines: text and weight of each.
+	 * @return string
+	 */
+	public static function badge( $post_id, $key, $badge ) {
+		$lines = array();
+		$last  = count( $badge['lines'] ) - 1;
+
+		foreach ( $badge['lines'] as $index => $line ) {
+			$lines[] = self::t(
+				$post_id,
+				$key . '-line-' . $index,
+				$line[0],
+				array(
+					'size'   => array( 14, '', '' ),
+					'lh'     => 1.1,
+					'weight' => $line[1],
+					'align'  => 'center',
+					'color'  => Velocity_Seed::color( 'palette2' ),
+					'margin' => array( '0', '', $index < $last ? '4' : '0', '' ),
+				)
+			);
+		}
+
+		return Velocity_Seed::column(
+			$post_id,
+			$key,
+			implode( "\n\n", $lines ),
+			array(
+				// Figma: fill #eed8c5, a 1px line #e59765, radius 7. Neither color is
+				// one of the named ones.
+				'background'    => '#eed8c5',
+				'borderStyle'   => self::border( '#e59765' ),
+				'borderRadius'  => array( 7, 7, 7, 7 ),
+				'padding'       => $badge['padding'],
+				'mobilePadding' => isset( $badge['mobile_padding'] ) ? $badge['mobile_padding'] : array( '', '', '', '' ),
+				'className'     => 'vm-badge vm-badge--' . $badge['icon'] . ' ' . $badge['at'],
+				'metadata'      => array( 'name' => 'Label: ' . wp_strip_all_tags( $badge['lines'][ $last ][0] ) ),
+			)
+		);
+	}
+
+	/**
 	 * Settings of an outline button on a dark background: white instead of
 	 * orange, turning solid white with navy text on hover.
 	 *
