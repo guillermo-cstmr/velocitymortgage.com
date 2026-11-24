@@ -465,6 +465,8 @@ class Velocity_Deals_Page {
 				array(
 					'weight' => '600',
 					'margin' => array( '0', '', '0', '' ),
+					// Takes the link color while the pointer is on the card.
+					'class'  => 'vm-story-more',
 				)
 			),
 			self::card( 'Case study' )

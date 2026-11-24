@@ -954,6 +954,41 @@ body .vm-story-media .vm-story-stat--offices {
 }
 
 /*
+ * vm-story-more: the line that reads as a link at the foot of a card whose
+ * title links the whole card ("Read the Full Story"). It takes the color of
+ * a link under the pointer when the card does: the line is plain text, so
+ * the block has no hover color to set.
+ */
+.vm-card-link:hover .vm-story-more,
+.vm-card-link:focus-within .vm-story-more {
+	color: var(--global-palette2);
+}
+
+/*
+ * vm-photo-match: an Image block, in a row of two columns, that is as tall
+ * as the text beside it instead of keeping its own shape. The photo is taken
+ * out of the row's height, so the text alone sets it, and then fills it.
+ * Where the columns stack, the photo keeps the shape set in the block.
+ */
+@media (min-width: 768px) {
+	.kt-inside-inner-col:has(> .vm-photo-match) {
+		position: relative;
+		height: 100%;
+	}
+
+	.wp-block-kadence-image.vm-photo-match {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+	}
+
+	.vm-photo-match .kb-is-ratio-image.kb-is-ratio-image {
+		height: 100%;
+		padding-bottom: 0;
+	}
+}
+
+/*
  * Its button stays on one line where the section is at its full width. The
  * longest, "Explore Super Jumbo", is wider than the card's text, as in the
  * design, and runs into the card's right padding.
@@ -1852,7 +1887,11 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 		flex-basis: 100%;
 	}
 
-	.vm-glance__figures {
+	/* Two figures a row, in two columns of the same width. */
+	.vm-glance .vm-glance__figures {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		flex-basis: 100%;
 		gap: 16px 32px;
 	}
 }
@@ -2110,6 +2149,12 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 .vm-article .kb-dynamic-html > .wp-block-image img {
 	display: block;
 	margin-inline: auto;
+}
+
+/* In a case study a photo is as wide as the text, whatever its own size. */
+.vm-case .kb-dynamic-html > .wp-block-image img {
+	width: 100%;
+	height: auto;
 }
 
 .vm-article figure {

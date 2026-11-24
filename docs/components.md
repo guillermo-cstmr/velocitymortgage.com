@@ -161,6 +161,8 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-card-link` | Section that is a card, with a Text (Adv) linked to a page | Stretches that link over the whole card, so the card is one link with a name |
 | `vm-card-foot` | Section, the last part of a card | Sends it to the foot of the card. With the cards of a row at one height, the rule, the figures and the link line up across the row. On the card of a case study |
 | `vm-figures` | Section set to horizontal, with one Section per figure | Each figure is as wide as its text, with the gap of the Section between them. Without it Kadence shares the whole width among them. On the featured case study |
+| `vm-story-more` | The Text (Adv) that reads as a link at the foot of a card whose title links the whole card ("Read the Full Story") | Takes the link color (Deep Rust) while the pointer or the keyboard focus is on the card. The line is plain text, so the block has no hover color to set |
+| `vm-photo-match` | An Image block with a fixed shape, in a row of two columns | Beside the text, the photo is as tall as the text instead of keeping its shape, so its foot lines up with the last thing in the text (the button). Where the columns stack, it keeps the shape set in the block. On the case study of a program page |
 | `vm-stats--spread` | Row, beside `vm-stats` | On desktop each figure of the band is as wide as its text and the space between one and the next is the same. On the band of the program pages and of Programs Overview. How far the figures stay from the sides is the row's "Max width": 1440 on the program pages, 615 for the two of Programs Overview |
 | `vm-card-grow` | Section that is a card | The card grows a little under the pointer (mouse only, and not with "reduce motion"). Used with `vm-card-link` on the cards of "Other Ways We’ll Get You to Yes", as the design notes |
 | `vm-lines-1` to `vm-lines-4` | Text (Adv) | Cuts the text after that many lines, with "..." at the end. On the titles and summaries of the News and Insights cards |
@@ -623,6 +625,8 @@ The list at `/case-studies/` and the page of a case study, at `/case-study/...`.
 **The figures are fields, not text.** They are in the box "Deal at a glance" of the case study's editor: either choose the **Deal** it is about, and its amount, date, days to close, location, program, purpose, property type and account executive are copied from the deal; or leave "Deal" empty and type them. The strip and the cards read those fields, and leave out the ones that are empty. They are always the same four, so there is nothing to add or reorder per case study.
 
 **The account executive's photo and title** come from their profile under Account Executives. A case study is tied to an AE by name (the box "AEs" in the sidebar, or the deal's). The profile is the one chosen for that AE in Properties > AEs ("AE profile") or, when none is chosen, the Account Executive of the same name. A case study with no AE shows no card and no "Deal closed by".
+
+**A photo in the text of a case study is as wide as the text**, whatever its own size, so a small photo is enlarged: upload photos at least 1,500px wide. **"Deal at a glance" on a phone** sets its figures two a row.
 
 **The program's link** is the program's "Program page" (Properties > Programs) or, when that is empty, its page under Programs Overview.
 
