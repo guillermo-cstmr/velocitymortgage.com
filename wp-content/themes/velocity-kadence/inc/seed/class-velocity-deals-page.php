@@ -33,9 +33,12 @@ class Velocity_Deals_Page {
 	const SLUG = 'featured-investment-property-loans';
 
 	/**
-	 * The filters of the gallery: label, taxonomy, text of the empty choice.
-	 * Region joins them once it has terms in use: run the command again with
-	 * --force then, or add a Filter block for it to the query in the editor.
+	 * The filters of the gallery: label, taxonomy, text of the empty choice
+	 * and, for a list that reads from A to Z, "ASC". Kadence lists the
+	 * choices from Z to A unless told otherwise (the filter's "Order").
+	 * State joins them once a deal is filed under one: run
+	 * "wp velocity seed-deal-states" first, which files each deal under the
+	 * state of its location.
 	 *
 	 * @return array[] By key.
 	 */
@@ -44,12 +47,12 @@ class Velocity_Deals_Page {
 			'type'    => array( 'Property Type', 'velocity-property-type', 'All types' ),
 			'purpose' => array( 'Loan Purpose', 'velocity-property-purpose', 'All purposes' ),
 			'program' => array( 'Loan Program', 'velocity-property-program', 'All programs' ),
-			'region'  => array( 'Region', 'velocity-property-region', 'All regions' ),
+			'state'   => array( 'State', 'velocity-property-region', 'All states', 'ASC' ),
 		);
 
-		// Region has no terms until Velocity sends the list of regions. A filter
-		// with nothing to choose prints its label alone, so it waits until then.
-		$regions = get_terms(
+		// A filter with nothing to choose prints its label alone, so State
+		// waits until a deal is filed under one.
+		$states = get_terms(
 			array(
 				'taxonomy'   => 'velocity-property-region',
 				'hide_empty' => true,
@@ -57,8 +60,8 @@ class Velocity_Deals_Page {
 				'fields'     => 'ids',
 			)
 		);
-		if ( ! $regions || is_wp_error( $regions ) ) {
-			unset( $filters['region'] );
+		if ( ! $states || is_wp_error( $states ) ) {
+			unset( $filters['state'] );
 		}
 
 		return $filters;
@@ -85,7 +88,7 @@ class Velocity_Deals_Page {
 			'type'    => 1710083716,
 			'purpose' => 451343554,
 			'program' => 3635205064,
-			'region'  => 3888497028,
+			'state'   => 3888497028,
 		);
 
 		$facets = array();
@@ -483,20 +486,23 @@ class Velocity_Deals_Page {
 		$controls = array();
 
 		foreach ( self::filters() as $key => $filter ) {
-			$controls[] = Velocity_Seed::block(
-				'kadence/query-filter',
-				array(
-					'uniqueID'    => Velocity_Seed::uid( $query_id, 'filter-' . $key ),
-					'placeholder' => $filter[2],
-					'taxonomy'    => $filter[1],
-					'label'       => $filter[0],
-					'slug'        => $key,
-					// "Hide items when result count is zero": deals and case studies
-					// share these taxonomies, and without it a filter offers the
-					// terms the other one uses.
-					'hideWhenEmptyCount' => true,
-				)
+			$attrs = array(
+				'uniqueID'    => Velocity_Seed::uid( $query_id, 'filter-' . $key ),
+				'placeholder' => $filter[2],
+				'taxonomy'    => $filter[1],
+				'label'       => $filter[0],
+				'slug'        => $key,
+				// "Hide items when result count is zero": deals and case studies
+				// share these taxonomies, and without it a filter offers the
+				// terms the other one uses.
+				'hideWhenEmptyCount' => true,
 			);
+
+			if ( isset( $filter[3] ) ) {
+				$attrs['orderDirection'] = $filter[3];
+			}
+
+			$controls[] = Velocity_Seed::block( 'kadence/query-filter', $attrs );
 		}
 
 		// Sorting by amount reads the plain number the plugin keeps beside each
