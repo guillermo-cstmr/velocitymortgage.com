@@ -101,7 +101,7 @@ class Velocity_Program {
 				'eyebrow' => 'Long-term loan',
 				'title'   => '30-Year Fixed, Built to Buy and Hold',
 				'intro'   => 'Help your client buy, refinance, or cash out on residential or commercial property, while giving them the certainty of predictable payments for 30 years.',
-				'photo'   => array( 'hero-30-year-fixed.webp', 'Two brokers talking beside an office window. Property types: 1-4 units to commercial' ),
+				'photo'   => array( 'photo-30-year-fixed.webp', 'Two brokers talking beside an office window' ),
 				'stats'   => array(
 					array( '$75K to $2MM', '1-4 unit loan amounts' ),
 					array( 'From $100K', 'Commercial loan amounts' ),
@@ -216,7 +216,7 @@ class Velocity_Program {
 				'eyebrow' => 'Long-term loan',
 				'title'   => 'Fast50, <strong>Equity Does the Talking</strong>',
 				'intro'   => 'The same term as the 30-Year Fixed, with the weight on property equity—up to 50% of the property’s value. Use it to buy, refinance, or cash out on commercial or residential property.',
-				'photo'   => array( 'hero-fast50.webp', 'A broker smiling with his arms crossed. Property types: 1-4 units to commercial' ),
+				'photo'   => array( 'photo-fast50.webp', 'A broker smiling with his arms crossed' ),
 				'stats'   => array(
 					array( '$75K to $2MM', '1-4 unit loan amounts' ),
 					array( 'From $100K', 'Commercial loan amounts' ),
@@ -308,7 +308,7 @@ class Velocity_Program {
 				'eyebrow' => 'Short-term loan',
 				'title'   => 'Flex I/O, a Bridge Loan <strong>Between Projects</strong>',
 				'intro'   => 'A two-year loan for a house or small rental, interest-only until they sell or refinance. Get your client the cash they need between projects.',
-				'photo'   => array( 'hero-flex-io.webp', 'A broker smiling as she shakes hands with a client across a desk' ),
+				'photo'   => array( 'photo-flex-io.webp', 'A broker smiling as she shakes hands with a client across a desk' ),
 				'stats'   => array(
 					array( '$75K to $2MM', '1-4 unit loan amounts' ),
 					array( 'Up to 75%', 'Maximum LTV' ),
@@ -405,7 +405,7 @@ class Velocity_Program {
 				'eyebrow' => 'Long-term loan',
 				'title'   => 'Super Jumbo, <strong>Large-Balance Financing</strong>',
 				'intro'   => 'The same term as our 30-Year Fixed, but for amounts ranging from $2MM to $10MM. Made for experienced investors funding luxury residential properties.',
-				'photo'   => array( 'hero-super-jumbo.webp', 'A broker in a suit shaking hands with a client. Property types: 1-4 units only' ),
+				'photo'   => array( 'photo-super-jumbo.webp', 'A broker in a suit shaking hands with a client' ),
 				'stats'   => array(
 					array( '$2MM to $10MM', '1-4 unit loan amounts' ),
 					array( 'Up to 65%', 'Maximum LTV' ),
@@ -534,14 +534,45 @@ class Velocity_Program {
 	/**
 	 * Hero: eyebrow, title, intro and the main button beside the photo.
 	 *
-	 * The photo comes from the design in one piece, with the orange shape
-	 * and the label over it.
+	 * The photo comes from the design in one piece, with the orange shape.
+	 * The label over it, the program's property types, is a block of its own
+	 * (see Velocity_Home::photo_badges()).
 	 *
 	 * @param int   $post_id Page ID.
 	 * @param array $program One of programs().
 	 * @return string
 	 */
 	public static function hero( $post_id, $program ) {
+		// The label reads the same figure as the band under the hero.
+		$types = '';
+		foreach ( $program['stats'] as $stat ) {
+			if ( 'Property types' === $stat[1] ) {
+				$types = $stat[0];
+			}
+		}
+
+		$photo = self::image( $post_id, 'hero-photo', $program['photo'][0], 488, $program['photo'][1] );
+
+		if ( '' !== $types ) {
+			$photo = Velocity_Home::photo_badges(
+				$post_id,
+				'hero-photo',
+				$photo,
+				array(
+					array(
+						'icon'    => 'cottage',
+						'at'      => 'vm-badge--bottom',
+						'padding' => array( '4', '23', '5', '23' ),
+						'lines'   => array(
+							array( 'Property types', '300' ),
+							array( $types, '500' ),
+						),
+					),
+				),
+				488
+			);
+		}
+
 		$text =
 			// vm-eyebrow adds the orange dot. Everything else is block settings.
 			Velocity_Home::t(
@@ -589,7 +620,7 @@ class Velocity_Program {
 				Velocity_Seed::column(
 					$post_id,
 					'hero-photo-col',
-					self::image( $post_id, 'hero-photo', $program['photo'][0], 488, $program['photo'][1] ),
+					$photo,
 					array(
 						'id'                => 2,
 						'verticalAlignment' => 'middle',
