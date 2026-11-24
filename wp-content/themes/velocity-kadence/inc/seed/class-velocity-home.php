@@ -881,7 +881,7 @@ class Velocity_Home {
 	public static function programs( $post_id ) {
 		$programs = array(
 			array( 'Long-term loan', '30-Year Fixed, Built to Buy and Hold', 'Buy, refinance, or cash out on residential or commercial property with a rate that never changes.', 'Explore 30-Year Fixed', 'program-30-year-fixed.webp', 521, 'A broker smiling during a meeting' ),
-			array( 'Long-term loan', 'Fast50, a Yes When Credit Is the Problem', 'Like the 30-Year Fixed, but with looser credit rules. Perfect for clients with plenty of equity.', 'Explore Fast50', 'program-fast50.webp', 542, 'A hand holding a set of house keys' ),
+			array( 'Long-term loan', 'Fast50, Equity Does the Talking', 'Like the 30-Year Fixed, with the weight on property equity—up to 50% of the property’s value.', 'Explore Fast50', 'program-fast50.webp', 542, 'A hand holding a set of house keys' ),
 			array( 'Short-term loan', 'Flex I/O, a Bridge Loan Between Projects', 'Interest-only payments for 24 months, with no prepay penalty. Available on 1-4 unit properties.', 'Explore Flex I/O', 'program-flex-io.webp', 542, 'Two people reviewing documents at a table' ),
 			array( 'Long-term loan', 'Super Jumbo, Large-Balance Financing', 'The 30-Year Fixed for luxury property, $2MM to $10MM, for seasoned investors in major metro areas.', 'Explore Super Jumbo', 'program-super-jumbo.webp', 542, 'Two men shaking hands across a desk' ),
 		);
@@ -1040,7 +1040,7 @@ class Velocity_Home {
 	 */
 	public static function steps( $post_id ) {
 		$steps = array(
-			array( 'Register on <br>Our Site', 'Fill out a short form and we’ll reach out within 24 to 48 hours.' ),
+			array( 'Register on <br>Our Site', 'Fill out a short form and we’ll reach out within 24 hours.' ),
 			array( 'Talk to an Account Executive', 'Your account executive walks you through our programs and what approval will take.' ),
 			array( 'Bring a Deal to Get Approved', 'One round of paperwork to your broker of record, and the approval lasts a year.' ),
 			array( 'Submit the Deal for Processing', 'You get loan terms first, then the list of documents we need to move forward.' ),
@@ -1082,7 +1082,7 @@ class Velocity_Home {
 				$post_id,
 				'steps',
 				'How Brokers Grow With Velocity',
-				'We keep it simple. Register with us in minutes and hear back within 48 hours. Then just bring your deal for approval and we’ll help you close.',
+				'We keep it simple. Register with us in minutes and hear back within 24 hours. Then just bring your deal for approval and we’ll help you close.',
 				1055
 			) . "\n\n" .
 			Velocity_Seed::row(
@@ -1421,7 +1421,7 @@ class Velocity_Home {
 	public static function cta_band( $post_id, $title, $buttons, $width = 1040, $section = array(), $copy = array() ) {
 		$copy = array_merge(
 			array(
-				'intro' => 'Register today and hear back within 48 hours. One signed package approves you for a year. Start closing the deals banks turn down.',
+				'intro' => 'Register today and hear back within 24 hours. One signed package approves you for a year. Start closing the deals banks turn down.',
 				'note'  => true,
 			),
 			$copy

@@ -532,7 +532,7 @@ The section has the class `vm-needs-items`: while no case study is published, th
 
 ### What is still open
 
-- **Copy and design differ on three points.** The gallery's title: the copy document says "Browse the Deals That We’ve Funded", Figma says "Browse Past Deals We’ve Funded". The page uses the copy document. The copy mentions a filter by date; Figma has State in its place, and the page follows Figma. The date is in "Sort By". The call to action: the copy says "within 24 hours", Figma and every other page say 48. The page says 48.
+- **Copy and design differ on three points.** The gallery's title: the copy document says "Browse the Deals That We’ve Funded", Figma says "Browse Past Deals We’ve Funded". The page uses the copy document. The copy mentions a filter by date; Figma has State in its place, and the page follows Figma. The date is in "Sort By". The call to action: the copy says "within 24 hours" and Figma says 48. Every call to action of the site says 24 since the QA round of November 2026.
 - **The programs on the deals are the old ones.** Fifteen deals are filed under FlexTerm and two under Fast50, so those are the choices of the Loan Program filter. None is filed under 30-Year Fixed, Flex I/O or Super Jumbo.
 - **A deal with no photo shows an empty frame.**
 - **The new address, `/featured-deals/`,** in Velocity's list of addresses, is not applied. It is now a matter of renaming the page and adding the redirect.

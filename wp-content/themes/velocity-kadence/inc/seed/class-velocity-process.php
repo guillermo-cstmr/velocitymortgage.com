@@ -329,7 +329,7 @@ class Velocity_Process {
 			array( 'Register on Our Site', 'Start with a quick introduction. Who you are, where you do business, and that’s it.' ),
 			array( 'Hear Back Within 24 Hours', 'After registering, our broker approval team will respond in 24 hours.' ),
 			array( 'Tell Us About Your Business', 'Your account executive learns what you do, then shows you how Velocity can help.' ),
-			array( 'Get Set Up in Our System', 'Once registered, we’ll give you log in details for the broker portal so you can start pricing and submitting loans.' ),
+			array( 'Get Set Up in Our System', 'Once registered, we’ll give you login details for the broker portal so you can start pricing and submitting loans.' ),
 			array( 'Bring Your First Deal and Get Approved', 'Your account executive sends the approval package for the broker of record to sign.' ),
 		);
 
@@ -490,7 +490,7 @@ class Velocity_Process {
 					Velocity_Home::t(
 						$post_id,
 						'approval-note',
-						'All signatures come from the broker of record — your firm’s owner or officer.',
+						'All signatures come from the broker of record—your firm’s owner or officer.',
 						array(
 							'color'  => $white,
 							'margin' => array( '0', '', '0', '' ),
