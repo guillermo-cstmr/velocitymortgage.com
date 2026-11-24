@@ -136,10 +136,7 @@ h2 strong {
 
 /*
  * vm-menu-featured: a dropdown item set apart from the rest by a rule above
- * it. At rest it reads like the other items. Under the pointer, or with the
- * keyboard's focus, it turns bold and shows an arrow on the right; its color
- * is the dropdown's hover color, set on the navigation. The navigation block
- * has no setting to style one item differently.
+ * it. The navigation block has no setting to style one item differently.
  */
 .kb-nav-sub-menu > .vm-menu-featured {
 	margin-top: 12px;
@@ -147,7 +144,13 @@ h2 strong {
 	border-top: 1px solid var(--global-palette5);
 }
 
-.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content {
+/*
+ * Every dropdown item: at rest it is plain. Under the pointer, or with the
+ * keyboard's focus, it turns bold and shows an arrow on the right; its color
+ * is the dropdown's hover color, set on the navigation. The block has a
+ * hover color for its items, but no weight and no icon.
+ */
+.kb-nav-sub-menu > li > .kb-link-wrap > .kb-nav-link-content {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -155,7 +158,7 @@ h2 strong {
 }
 
 /* The arrow keeps its place while hidden, so the label does not move. */
-.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content::after {
+.kb-nav-sub-menu > li > .kb-link-wrap > .kb-nav-link-content::after {
 	content: "";
 	flex: none;
 	width: 16px;
@@ -166,13 +169,13 @@ h2 strong {
 	opacity: 0;
 }
 
-.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:hover,
-.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:focus-visible {
+.kb-nav-sub-menu > li > .kb-link-wrap > .kb-nav-link-content:hover,
+.kb-nav-sub-menu > li > .kb-link-wrap > .kb-nav-link-content:focus-visible {
 	font-weight: 700;
 }
 
-.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:hover::after,
-.kb-nav-sub-menu > .vm-menu-featured > .kb-link-wrap > .kb-nav-link-content:focus-visible::after {
+.kb-nav-sub-menu > li > .kb-link-wrap > .kb-nav-link-content:hover::after,
+.kb-nav-sub-menu > li > .kb-link-wrap > .kb-nav-link-content:focus-visible::after {
 	opacity: 1;
 }
 
