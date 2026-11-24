@@ -554,7 +554,7 @@ class Velocity_Insights {
 					Velocity_Home::subtitle(
 						$post_id,
 						'hero',
-						'From market trends to best broker practices to what’s new at Velocity, discover the latest in investor lending to fuel your growth.',
+						'From market trends to broker best practices to what’s new at Velocity, discover the latest in investor lending to fuel your growth.',
 						array(
 							'align' => 'center',
 							'color' => $white,
