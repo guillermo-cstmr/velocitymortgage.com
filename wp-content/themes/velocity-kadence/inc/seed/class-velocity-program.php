@@ -226,7 +226,8 @@ class Velocity_Program {
 					array( '2 to 4 weeks', '1-4 unit time to close' ),
 				),
 				'why'     => array(
-					'Credit score doesn’t decide the deal. Along the way, we’ll help you earn a client for the next 30 years.',
+					// The last five words stay together, so the second line is not just "30 years."
+					'Credit score doesn’t decide the deal. Along the way, we’ll help you earn a client for&nbsp;the&nbsp;next&nbsp;30&nbsp;years.',
 					array(
 						array( 'icon-airwave.svg', 'Looser Credit Rules,<br>Same 30-Year Loan', 'A discharged bankruptcy or late mortgage payment doesn’t rule a loan out.' ),
 						array( 'icon-hourglass-disabled.svg', 'No Waiting Period to Refinance', 'Refinance a property right after purchase so that cash goes back to work.' ),
