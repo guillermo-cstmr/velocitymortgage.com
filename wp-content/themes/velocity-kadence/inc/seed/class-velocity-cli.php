@@ -82,6 +82,9 @@ class Velocity_CLI {
 		'contact-us'        => 'contact',
 		'mortgage-programs' => 'loan-programs',
 		'broker-toolkit'    => 'broker-tools',
+		// A page under another one: the whole path, old and new. Only its last
+		// part changes.
+		'loan-programs/flex-i-o' => 'loan-programs/flex-io',
 	);
 
 	/**
@@ -1728,7 +1731,7 @@ class Velocity_CLI {
 				wp_update_post(
 					array(
 						'ID'        => $page->ID,
-						'post_name' => $new,
+						'post_name' => basename( $new ),
 					)
 				);
 				$moved[ $before ] = get_permalink( $page->ID );
@@ -1792,6 +1795,26 @@ class Velocity_CLI {
 
 		if ( ! $total ) {
 			WP_CLI::log( '  none' );
+		}
+
+		// A program keeps the address of its page (Properties, Programs), and
+		// each case study a copy of it. The calculator and the cards link there.
+		global $wpdb;
+
+		foreach ( $moved as $before => $after ) {
+			foreach ( array( array( $wpdb->termmeta, 'velocity_program_page' ), array( $wpdb->postmeta, 'velocity_case_study_program_url' ) ) as $place ) {
+				$count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE meta_key = %s AND meta_value = %s', $place[0], $place[1], $before ) );
+
+				if ( ! $count ) {
+					continue;
+				}
+
+				WP_CLI::log( sprintf( '  %s  %d in the field %s', $this->execute ? 'updated ' : 'would update', $count, $place[1] ) );
+
+				if ( $this->execute ) {
+					$wpdb->update( $place[0], array( 'meta_value' => $after ), array( 'meta_key' => $place[1], 'meta_value' => $before ) );
+				}
+			}
 		}
 
 		$this->redirects();
