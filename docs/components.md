@@ -433,7 +433,7 @@ The four steps on the line are one SVG, `assets/images/process/hero-steps.svg`, 
 
 ## The program pages
 
-30-Year Fixed, Fast50, Flex I/O and Super Jumbo are four pages under Programs Overview: `/loan-programs/30-year-fixed/`, `/loan-programs/fast50/`, `/loan-programs/flex-i-o/` and `/loan-programs/jumbo/`. `wp velocity seed-program-pages` creates their first version. One builder makes the four, so they share every section and differ in copy, photo and icons. After that each page is edited on its own in the editor.
+30-Year Fixed, Fast50, Flex I/O and Super Jumbo are four pages under Programs Overview: `/loan-programs/30-year-fixed/`, `/loan-programs/fast50/`, `/loan-programs/flex-io/` and `/loan-programs/jumbo/`. `wp velocity seed-program-pages` creates their first version. One builder makes the four, so they share every section and differ in copy, photo and icons. After that each page is edited on its own in the editor.
 
 In the hero, the title and the intro are 764px wide in the design, 20px more than their column. Each has a right margin of -20px on desktop and 0 on tablet and phone, under Advanced, Margin, so a long title such as Flex I/O's stays on two lines.
 

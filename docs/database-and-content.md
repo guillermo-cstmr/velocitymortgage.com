@@ -272,7 +272,7 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 | Home | `/` | `seed-home` | Built | Built, 2026-11-18 |
 | Programs Overview | `/loan-programs/` | `seed-programs-page` | Built | The old page, moved to this address on 2026-11-19 (`rename-pages`) |
 | 30-Year Fixed | `/loan-programs/30-year-fixed/` | `seed-program-pages --page=30-year-fixed` | Built | Built, 2026-11-19 |
-| Fast50, Flex I/O, Super Jumbo | `/loan-programs/fast50/`, `/flex-i-o/`, `/jumbo/` | `seed-program-pages` | Built | Not yet. The menu and the cards of 30-Year Fixed already link to them |
+| Fast50, Flex I/O, Super Jumbo | `/loan-programs/fast50/`, `/flex-io/` (it was `/flex-i-o/` until 2026-11-25; `rename-pages` moves it and adds the redirect), `/jumbo/` | `seed-program-pages` | Built | Not yet. The menu and the cards of 30-Year Fixed already link to them |
 | Process | `/process/` | `seed-process` | Built | Not yet |
 | About Us | `/about/` | `seed-company` | Built | Built, 2026-11-19 |
 | Contact | `/contact/` | `seed-contact` | Built | The old page, moved to this address on 2026-11-19 |

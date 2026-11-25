@@ -303,7 +303,7 @@ class Velocity_Program {
 			),
 
 			'flex-io'       => array(
-				'slug'    => 'flex-i-o',
+				'slug'    => 'flex-io',
 				'term'    => 'flex-io',
 				'name'    => 'Flex I/O',
 				'eyebrow' => 'Short-term loan',
