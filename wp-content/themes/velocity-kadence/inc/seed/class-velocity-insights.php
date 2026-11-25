@@ -1,7 +1,7 @@
 <?php
 /**
  * Builds News and Insights as block content: the page that lists the
- * articles, at /insights/, and the page of an article.
+ * articles, at /news-insights/, and the page of an article.
  *
  * That address is the list of a post type (Insights, from the plugin
  * Velocity Insights), not a page. Its content is a Kadence Element,
@@ -851,7 +851,7 @@ class Velocity_Insights {
 		$back = Velocity_Home::t(
 			$post_id,
 			'top-back',
-			'<a href="' . esc_url( home_url( '/insights/' ) ) . '">&lt; News &amp; Insights</a>',
+			'<a href="' . esc_url( home_url( '/news-insights/' ) ) . '">&lt; News &amp; Insights</a>',
 			array(
 				'weight'     => '600',
 				'lh'         => 1.1,

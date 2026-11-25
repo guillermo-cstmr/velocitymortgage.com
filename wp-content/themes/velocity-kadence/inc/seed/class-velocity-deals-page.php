@@ -30,7 +30,7 @@ class Velocity_Deals_Page {
 	 * Slug of the page this class fills. It is the address the list of
 	 * deals always had.
 	 */
-	const SLUG = 'featured-investment-property-loans';
+	const SLUG = 'featured-deals';
 
 	/**
 	 * The filters of the gallery: label, taxonomy, text of the empty choice

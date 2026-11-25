@@ -312,21 +312,45 @@ class Velocity_Cases {
 			)
 		);
 
-		$bottom = Velocity_Seed::column(
+		// The same two columns as the row above, so the button starts where the
+		// title does. The figures sit under the photo, 32px in.
+		$bottom = Velocity_Seed::row(
 			$card_id,
 			'featured-bottom',
-			$figures . "\n\n" . Velocity_Insights::post_button( $card_id, 'featured', 'Read the Full Story' ),
 			array(
-				'direction'         => array( 'horizontal', '', 'vertical' ),
-				'wrapContent'       => array( 'wrap', '', '' ),
+				Velocity_Seed::column(
+					$card_id,
+					'featured-figures-col',
+					$figures,
+					array(
+						'verticalAlignment' => 'middle',
+						'padding'           => array( '0', '0', '0', '32' ),
+						'mobilePadding'     => array( '0', '0', '0', '0' ),
+						'inQueryBlock'      => true,
+						'metadata'          => array( 'name' => 'Figures' ),
+					)
+				),
+				Velocity_Seed::column(
+					$card_id,
+					'featured-button-col',
+					Velocity_Insights::post_button( $card_id, 'featured', 'Read the Full Story' ),
+					array(
+						'id'                => 2,
+						'verticalAlignment' => 'middle',
+						'inQueryBlock'      => true,
+						'metadata'          => array( 'name' => 'Button' ),
+					)
+				),
+			),
+			array(
+				'firstColumnWidth'  => 54.5,
+				'secondColumnWidth' => 45.5,
+				'columnGutter'      => 'custom',
+				'customGutter'      => array( 48, 32, 24 ),
 				'verticalAlignment' => 'middle',
-				'gutter'            => array( 32, 24, 24 ),
-				'gutterVariable'    => array( 'custom', 'custom', 'custom' ),
-				'rowGapVariable'    => array( 'custom', 'custom', 'custom' ),
-				'rowGap'            => array( 24, 24, 24 ),
-				'padding'           => array( '0', '32', '0', '32' ),
-				'mobilePadding'     => array( '0', '0', '0', '0' ),
-				'margin'            => array( '33', '', '0', '' ),
+				'tabletLayout'      => 'row',
+				'mobileLayout'      => 'row',
+				'padding'           => array( '33', '', '0', '' ),
 				'inQueryBlock'      => true,
 				'metadata'          => array( 'name' => 'Figures and button' ),
 			)

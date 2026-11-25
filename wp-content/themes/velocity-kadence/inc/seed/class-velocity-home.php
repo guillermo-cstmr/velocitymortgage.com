@@ -1373,7 +1373,7 @@ class Velocity_Home {
 			Velocity_Seed::column(
 				$post_id,
 				'deals-action',
-				self::buttons( $post_id, 'deals', array( array( 'Explore More Closed Deals', home_url( '/featured-investment-property-loans/' ) ) ) ),
+				self::buttons( $post_id, 'deals', array( array( 'Explore More Closed Deals', home_url( '/featured-deals/' ) ) ) ),
 				array(
 					'padding'  => array( '56', '', '0', '' ),
 					'metadata' => array( 'name' => 'Button' ),
@@ -1401,7 +1401,7 @@ class Velocity_Home {
 	public static function resources( $post_id ) {
 		$cards = array(
 			array( 'Broker Toolkit', 'Forms, Flyers, and Marketing Tools', 'Everything you need to fund deals, educate borrowers, and win more clients.', home_url( '/broker-tools/' ) ),
-			array( 'Blog', 'News and Insights For Brokers', 'What’s trending in investor lending, from the people who make these loans every day.', home_url( '/insights/' ) ),
+			array( 'Blog', 'News and Insights For Brokers', 'What’s trending in investor lending, from the people who make these loans every day.', home_url( '/news-insights/' ) ),
 			array( 'Case Studies', 'Case Studies and Success Stories', 'How brokers like you placed the hard deals, and what winning looked like.', home_url( '/case-studies/' ) ),
 		);
 

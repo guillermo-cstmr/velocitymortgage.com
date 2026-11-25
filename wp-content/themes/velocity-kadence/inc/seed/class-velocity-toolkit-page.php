@@ -860,8 +860,8 @@ class Velocity_Toolkit_Page {
 		$cards = array(
 			array( 'Broker Resources', 'Download our product brochure and rate sheet. Contact us for the password.', home_url( '/broker-resources/' ), true ),
 			array( 'Broker Portal', 'Your login for the Velocity portal, where you can view and work on your deals.', 'https://www.generatevelocity.com/#/SignIn', false ),
-			array( 'Featured Deals', 'See all the properties and deals that Velocity finances, program by program.', home_url( '/featured-investment-property-loans/' ), false ),
-			array( 'News and Insights', 'Expert articles to help you learn and grow, plus the latest Velocity updates.', home_url( '/insights/' ), false ),
+			array( 'Featured Deals', 'See all the properties and deals that Velocity finances, program by program.', home_url( '/featured-deals/' ), false ),
+			array( 'News and Insights', 'Expert articles to help you learn and grow, plus the latest Velocity updates.', home_url( '/news-insights/' ), false ),
 		);
 
 		$rows = array();

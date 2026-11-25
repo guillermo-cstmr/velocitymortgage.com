@@ -481,7 +481,7 @@ Each hero photo is one image exported from Figma, `assets/images/programs/hero-*
 
 ## The Featured Deals page
 
-`/featured-investment-property-loans/` is a page, built by `wp velocity seed-deals-page` and edited in the block editor after that. The address used to be the list of deals WordPress makes by itself, which cannot be edited with blocks: the must-use plugin no longer makes that list, so the page takes the address. Each deal keeps its own page, under `/property/`.
+`/featured-deals/` is a page (it was at `/featured-investment-property-loans/` until 2026-11-25; `wp velocity rename-pages` moves it and adds the redirect), built by `wp velocity seed-deals-page` and edited in the block editor after that. The address used to be the list of deals WordPress makes by itself, which cannot be edited with blocks: the must-use plugin no longer makes that list, so the page takes the address. Each deal keeps its own page, under `/property/`.
 
 ### The gallery
 
@@ -540,11 +540,10 @@ The section has the class `vm-needs-items`: while no case study is published, th
 - **Copy and design differ on three points.** The gallery's title: the copy document says "Browse the Deals That We’ve Funded", Figma says "Browse Past Deals We’ve Funded". The page uses the copy document. The copy mentions a filter by date; Figma has State in its place, and the page follows Figma. The date is in "Sort By". The call to action: the copy says "within 24 hours" and Figma says 48. Every call to action of the site says 24 since the QA round of November 2026.
 - **The programs on the deals are the old ones.** Fifteen deals are filed under FlexTerm and two under Fast50, so those are the choices of the Loan Program filter. None is filed under 30-Year Fixed, Flex I/O or Super Jumbo.
 - **A deal with no photo shows an empty frame.**
-- **The new address, `/featured-deals/`,** in Velocity's list of addresses, is not applied. It is now a matter of renaming the page and adding the redirect.
 
 ## News and Insights
 
-The list of articles, at `/insights/`. The articles are the posts under **Insights**, a post type of the plugin Velocity Insights. That address is the list of a post type, not a page, so there is no page to open in Pages: its content is a **Kadence Element**, "News and Insights" (Kadence > Elements), built by `wp velocity seed-insights` and edited with blocks after that. Its placement is "Replace archive content", for the Insights list.
+The list of articles, at `/news-insights/`. The articles are the posts under **Insights**, a post type of the plugin Velocity Insights. That address is the list of a post type, not a page, so there is no page to open in Pages: its content is a **Kadence Element**, "News and Insights" (Kadence > Elements), built by `wp velocity seed-insights` and edited with blocks after that. Its placement is "Replace archive content", for the Insights list.
 
 | Part | Block | Where it is edited |
 |---|---|---|
@@ -557,7 +556,7 @@ The list of articles, at `/insights/`. The articles are the posts under **Insigh
 
 **A card reads the article**: its featured image, its topic, its title and its excerpt. The summary is the article's **Excerpt** (in its editor, in the sidebar), cut to one line on a card and to two on the featured article. An article with no excerpt shows the start of its text there instead, which WordPress gives by itself. At the top of the article's own page only a written excerpt shows: the start of the text would repeat what comes right under it. An article with no topic shows no label. An article filed under several topics shows the first, in alphabetical order.
 
-**Choosing a topic lists its articles on the same page**, as the design notes. The address of a topic (`/insights/topic/...`) goes to the list with that topic chosen, so there is one page that lists articles and not one per topic.
+**Choosing a topic lists its articles on the same page**, as the design notes. The address of a topic (`/news-insights/topic/...`) goes to the list with that topic chosen, so there is one page that lists articles and not one per topic.
 
 **The sort reads "Newest first"**, the order the list starts in, and offers "Oldest first".
 
@@ -587,7 +586,7 @@ A second element, "News and Insights: article", with the placement "Replace sing
 
 ### What is still open
 
-- **The press releases are in two places for now.** `wp velocity copy-press` copies each one into Insights, under the topic "Press Release", and leaves Press as it is: every press release still answers at `/press/...`, and its copy at `/insights/...`. Until Velocity confirms that Press and Insights become one, a change to a press release has to be made in both. Once confirmed, what is left to do is remove Press (its posts, its menu and `mu-plugins/velocity/cpt-press.php`) and redirect `/press/` and each `/press/...` to its copy; the copy keeps the same address ending, so the redirect is one rule.
+- **The press releases are in two places for now.** `wp velocity copy-press` copies each one into Insights, under the topic "Press Release", and leaves Press as it is: every press release still answers at `/press/...`, and its copy at `/news-insights/...`. Until Velocity confirms that Press and Insights become one, a change to a press release has to be made in both. Once confirmed, what is left to do is remove Press (its posts, its menu and `mu-plugins/velocity/cpt-press.php`) and redirect `/press/` and each `/press/...` to its copy; the copy keeps the same address ending, so the redirect is one rule.
 - One press release has no copy: "Why Conventional Loans Stall Real Estate Investors..." already exists as an article waiting for review, written for Insights. The command skips it and says so.
 - The list of topics is not defined. The design says "Category".
 - The newsletter form saves the address in Gravity Forms and sends it nowhere yet.

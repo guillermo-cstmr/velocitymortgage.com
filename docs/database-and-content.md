@@ -279,9 +279,9 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 | Broker Tools | `/broker-tools/` | `seed-toolkit-page` | Built | Empty page |
 | Careers, and each job | `/careers/` | None: posts of the database | Copied from staging | The production version on the new theme. Not part of the redesign |
 | Become a Partner, Broker Login | Velocity's portal | None | Not ours to build: Figma marks them "client will develop, CSTMR to QA" | |
-| News and Insights | `/insights/` | `seed-insights` | Built, as a Kadence Element. Tested with temporary articles | Not yet: default template |
-| An article of News and Insights | `/insights/...` | `seed-insights` | Built, as a Kadence Element. Tested with temporary articles | Not yet: default template |
-| Featured Deals | `/featured-investment-property-loans/` | `seed-deals-page` | Built | The automatic list, on the default template |
+| News and Insights | `/news-insights/` | `seed-insights` | Built, as a Kadence Element. Tested with temporary articles | Not yet: default template |
+| An article of News and Insights | `/news-insights/...` | `seed-insights` | Built, as a Kadence Element. Tested with temporary articles | Not yet: default template |
+| Featured Deals | `/featured-deals/` | `seed-deals-page` | Built | The automatic list, on the default template |
 | Terms of Use | `/terms-of-use/` | `seed-legal-pages` | Built | Built, 2026-11-18 |
 | Privacy (Privacy Notice for California Residents) | `/privacy/` | `seed-legal-pages` | Built | Built, 2026-11-18. The old text about cookies is gone; a cookie banner replaces it and is not built yet |
 | 404 | Any address that does not exist | `seed-404` | Built, as a Kadence Element | Built, 2026-11-18 |
@@ -299,7 +299,6 @@ Waiting on someone else:
 - The address of "Become a Partner" in Velocity's portal.
 - The files of the two forms libraries of Broker Tools.
 - Case studies: none is published, so "A Deal That Fits" shows on no program page. The three boxes of that section are not defined in the design.
-- The new addresses for News and Insights (`/news-insights/`) and Featured Deals (`/featured-deals/`), which need a change in the plugins.
 - Copy: the open points listed under "What is still open" of each page in [components.md](components.md).
 
 ## Theme commands
@@ -318,7 +317,7 @@ All of them are dry runs unless called with `--execute`.
 | `wp velocity seed-deal-states` | Files each deal under the state of its Location, for the State filter of Featured Deals. Lists the deals whose location has no state it can read. Run it before `seed-deals-page`, which adds the filter once a deal has a state |
 | `wp velocity seed-legal-pages` | Fills Terms of Use and Privacy with the layout and the text of the design, creating a page that is missing. A page with content is left alone without `--force`: both have the old site's text, so they need it. `--page=terms` or `--page=privacy` does one page (see [components.md](components.md), "The legal pages") |
 | `wp velocity seed-404` | Creates the Kadence Element that replaces the theme's 404 content. `--force` rebuilds it (see [components.md](components.md), "The 404 page") |
-| `wp velocity seed-insights` | Creates the two Kadence Elements of News and Insights (the list at `/insights/` and the page of an article), their three Kadence queries (the featured article, the list, and "You may also like") and the two cards. Needs the plugin Velocity Insights. `--force` rebuilds them (see [components.md](components.md), "News and Insights") |
+| `wp velocity seed-insights` | Creates the two Kadence Elements of News and Insights (the list at `/news-insights/` and the page of an article), their three Kadence queries (the featured article, the list, and "You may also like") and the two cards. Needs the plugin Velocity Insights. `--force` rebuilds them (see [components.md](components.md), "News and Insights") |
 | `wp velocity copy-press` | Copies every press release (Press) into Insights, under the topic "Press Release": same title, address ending, text, summary, date, status, featured image and SEO settings. The quote of the old "Quote" box is added at the end of the text, as the pattern "Article: Press Quote". Press itself is not touched. Safe to run again: a press release that has its copy is left alone. `--force` writes the copies again |
 | `wp velocity seed-cases` | Creates the two Kadence Elements of Case Studies (the list at `/case-studies/` and the page of a case study), their three Kadence queries and the two cards, and adds the program "Multifamily & Commercial" if it is missing. `--force` rebuilds them (see [components.md](components.md), "Case Studies") |
 | `wp velocity seed-forms` | Updates the contact form to the design and adds its consent checkbox, and creates the newsletter form. Leaves them alone once done (see [components.md](components.md), "Forms") |
