@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Velocity Insights
- * Description: Adds the Insights article section (/insights/), topic filtering, a featured article, per-article SEO fields, an optional bottom-of-article CTA, and a draft → review → publish workflow for the agency (CSTMR).
+ * Description: Adds the Insights article section (/news-insights/), topic filtering, a featured article, per-article SEO fields, an optional bottom-of-article CTA, and a draft → review → publish workflow for the agency (CSTMR).
  * Version:     1.6.0
  * Author:      Velocity Mortgage
  * Requires at least: 6.2
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Final directory name. Change to 'blog' if that is what's agreed.
 // After changing it on a live site: Settings → Permalinks → Save.
-define( 'VMI_SLUG', 'insights' );
+define( 'VMI_SLUG', 'news-insights' );
 
 // Default articles per page on the index (can be changed in wp-admin → Insights → Settings).
 define( 'VMI_PER_PAGE', 9 );
@@ -58,7 +58,7 @@ define( 'VMI_SHOW_CTA', false );
 
 add_action( 'init', 'vmi_register', 5 );
 function vmi_register() {
-	// Registered before the post type so /insights/topic/... resolves before /insights/{article}/.
+	// Registered before the post type so /news-insights/topic/... resolves before /news-insights/{article}/.
 	register_taxonomy(
 		'insight_topic',
 		array( 'insight' ),
@@ -98,7 +98,7 @@ function vmi_register() {
 			),
 			'public'          => true,
 			'has_archive'     => VMI_SLUG,
-			// with_front=false keeps the URL at /insights/ even if the permalink base is e.g. /press/.
+			// with_front=false keeps the URL at /news-insights/ even if the permalink base is e.g. /press/.
 			'rewrite'         => array( 'slug' => VMI_SLUG, 'with_front' => false ),
 			'show_in_rest'    => true, // block editor
 			'menu_position'   => 5,

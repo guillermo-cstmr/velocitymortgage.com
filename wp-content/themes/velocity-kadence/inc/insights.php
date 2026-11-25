@@ -27,7 +27,7 @@
  * A press release has no author: an article under the topic "Press Release"
  * shows no "Written by" and no author box.
  *
- * The address of a topic (/insights/topic/...) goes to the list with that
+ * The address of a topic (/news-insights/topic/...) goes to the list with that
  * topic chosen, so there is one page that lists articles, not one per topic.
  *
  * See docs/components.md, "News and Insights".
@@ -145,6 +145,35 @@ function vm_insights_topic_redirect() {
 	exit;
 }
 add_action( 'template_redirect', 'vm_insights_topic_redirect' );
+
+/**
+ * The section was at /insights/ until 2026-11-25 and is at /news-insights/
+ * since. An address under the old one that is no longer found goes to the
+ * same place under the new one, so links and bookmarks keep working.
+ */
+function vm_insights_old_address_redirect() {
+	if ( ! is_404() || ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return;
+	}
+
+	$path = (string) wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ), PHP_URL_PATH );
+	$home = (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH );
+	$rest = 0 === strpos( $path, $home ) ? substr( $path, strlen( $home ) ) : ltrim( $path, '/' );
+
+	if ( 'insights' !== $rest && 0 !== strpos( $rest, 'insights/' ) ) {
+		return;
+	}
+
+	$list = get_post_type_archive_link( 'insight' );
+
+	if ( ! $list ) {
+		return;
+	}
+
+	wp_safe_redirect( trailingslashit( $list ) . ltrim( substr( $rest, strlen( 'insights' ) ), '/' ), 301 );
+	exit;
+}
+add_action( 'template_redirect', 'vm_insights_old_address_redirect', 1 );
 
 /**
  * Slug of the topic that marks a press release.

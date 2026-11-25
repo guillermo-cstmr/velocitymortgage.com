@@ -1315,7 +1315,7 @@ class Velocity_CLI {
 	}
 
 	/**
-	 * Builds News and Insights: the list of articles at /insights/.
+	 * Builds News and Insights: the list of articles at /news-insights/.
 	 *
 	 * That address is the list of a post type, not a page, so its content is
 	 * a Kadence Element, "News and Insights" (Kadence > Elements), that takes

@@ -544,7 +544,7 @@ The section has the class `vm-needs-items`: while no case study is published, th
 
 ## News and Insights
 
-The list of articles, at `/insights/`. The articles are the posts under **Insights**, a post type of the plugin Velocity Insights. That address is the list of a post type, not a page, so there is no page to open in Pages: its content is a **Kadence Element**, "News and Insights" (Kadence > Elements), built by `wp velocity seed-insights` and edited with blocks after that. Its placement is "Replace archive content", for the Insights list.
+The list of articles, at `/news-insights/`. The articles are the posts under **Insights**, a post type of the plugin Velocity Insights. That address is the list of a post type, not a page, so there is no page to open in Pages: its content is a **Kadence Element**, "News and Insights" (Kadence > Elements), built by `wp velocity seed-insights` and edited with blocks after that. Its placement is "Replace archive content", for the Insights list.
 
 | Part | Block | Where it is edited |
 |---|---|---|
@@ -557,7 +557,7 @@ The list of articles, at `/insights/`. The articles are the posts under **Insigh
 
 **A card reads the article**: its featured image, its topic, its title and its excerpt. The summary is the article's **Excerpt** (in its editor, in the sidebar), cut to one line on a card and to two on the featured article. An article with no excerpt shows the start of its text there instead, which WordPress gives by itself. At the top of the article's own page only a written excerpt shows: the start of the text would repeat what comes right under it. An article with no topic shows no label. An article filed under several topics shows the first, in alphabetical order.
 
-**Choosing a topic lists its articles on the same page**, as the design notes. The address of a topic (`/insights/topic/...`) goes to the list with that topic chosen, so there is one page that lists articles and not one per topic.
+**Choosing a topic lists its articles on the same page**, as the design notes. The address of a topic (`/news-insights/topic/...`) goes to the list with that topic chosen, so there is one page that lists articles and not one per topic.
 
 **The sort reads "Newest first"**, the order the list starts in, and offers "Oldest first".
 
@@ -587,7 +587,7 @@ A second element, "News and Insights: article", with the placement "Replace sing
 
 ### What is still open
 
-- **The press releases are in two places for now.** `wp velocity copy-press` copies each one into Insights, under the topic "Press Release", and leaves Press as it is: every press release still answers at `/press/...`, and its copy at `/insights/...`. Until Velocity confirms that Press and Insights become one, a change to a press release has to be made in both. Once confirmed, what is left to do is remove Press (its posts, its menu and `mu-plugins/velocity/cpt-press.php`) and redirect `/press/` and each `/press/...` to its copy; the copy keeps the same address ending, so the redirect is one rule.
+- **The press releases are in two places for now.** `wp velocity copy-press` copies each one into Insights, under the topic "Press Release", and leaves Press as it is: every press release still answers at `/press/...`, and its copy at `/news-insights/...`. Until Velocity confirms that Press and Insights become one, a change to a press release has to be made in both. Once confirmed, what is left to do is remove Press (its posts, its menu and `mu-plugins/velocity/cpt-press.php`) and redirect `/press/` and each `/press/...` to its copy; the copy keeps the same address ending, so the redirect is one rule.
 - One press release has no copy: "Why Conventional Loans Stall Real Estate Investors..." already exists as an article waiting for review, written for Insights. The command skips it and says so.
 - The list of topics is not defined. The design says "Category".
 - The newsletter form saves the address in Gravity Forms and sends it nowhere yet.
