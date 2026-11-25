@@ -296,10 +296,10 @@ class Velocity_Company {
 	public static function values( $post_id ) {
 		$cards = array(
 			array( 'icon-person.svg', 'In Your Corner', 'In every deal and every conversation, you get a real person who’s got your back.' ),
+			array( 'icon-check.svg', 'Find the Win', 'When other lenders say no, we keep working to find a path to “yes.”' ),
 			array( 'icon-forum.svg', 'Straight Talk', 'We tell you up front what we can do and what we can’t, so nothing comes as a surprise.' ),
 			array( 'icon-long-term.svg', 'Here Long Term', 'Holding our own loans lets us offer 30-year terms so your clients can keep planning.' ),
 			array( 'icon-book.svg', 'Education First', 'We make sure you understand how each loan works so you can place them successfully.' ),
-			array( 'icon-check.svg', 'Find the Win', 'When other lenders say no, we keep working to find a path to “yes.”' ),
 		);
 
 		$columns = array();

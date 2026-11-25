@@ -89,7 +89,8 @@ class Velocity_Seed {
 		return array(
 			array( 'Privacy Policy', '/privacy/' ),
 			array( 'Terms of Service', '/terms-of-use/' ),
-			array( 'Forms Library', '#' ),
+			// The forms are a section of Broker Tools.
+			array( 'Forms Library', '/broker-tools/#forms' ),
 		);
 	}
 
@@ -966,6 +967,8 @@ class Velocity_Seed {
 				'iconColor'      => 'theme-palette1',
 				'iconColorValue' => 'var(--global-palette1)',
 				'className'      => 'is-style-logos-only',
+				// The networks open in a new tab.
+				'openInNewTab'   => true,
 				'layout'         => array(
 					'type'           => 'flex',
 					'justifyContent' => 'right',

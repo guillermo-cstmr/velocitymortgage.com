@@ -77,6 +77,10 @@ class Velocity_Programs {
 				'Four Programs, <br><strong>One Perfect Fit</strong>',
 				array(
 					'tag'    => 'h1',
+					// Looser than the 1.1 of every other h1: here the "g" of
+					// "Programs" sits right above the "f" of "Perfect", in bold,
+					// and at 1.1 the two letters touch.
+					'lh'     => 1.2,
 					'margin' => array( '0', '', '32', '' ),
 					'class'  => 'is-style-vm-reveal-lines',
 				)
@@ -364,6 +368,8 @@ class Velocity_Programs {
 	public static function programs( $post_id ) {
 		$close    = 'From submission to funding';
 		$links    = self::links();
+		// Super Jumbo comes before Flex I/O here: the order of the approved copy.
+		$links    = array( $links[0], $links[1], $links[3], $links[2] );
 		$programs = array(
 			array(
 				'Long-term loan',
@@ -375,7 +381,7 @@ class Velocity_Programs {
 				array(
 					array( 'Loan amounts', '$75K to $2MM', '1-4 units; commercial from $100K' ),
 					array( 'LTV limit', 'Up to 75%', '70% on office, retail, and similar' ),
-					array( 'Time to close', 'Two weeks to 45 days', $close ),
+					array( 'Time to close', '2 weeks to 45 days', $close ),
 				),
 			),
 			array(
@@ -388,21 +394,7 @@ class Velocity_Programs {
 				array(
 					array( 'Loan amounts', 'Up to $2MM', '1-4 units; commercial from $100K' ),
 					array( 'LTV limit', 'Up to 50%', 'On every property type' ),
-					array( 'Time to close', 'Two to six weeks', $close ),
-				),
-			),
-			array(
-				// The design repeats "Long-term loan" here. Flex I/O is the short-term one.
-				'Short-term loan',
-				'Flex I/O, a Bridge Loan Between Projects',
-				'Interest-only payments for 24 months, with no prepay penalty. Available on 1-4 unit properties.',
-				'Explore Flex I/O',
-				'program-flex-io.webp',
-				'A brick apartment building with balconies',
-				array(
-					array( 'Loan amounts', '$75K to $2MM', '1-4 units only' ),
-					array( 'LTV limit', 'Up to 75%', '70% above $1MM' ),
-					array( 'Time to close', 'Two weeks to 45 days', $close ),
+					array( 'Time to close', '2 weeks to 45 days', $close ),
 				),
 			),
 			array(
@@ -415,7 +407,22 @@ class Velocity_Programs {
 				array(
 					array( 'Loan amounts', '$2MM to $10MM', '1-4 units only' ),
 					array( 'LTV limit', 'Up to 65%', 'Same on a purchase or refinance' ),
-					array( 'Time to close', 'Two weeks to 45 days', $close ),
+					array( 'Time to close', '2 to 4 weeks', $close ),
+				),
+			),
+			array(
+				// The design repeats "Long-term loan" here. Flex I/O is the short-term one.
+				// It comes last, after Super Jumbo: the order of the approved copy.
+				'Short-term loan',
+				'Flex I/O, a Bridge Loan Between Projects',
+				'Interest-only payments for 24 months, with no prepay penalty. Available on 1-4 unit properties.',
+				'Explore Flex I/O',
+				'program-flex-io.webp',
+				'A brick apartment building with balconies',
+				array(
+					array( 'Loan amounts', '$75K to $2MM', '1-4 units only' ),
+					array( 'LTV limit', 'Up to 75%', '70% above $1MM' ),
+					array( 'Time to close', '2 to 4 weeks', $close ),
 				),
 			),
 		);

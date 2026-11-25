@@ -105,7 +105,7 @@ class Velocity_Program {
 				'stats'   => array(
 					array( '$75K to $2MM', '1-4 unit loan amounts' ),
 					array( 'From $100K', 'Commercial loan amounts' ),
-					array( 'Up to 75%', 'Maximum LTV' ),
+					array( 'Up to 75% on 1-4 units', 'Maximum LTV' ),
 					array( '1-4 units to commercial', 'Property types' ),
 					array( '2 wks to 45 days', 'Time to close' ),
 				),
@@ -250,7 +250,7 @@ class Velocity_Program {
 						array( 'Paying It Off Early', array( 'A fee that steps down over five years, 5% of the balance in year one to 1% in year five, then none' ) ),
 						array( 'Foreign Borrowers', array( '50% LTV', $itin ) ),
 						array( 'Where Velocity Lends', array( 'Nationwide' ) ),
-						array( 'Time to Close', array( 'Two to four weeks' ), array( '30 to 45 days' ) ),
+						array( 'Time to Close', array( '2 to 4 weeks' ), array( '30 to 45 days' ) ),
 					),
 				),
 				'clients' => array(
@@ -287,7 +287,7 @@ class Velocity_Program {
 					array(
 						'How fast does Fast50 close?',
 						array(
-							'It takes two to six weeks from a complete submission (our other programs take two weeks to 45 days.) In addition to speed, Fast50 also delivers certainty. Once your documents are in and the appraisal comes back, your file starts moving.',
+							'It takes two weeks to 45 days from a complete submission. In addition to speed, Fast50 also delivers certainty. Once your documents are in and the appraisal comes back, your file starts moving.',
 							'Remember to ask your account executive for current timing on a specific deal, since property type and location can change the date. As with every program, turning in the documents while the appraisal is out is the fastest path to close.',
 						),
 					),
@@ -315,7 +315,7 @@ class Velocity_Program {
 					array( '24 months', 'Interest-only term' ),
 					array( '675+', 'Credit minimum' ),
 					array( '1-4 units only', 'Property types' ),
-					array( '2 wks to 45 days', 'Time to close' ),
+					array( '2 to 4 weeks', 'Time to close' ),
 				),
 				'others'  => array( '30-year-fixed', 'super-jumbo', 'fast50' ),
 				'why'     => array(
@@ -364,7 +364,7 @@ class Velocity_Program {
 						'How long is the Flex I/O term?',
 						array(
 							'Two years (24 months), or until the owner sells or refinances. Flex I/O acts just like a bridge loan in real estate, except it’s meant for investment properties. Payments are interest-only for the whole term.',
-							'It takes between two weeks and 45 days for a Flex I/O to close, after which the 24 months of its term begin. If your client wants to keep their property after this term is up, they can transition smoothly into our 30-Year Fixed loan.',
+							'It takes two to four weeks for a Flex I/O to close, after which the 24 months of its term begin. If your client wants to keep their property after this term is up, they can transition smoothly into our 30-Year Fixed loan.',
 						),
 					),
 					array(
@@ -392,7 +392,7 @@ class Velocity_Program {
 						'What property types does Flex I/O cover?',
 						array(
 							'Flex I/O is a residential bridge loan, so it covers 1-4 unit properties (meaning single-family homes), condos, and 2-4 unit buildings held as rentals or listed for sale. Multifamily with five or more units and commercial property belong on the 30-Year Fixed or Fast50 instead.',
-							'Loan amounts run from $75,000 to $2 million, and the loan closes in two weeks to 45 days from a complete submission. First-time investors can borrow up to 65% of value, and foreign investors are eligible at 65% as well, with no U.S. credit history required.',
+							'Loan amounts run from $75,000 to $2 million, and the loan closes in two to four weeks from a complete submission. First-time investors can borrow up to 65% of value, and foreign investors are eligible at 65% as well, with no U.S. credit history required.',
 						),
 					),
 				),
@@ -412,7 +412,7 @@ class Velocity_Program {
 					array( '600', 'Minimum credit score' ),
 					array( '1-4 units only', 'Property types' ),
 					array( 'Major metros', 'Where Velocity lends' ),
-					array( '2 wks to 45 days', 'Time to close' ),
+					array( '2 to 4 weeks', 'Time to close' ),
 				),
 				'why'     => array(
 					'As we judge based on the property, we make it possible for you to offer clients long-term certainty on loan amounts other lenders won’t touch.',
@@ -446,7 +446,7 @@ class Velocity_Program {
 						),
 						array( 'Foreign Borrowers', array( 'A foreign national (lives in the U.S. part of the year, has U.S. credit) up to 65% LTV' ) ),
 						array( 'Where Velocity Lends', array( 'Major metropolitan areas only' ) ),
-						array( 'Time to Close', array( 'Two weeks to 45 days' ) ),
+						array( 'Time to Close', array( '2 to 4 weeks' ) ),
 					),
 				),
 				'clients' => array(

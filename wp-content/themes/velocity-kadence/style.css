@@ -775,6 +775,36 @@ body .gform_wrapper.gravity-theme form.vm-form-inline .gfield input[type="email"
 	min-height: 54px;
 }
 
+/*
+ * A one-line form that was sent with a mistake. The message of the field
+ * goes under the field, in the color of the text around it (the Alert red
+ * cannot be read on the dark panel; the field keeps its red border). The
+ * box Gravity Forms prints above the form repeats that one message, so it
+ * is kept for screen readers only: with it the button no longer lined up
+ * with the field.
+ */
+body .gform_wrapper.gravity-theme form.vm-form-inline .gfield {
+	display: flex;
+	flex-direction: column;
+}
+
+body .gform_wrapper.gravity-theme form.vm-form-inline .gfield .validation_message {
+	order: 3;
+	color: inherit;
+}
+
+body .gform_wrapper.gravity-theme:has(form.vm-form-inline) .gform_validation_errors {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
 .vm-form .vm-form__note {
 	margin: 12px 0 0;
 	font-size: 12px;
@@ -1378,6 +1408,17 @@ body .vm-carousel-track > .kt-inside-inner-col {
 /* Every card is as tall as the tallest: the card's box fills its place in the line. */
 .vm-carousel-track > .kt-inside-inner-col > .wp-block-kadence-column > .kt-inside-inner-col {
 	flex: 1;
+}
+
+/*
+ * On a computer two cards fill the list exactly, so none is cut at its edge.
+ * 23px is the space the block leaves between cards.
+ */
+@media (min-width: 1025px) {
+	.wp-block-kadence-column.vm-carousel-track.kb-section-dir-horizontal > .kt-inside-inner-col > .wp-block-kadence-column.wp-block-kadence-column {
+		flex: 0 0 calc((100% - 23px) / 2);
+		max-width: none;
+	}
 }
 
 .vm-carousel--below .vm-carousel__arrows {
@@ -2003,15 +2044,41 @@ body .wp-block-kadence-query .wp-block-kadence-query-filter-reset .kb-button {
 }
 
 /*
+ * A paragraph does not end with one word alone on its last line: the browser
+ * moves a word or two down to keep it company. Browsers that do not know the
+ * rule break the text as before.
+ */
+p {
+	text-wrap: pretty;
+}
+
+/*
  * FAQs: the plus and minus of the Kadence accordion. The block has no setting
  * for their size; the design draws them 14px wide, Kadence 20px.
+ *
+ * Both lines sit on whole pixels. On half a pixel a browser draws a 3px line
+ * as two solid pixels and two pale ones, and the sign looks thinner. The
+ * upright line is the first one turned, so it starts half a pixel earlier.
  */
 .kt-accodion-icon-style-basic .kt-blocks-accordion-icon-trigger::before,
 .kt-accodion-icon-style-basic .kt-blocks-accordion-icon-trigger::after {
 	width: 14px;
 	height: 3px;
 	left: 5px;
-	top: 10.5px;
+	top: 10px;
+}
+
+.kt-accodion-icon-style-basic .kt-blocks-accordion-header:not(.kt-accordion-panel-active) .kt-blocks-accordion-icon-trigger::before {
+	left: 4.5px;
+}
+
+/*
+ * A question is a whole number of pixels tall, so every sign of the list
+ * starts on a whole pixel and all of them are drawn the same. The block sets
+ * the line height as a ratio (1.31), which gives 26.2px.
+ */
+.kt-blocks-accordion-header .kt-blocks-accordion-title {
+	line-height: round(1.31em, 1px);
 }
 
 /*

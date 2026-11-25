@@ -221,7 +221,7 @@ class Velocity_Process {
 				$post_id,
 				'people',
 				'The People You’ll Work With',
-				'At Velocity we lend out our own money as a direct portfolio lender. That means our experienced professionals only work to answer your needs.',
+				'At Velocity, we lend out our own money as a direct portfolio lender. That means our experienced professionals only work to answer your needs.',
 				854
 			) . "\n\n" . $grid,
 			'The people you will work with',
@@ -330,7 +330,6 @@ class Velocity_Process {
 			array( 'Hear Back Within 24 Hours', 'After registering, our broker approval team will respond in 24 hours.' ),
 			array( 'Tell Us About Your Business', 'Your account executive learns what you do, then shows you how Velocity can help.' ),
 			array( 'Get Set Up in Our System', 'Once registered, we’ll give you login details for the broker portal so you can start pricing and submitting loans.' ),
-			array( 'Bring Your First Deal and Get Approved', 'Your account executive sends the approval package for the broker of record to sign.' ),
 		);
 
 		return Velocity_Home::section(
@@ -339,10 +338,10 @@ class Velocity_Process {
 			self::header(
 				$post_id,
 				'partner',
-				'Partner With Us in Five Steps',
+				'Partner With Us in Four Steps',
 				'Just a short form, a single conversation, and some paperwork if you already have a deal. That’s how simple it is.'
 			) . "\n\n" . self::steps( $post_id, 'partner-step', $steps, Velocity_Seed::color( 'palette2' ) ),
-			'Partner with us in five steps',
+			'Partner with us in four steps',
 			array(
 				'padding'       => array( '72', '', '48', '' ),
 				'mobilePadding' => array( '48', '', '32', '' ),
@@ -484,7 +483,7 @@ class Velocity_Process {
 						$post_id,
 						'approval',
 						'A Closer Look at Our Approval Package',
-						'This is step five of our partnership process, broken down for you to see. Once the broker of record signs, your approval lasts a whole year.',
+						'This is step four of our partnership process, broken down for you to see. Once the broker of record signs, your approval lasts a whole year.',
 						$white
 					) . "\n\n" . $lists . "\n\n" .
 					Velocity_Home::t(
