@@ -319,6 +319,21 @@ body .vm-toolkit-inline .gform_wrapper.gravity-theme .gform_footer .gform_button
 	text-align: center;
 }
 
+/* On the page, Company and Phone share a line, as in the design. The fields
+   keep their order, so the Tab key follows what is seen. */
+@media (min-width: 641px) {
+	body .vm-toolkit-inline .gform_wrapper.gravity-theme .gfield.gfield--type-text,
+	body .vm-toolkit-inline .gform_wrapper.gravity-theme .gfield.gfield--type-phone {
+		grid-column: span 6;
+	}
+}
+
+/* Every field of this form is needed, so the design does not mark them one by
+   one. The fields themselves still say so to a screen reader. */
+body .vm-toolkit-fields .gform_wrapper.gravity-theme .gfield_required {
+	display: none;
+}
+
 .vm-toolkit-wl:not(:has(a[href*="action=velocity_toolkit"])) {
 	display: none;
 }
