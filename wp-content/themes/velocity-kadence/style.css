@@ -2056,20 +2056,17 @@ p {
  * FAQs: the plus and minus of the Kadence accordion. The block has no setting
  * for their size; the design draws them 14px wide, Kadence 20px.
  *
- * Both lines sit on whole pixels. On half a pixel a browser draws a 3px line
- * as two solid pixels and two pale ones, and the sign looks thinner. The
- * upright line is the first one turned, so it starts half a pixel earlier.
+ * Both lines are 15 by 3 and share one middle, on whole pixels: the upright
+ * line is the same box turned around its center. With an even length (14) a
+ * 3px line cannot be centered on whole pixels, so one of the two was drawn
+ * half a pixel to the side and the sign looked off center or thinner.
  */
 .kt-accodion-icon-style-basic .kt-blocks-accordion-icon-trigger::before,
 .kt-accodion-icon-style-basic .kt-blocks-accordion-icon-trigger::after {
-	width: 14px;
+	width: 15px;
 	height: 3px;
-	left: 5px;
+	left: 4px;
 	top: 10px;
-}
-
-.kt-accodion-icon-style-basic .kt-blocks-accordion-header:not(.kt-accordion-panel-active) .kt-blocks-accordion-icon-trigger::before {
-	left: 4.5px;
 }
 
 /*
