@@ -1978,6 +1978,7 @@ class Velocity_CLI {
 					'max_ltv'       => '75%',
 					'term'          => 'Fixed for 30 years',
 					'time_to_close' => '2 weeks to 45 days',
+					'page'          => Velocity_Program::url( '30-year-fixed' ),
 				),
 			),
 			'fast50'           => array(
@@ -1987,7 +1988,8 @@ class Velocity_CLI {
 					'loan_amounts'  => 'Up to $2MM',
 					'max_ltv'       => '50%',
 					'term'          => 'Fixed for 30 years',
-					'time_to_close' => '2 to 6 weeks',
+					'time_to_close' => '2 weeks to 45 days',
+					'page'          => Velocity_Program::url( 'fast50' ),
 				),
 			),
 			'super-jumbo'      => array(
@@ -1997,7 +1999,8 @@ class Velocity_CLI {
 					'loan_amounts'  => '$2MM – $10MM',
 					'max_ltv'       => '65%',
 					'term'          => 'Fixed for 30 years',
-					'time_to_close' => '2 weeks to 45 days',
+					'time_to_close' => '2 to 4 weeks',
+					'page'          => Velocity_Program::url( 'super-jumbo' ),
 				),
 			),
 			'flex-io'          => array(
@@ -2007,7 +2010,8 @@ class Velocity_CLI {
 					'loan_amounts'  => '$75K – $2MM',
 					'max_ltv'       => '75%',
 					'term'          => '24 months, interest only',
-					'time_to_close' => '2 weeks to 45 days',
+					'time_to_close' => '2 to 4 weeks',
+					'page'          => Velocity_Program::url( 'flex-io' ),
 				),
 			),
 			'foreign-investor' => array(

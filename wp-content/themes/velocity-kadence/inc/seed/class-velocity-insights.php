@@ -318,7 +318,6 @@ class Velocity_Insights {
 				'',
 				array(
 					'tag'     => 'h2',
-					'class'   => 'vm-lines-4',
 					'size'    => array( 46, 36, 30 ),
 					'lh'      => 1.1,
 					'color'   => Velocity_Seed::color( 'palette3' ),

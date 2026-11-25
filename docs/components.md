@@ -167,7 +167,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-badge`, with `vm-badge--{icon}` and a place | A Section inside `vm-photo-badges`: one orange label. Its background, border, radius, inner space and text are block settings | Takes the label out of the flow, over the photo, and brings it in a moment after the page (1.2 seconds, then one every 0.4), not for visitors who ask for less motion. `vm-badge--cottage`, `--diamond`, `--gesture`, `--acute` or `--calendar` draws the icon before its first line, from `assets/images/badges`. The place is `vm-badge--bottom` (program pages) or `vm-badge--top-right`, `--upper-left`, `--lower-right`, `--bottom-left` (Programs Overview). The labels come in in the order they have in the Section |
 | `vm-stats--spread` | Row, beside `vm-stats` | On desktop each figure of the band is as wide as its text and the space between one and the next is the same. On the band of the program pages and of Programs Overview. How far the figures stay from the sides is the row's "Max width": 1440 on the program pages, 615 for the two of Programs Overview |
 | `vm-card-grow` | Section that is a card | The card grows a little under the pointer (mouse only, and not with "reduce motion"). Used with `vm-card-link` on the cards of "Other Ways We’ll Get You to Yes", as the design notes |
-| `vm-lines-1` to `vm-lines-4` | Text (Adv) | Cuts the text after that many lines, with "..." at the end. On the titles and summaries of the News and Insights cards |
+| `vm-lines-1` to `vm-lines-4` | Text (Adv) | Cuts the text after that many lines, with "..." at the end. On the titles and summaries of the News and Insights cards. The title of the featured article is not cut: it is shown whole |
 | `vm-article` | Section that holds the Post Content block of an article | The look of what an author writes: headings, lists, images, quotes and tables. See "News and Insights" |
 | `vm-takeaways` | Group (core), in an article | The "Key Takeaways" box, wider than the text. Comes with the pattern of that name |
 | `vm-question` | Heading 3 (core), in an article | A question of the "Frequently Asked Questions": a heading for the outline, drawn as a line of bold text. Comes with the pattern of that name |
@@ -175,7 +175,7 @@ The exceptions. Each one exists because no block setting can do the job. To use 
 | `vm-key-results` | Group (core), in a case study | The "Key Results" band, the full width of the screen. Comes with the pattern "Case Study: Key Results" |
 | `vm-people` | Row around a Kadence query | Centers a last line of cards that is not full. See "The About Us page" |
 | `vm-carousel` | Section around a Kadence query, or around a `vm-carousel-track` | Makes the list scroll sideways, with arrows when it does not fit. Kadence's query has no carousel |
-| `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways and keep their width. See "The Process page" |
+| `vm-carousel-track` | Horizontal Section of cards inside a `vm-carousel` | The cards scroll sideways. On a computer two cards fill the list exactly, so none is cut at its edge; on smaller screens they keep their width. See "The Process page" |
 | `vm-compare` | Kadence Table | Keeps the table at a readable width on small screens, scrolling sideways. Kadence has no minimum width setting. Every cell starts at the top of its row |
 | `vm-compare--pick` | A Table that already has `vm-compare`, with one column per program | On a phone the table shows two programs at a time: two menus above it choose which, and each row has its name above its two values. Choosing a program that is in the other menu swaps the two. The menus stay in view while the table scrolls, under the header when it comes back. `assets/js/compare.js` adds the menus; without it, and from 768px up, the table shows every column and scrolls sideways. On Programs Overview |
 | `vm-terms` | Kadence Table | The terms table of a program page: every cell starts at the top of its row. Kadence has no setting for it |
@@ -234,7 +234,7 @@ The card, the heading and the spacing around a form are normal blocks, edited in
 | Newsletter | Forms, "Newsletter Signup" | Stores each sign-up as an entry and sends no email. The newsletter service is connected to this form once it is chosen. The consent line under the field is printed by the shortcode |
 | Broker Toolkit unlock | Forms, "Broker Toolkit Item Request" (form 14) | Opens by itself from the toolkit buttons. See [database-and-content.md](database-and-content.md), "Broker Toolkit" |
 
-The look of every Gravity Form is in the theme's `style.css`, "Forms": fields, labels, checkbox, errors and the submit button, which follows the primary button and gets its arrow from `inc/forms.php`. A form with the CSS class `vm-form-inline`, set in its Gravity Forms settings, puts the field and the button on one line.
+A one-line form (`vm-form-inline`, the newsletter) sent with a mistake shows the message under its field, in the color of the text around it, and keeps the summary box Gravity Forms prints above the form for screen readers only. The look of every Gravity Form is in the theme's `style.css`, "Forms": fields, labels, checkbox, errors and the submit button, which follows the primary button and gets its arrow from `inc/forms.php`. A form with the CSS class `vm-form-inline`, set in its Gravity Forms settings, puts the field and the button on one line.
 
 `wp velocity seed-forms` prepares both forms on a new environment. See [database-and-content.md](database-and-content.md), "Theme commands".
 
@@ -404,7 +404,7 @@ Each step is a horizontal Section with a rule above it, set as its top border. I
 - **The number**: 48 by 48, with its background, border and radius in the block settings, and the number as a Text (Adv).
 - **Title and text**: set to grow, with a 12px gap between its two texts.
 
-To add a step, duplicate one and change its number and texts. The rules are Deep Rust in "Partner With Us in Five Steps" and gray in "How Your First Deal Moves Forward"; that is the border color of each step.
+To add a step, duplicate one and change its number and texts. The rules are Deep Rust in "Partner With Us in Four Steps" and gray in "How Your First Deal Moves Forward"; that is the border color of each step.
 
 ### Document lists
 

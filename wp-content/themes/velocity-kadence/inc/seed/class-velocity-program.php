@@ -105,7 +105,7 @@ class Velocity_Program {
 				'stats'   => array(
 					array( '$75K to $2MM', '1-4 unit loan amounts' ),
 					array( 'From $100K', 'Commercial loan amounts' ),
-					array( 'Up to 75%', 'Maximum LTV' ),
+					array( 'Up to 75% on 1-4 units', 'Maximum LTV' ),
 					array( '1-4 units to commercial', 'Property types' ),
 					array( '2 wks to 45 days', 'Time to close' ),
 				),
@@ -250,7 +250,7 @@ class Velocity_Program {
 						array( 'Paying It Off Early', array( 'A fee that steps down over five years, 5% of the balance in year one to 1% in year five, then none' ) ),
 						array( 'Foreign Borrowers', array( '50% LTV', $itin ) ),
 						array( 'Where Velocity Lends', array( 'Nationwide' ) ),
-						array( 'Time to Close', array( 'Two to four weeks' ), array( '30 to 45 days' ) ),
+						array( 'Time to Close', array( '2 to 4 weeks' ), array( '30 to 45 days' ) ),
 					),
 				),
 				'clients' => array(
@@ -315,7 +315,7 @@ class Velocity_Program {
 					array( '24 months', 'Interest-only term' ),
 					array( '675+', 'Credit minimum' ),
 					array( '1-4 units only', 'Property types' ),
-					array( '2 wks to 45 days', 'Time to close' ),
+					array( '2 to 4 weeks', 'Time to close' ),
 				),
 				'others'  => array( '30-year-fixed', 'super-jumbo', 'fast50' ),
 				'why'     => array(
@@ -412,7 +412,7 @@ class Velocity_Program {
 					array( '600', 'Minimum credit score' ),
 					array( '1-4 units only', 'Property types' ),
 					array( 'Major metros', 'Where Velocity lends' ),
-					array( '2 wks to 45 days', 'Time to close' ),
+					array( '2 to 4 weeks', 'Time to close' ),
 				),
 				'why'     => array(
 					'As we judge based on the property, we make it possible for you to offer clients long-term certainty on loan amounts other lenders won’t touch.',
@@ -446,7 +446,7 @@ class Velocity_Program {
 						),
 						array( 'Foreign Borrowers', array( 'A foreign national (lives in the U.S. part of the year, has U.S. credit) up to 65% LTV' ) ),
 						array( 'Where Velocity Lends', array( 'Major metropolitan areas only' ) ),
-						array( 'Time to Close', array( 'Two weeks to 45 days' ) ),
+						array( 'Time to Close', array( '2 to 4 weeks' ) ),
 					),
 				),
 				'clients' => array(

@@ -288,7 +288,7 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 | A deal | `/property/...` | None yet | Not built: default template | |
 | Case Studies, and a case study | `/case-studies/`, `/case-study/...` | `seed-cases` | Built, as two Kadence Elements. Tested with eleven test case studies | Not yet: default template |
 | Contact thank-you | `/contact/thank-you/` | None yet | Does not exist | |
-| Forms Library (footer) | | None yet | Does not exist. Its link points to "#". "Licenses" was taken out of the footer on 2026-11-20 | |
+| Forms Library (footer) | `/broker-tools/#forms` | None | The forms are a section of Broker Tools. The footer link points there since 2026-11-25 | |
 
 Branches, each on top of the one before, none pushed: `feature/contact-page`, `feature/company-page`, `feature/process-page`, `feature/program-pages`.
 
@@ -311,7 +311,7 @@ All of them are dry runs unless called with `--execute`.
 | `wp velocity cleanup` | Removes the old Kadence and Beaver Builder front end. Keeps all content, the header, menus and footer made by `seed-chrome`, and the careers pages (see "Careers") |
 | `wp velocity seed-chrome` | Creates the header, the menus and the footer. `--menus` limits it to the menus |
 | `wp velocity seed-home` | Fills the home page, if it is empty, and creates the Kadence query of its deal cards. `--force` rebuilds it and discards every change made in the editor |
-| `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. Never overwrites a filled field |
+| `wp velocity seed-programs` | Creates the loan programs the site needs and fills their empty details. That includes the address of each program's page, which the calculator and the case studies link to. Never overwrites a filled field |
 | `wp velocity seed-toolkit` | Creates the Broker Toolkit documents from the old toolkit form and page. Skips the ones that exist (see "Broker Toolkit") |
 | `wp velocity seed-toolkit-page` | Fills the Broker Tools page, if it is empty, and creates its seven Kadence queries and their two cards. `--force` rebuilds them and discards every change made in the editor (see "Broker Toolkit", "The page") |
 | `wp velocity seed-deals-page` | Creates the Featured Deals page if it is missing and fills it, if it is empty, with its two Kadence queries and their cards. `--force` rebuilds them and discards every change made in the editor (see [components.md](components.md), "The Featured Deals page") |

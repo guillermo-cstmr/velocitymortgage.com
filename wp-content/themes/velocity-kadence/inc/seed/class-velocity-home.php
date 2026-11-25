@@ -966,10 +966,12 @@ class Velocity_Home {
 	 */
 	public static function programs( $post_id ) {
 		$programs = array(
-			array( 'Long-term loan', '30-Year Fixed, Built to Buy and Hold', 'Buy, refinance, or cash out on residential or commercial property with a rate that never changes.', 'Explore 30-Year Fixed', 'program-30-year-fixed.webp', 521, 'A broker smiling during a meeting' ),
-			array( 'Long-term loan', 'Fast50, Equity Does the Talking', 'Like the 30-Year Fixed, with the weight on property equity—up to 50% of the property’s value.', 'Explore Fast50', 'program-fast50.webp', 542, 'A hand holding a set of house keys' ),
-			array( 'Short-term loan', 'Flex I/O, a Bridge Loan Between Projects', 'Interest-only payments for 24 months, with no prepay penalty. Available on 1-4 unit properties.', 'Explore Flex I/O', 'program-flex-io.webp', 542, 'Two people reviewing documents at a table' ),
-			array( 'Long-term loan', 'Super Jumbo, Large-Balance Financing', 'The 30-Year Fixed for luxury property, $2MM to $10MM, for seasoned investors in major metro areas.', 'Explore Super Jumbo', 'program-super-jumbo.webp', 542, 'Two men shaking hands across a desk' ),
+			// The order of the approved copy: Super Jumbo comes before Flex I/O.
+			// The last item of each is its key in Velocity_Program::programs().
+			array( 'Long-term loan', '30-Year Fixed, Built to Buy and Hold', 'Buy, refinance, or cash out on residential or commercial property with a rate that never changes.', 'Explore 30-Year Fixed', 'program-30-year-fixed.webp', 521, 'A broker smiling during a meeting', '30-year-fixed' ),
+			array( 'Long-term loan', 'Fast50, Equity Does the Talking', 'Like the 30-Year Fixed, with the weight on property equity—up to 50% of the property’s value.', 'Explore Fast50', 'program-fast50.webp', 542, 'A hand holding a set of house keys', 'fast50' ),
+			array( 'Long-term loan', 'Super Jumbo, Large-Balance Financing', 'The 30-Year Fixed for luxury property, $2MM to $10MM, for seasoned investors in major metro areas.', 'Explore Super Jumbo', 'program-super-jumbo.webp', 542, 'Two men shaking hands across a desk', 'super-jumbo' ),
+			array( 'Short-term loan', 'Flex I/O, a Bridge Loan Between Projects', 'Interest-only payments for 24 months, with no prepay penalty. Available on 1-4 unit properties.', 'Explore Flex I/O', 'program-flex-io.webp', 542, 'Two people reviewing documents at a table', 'flex-io' ),
 		);
 
 		$rows = array();
@@ -1006,7 +1008,7 @@ class Velocity_Home {
 					)
 				) . "\n\n" .
 				self::subtitle( $post_id, $key, $program[2], array( 'margin' => array( '0', '', '40', '' ) ) ) . "\n\n" .
-				self::buttons( $post_id, $key, array( array( $program[3], Velocity_Program::url( $pages[ $index ] ), 'outline' ) ), 'left' ),
+				self::buttons( $post_id, $key, array( array( $program[3], Velocity_Program::url( $program[7] ), 'outline' ) ), 'left' ),
 				array(
 					'id'                => $image_first ? 2 : 1,
 					'verticalAlignment' => 'middle',
@@ -1168,7 +1170,7 @@ class Velocity_Home {
 				$post_id,
 				'steps',
 				'How Brokers Grow With Velocity',
-				'We keep it simple. Register with us in minutes and hear back within 24 hours. Then just bring your deal for approval and we’ll help you close.',
+				'We keep it simple. Register with us in minutes and hear back within 24 hours. <br>Then just bring your deal for approval and we’ll help you close.',
 				1055
 			) . "\n\n" .
 			Velocity_Seed::row(
@@ -1365,7 +1367,7 @@ class Velocity_Home {
 			self::section_header(
 				$post_id,
 				'deals',
-				'Deals Other Brokers Already Placed',
+				'Deals Other Brokers <br>Already Placed',
 				'See how Velocity has helped brokers close everything from fourplexes to mixed-use buildings to warehouses, and more.'
 			) . "\n\n" . $list . "\n\n" .
 			Velocity_Seed::column(
