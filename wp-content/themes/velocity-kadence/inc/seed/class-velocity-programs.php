@@ -77,6 +77,10 @@ class Velocity_Programs {
 				'Four Programs, <br><strong>One Perfect Fit</strong>',
 				array(
 					'tag'    => 'h1',
+					// Looser than the 1.1 of every other h1: here the "g" of
+					// "Programs" sits right above the "f" of "Perfect", in bold,
+					// and at 1.1 the two letters touch.
+					'lh'     => 1.2,
 					'margin' => array( '0', '', '32', '' ),
 					'class'  => 'is-style-vm-reveal-lines',
 				)

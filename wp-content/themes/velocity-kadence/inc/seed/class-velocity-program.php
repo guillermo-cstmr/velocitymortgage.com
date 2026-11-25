@@ -287,7 +287,7 @@ class Velocity_Program {
 					array(
 						'How fast does Fast50 close?',
 						array(
-							'It takes two to six weeks from a complete submission (our other programs take two weeks to 45 days.) In addition to speed, Fast50 also delivers certainty. Once your documents are in and the appraisal comes back, your file starts moving.',
+							'It takes two weeks to 45 days from a complete submission. In addition to speed, Fast50 also delivers certainty. Once your documents are in and the appraisal comes back, your file starts moving.',
 							'Remember to ask your account executive for current timing on a specific deal, since property type and location can change the date. As with every program, turning in the documents while the appraisal is out is the fastest path to close.',
 						),
 					),
@@ -364,7 +364,7 @@ class Velocity_Program {
 						'How long is the Flex I/O term?',
 						array(
 							'Two years (24 months), or until the owner sells or refinances. Flex I/O acts just like a bridge loan in real estate, except it’s meant for investment properties. Payments are interest-only for the whole term.',
-							'It takes between two weeks and 45 days for a Flex I/O to close, after which the 24 months of its term begin. If your client wants to keep their property after this term is up, they can transition smoothly into our 30-Year Fixed loan.',
+							'It takes two to four weeks for a Flex I/O to close, after which the 24 months of its term begin. If your client wants to keep their property after this term is up, they can transition smoothly into our 30-Year Fixed loan.',
 						),
 					),
 					array(
@@ -392,7 +392,7 @@ class Velocity_Program {
 						'What property types does Flex I/O cover?',
 						array(
 							'Flex I/O is a residential bridge loan, so it covers 1-4 unit properties (meaning single-family homes), condos, and 2-4 unit buildings held as rentals or listed for sale. Multifamily with five or more units and commercial property belong on the 30-Year Fixed or Fast50 instead.',
-							'Loan amounts run from $75,000 to $2 million, and the loan closes in two weeks to 45 days from a complete submission. First-time investors can borrow up to 65% of value, and foreign investors are eligible at 65% as well, with no U.S. credit history required.',
+							'Loan amounts run from $75,000 to $2 million, and the loan closes in two to four weeks from a complete submission. First-time investors can borrow up to 65% of value, and foreign investors are eligible at 65% as well, with no U.S. credit history required.',
 						),
 					),
 				),

@@ -483,7 +483,7 @@ class Velocity_Process {
 						$post_id,
 						'approval',
 						'A Closer Look at Our Approval Package',
-						'This is step five of our partnership process, broken down for you to see. Once the broker of record signs, your approval lasts a whole year.',
+						'This is step four of our partnership process, broken down for you to see. Once the broker of record signs, your approval lasts a whole year.',
 						$white
 					) . "\n\n" . $lists . "\n\n" .
 					Velocity_Home::t(
