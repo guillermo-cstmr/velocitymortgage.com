@@ -60,7 +60,7 @@ class Velocity_Seed {
 				'',
 				array(
 					array( 'News and Insights', '/news-insights/' ),
-					array( 'Featured Deals', '/featured-investment-property-loans/' ),
+					array( 'Featured Deals', '/featured-deals/' ),
 					array( 'Case Studies', '/case-studies/' ),
 					array( 'Broker Tools', '/broker-tools/' ),
 				),

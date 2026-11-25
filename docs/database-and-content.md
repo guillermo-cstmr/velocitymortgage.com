@@ -281,7 +281,7 @@ As of 2026-11-17. "Local" means built and reviewed on a LocalWP copy, with its c
 | Become a Partner, Broker Login | Velocity's portal | None | Not ours to build: Figma marks them "client will develop, CSTMR to QA" | |
 | News and Insights | `/news-insights/` | `seed-insights` | Built, as a Kadence Element. Tested with temporary articles | Not yet: default template |
 | An article of News and Insights | `/news-insights/...` | `seed-insights` | Built, as a Kadence Element. Tested with temporary articles | Not yet: default template |
-| Featured Deals | `/featured-investment-property-loans/` | `seed-deals-page` | Built | The automatic list, on the default template |
+| Featured Deals | `/featured-deals/` | `seed-deals-page` | Built | The automatic list, on the default template |
 | Terms of Use | `/terms-of-use/` | `seed-legal-pages` | Built | Built, 2026-11-18 |
 | Privacy (Privacy Notice for California Residents) | `/privacy/` | `seed-legal-pages` | Built | Built, 2026-11-18. The old text about cookies is gone; a cookie banner replaces it and is not built yet |
 | 404 | Any address that does not exist | `seed-404` | Built, as a Kadence Element | Built, 2026-11-18 |
@@ -299,7 +299,6 @@ Waiting on someone else:
 - The address of "Become a Partner" in Velocity's portal.
 - The files of the two forms libraries of Broker Tools.
 - Case studies: none is published, so "A Deal That Fits" shows on no program page. The three boxes of that section are not defined in the design.
-- The new addresses for News and Insights (`/news-insights/`) and Featured Deals (`/featured-deals/`), which need a change in the plugins.
 - Copy: the open points listed under "What is still open" of each page in [components.md](components.md).
 
 ## Theme commands

@@ -1373,7 +1373,7 @@ class Velocity_Home {
 			Velocity_Seed::column(
 				$post_id,
 				'deals-action',
-				self::buttons( $post_id, 'deals', array( array( 'Explore More Closed Deals', home_url( '/featured-investment-property-loans/' ) ) ) ),
+				self::buttons( $post_id, 'deals', array( array( 'Explore More Closed Deals', home_url( '/featured-deals/' ) ) ) ),
 				array(
 					'padding'  => array( '56', '', '0', '' ),
 					'metadata' => array( 'name' => 'Button' ),

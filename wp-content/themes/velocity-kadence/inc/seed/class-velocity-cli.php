@@ -82,6 +82,7 @@ class Velocity_CLI {
 		'contact-us'        => 'contact',
 		'mortgage-programs' => 'loan-programs',
 		'broker-toolkit'    => 'broker-tools',
+		'featured-investment-property-loans' => 'featured-deals',
 		// A page under another one: the whole path, old and new. Only its last
 		// part changes.
 		'loan-programs/flex-i-o' => 'loan-programs/flex-io',
@@ -947,7 +948,7 @@ class Velocity_CLI {
 	/**
 	 * Fills the Featured Deals page with its sections as block content.
 	 *
-	 * It writes to the page with the slug "featured-investment-property-loans",
+	 * It writes to the page with the slug "featured-deals",
 	 * and creates that page if it does not exist: hero, the figures, the
 	 * gallery of deals with its filters, sort and pages, the three latest
 	 * case studies, and the call to action. The gallery and the case studies
